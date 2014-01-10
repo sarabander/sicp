@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 4.3</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.3" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-4.xhtml#Chapter-4" rel="prev" title="Chapter 4" />
+<link href="4_002e3_002e1.xhtml#g_t4_002e3_002e1" rel="next" title="4.3.1" />
+<link href="4_002e2_002e3.xhtml#g_t4_002e2_002e3" rel="prev" title="4.2.3" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t4_002e3"></a>
+<nav class="header">
+<p>
+Next: <a href="4_002e3_002e1.xhtml#g_t4_002e3_002e1" accesskey="n" rel="next">4.3.1</a>, Previous: <a href="4_002e2_002e3.xhtml#g_t4_002e2_002e3" accesskey="p" rel="prev">4.2.3</a>, Up: <a href="Chapter-4.xhtml#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Variations-on-a-Scheme-_002d_002d_002d-Nondeterministic-Computing"></a>
+<h3 class="section"><span class="secnum">4.3</span><span class="sectitle">Variations on a Scheme — Nondeterministic Computing</span></h3>
+
+<p>In this section, we extend the Scheme evaluator to support a programming
+paradigm called <a id="index-nondeterministic-computing-1"></a>
+<em>nondeterministic computing</em> by building into the
+evaluator a facility to support automatic search.  This is a much more profound
+change to the language than the introduction of lazy evaluation in 
+<a href="4_002e2.xhtml#g_t4_002e2">4.2</a>.
+</p>
+<p>Nondeterministic computing, like stream processing, is useful for “generate
+and test” applications.  Consider the task of starting with two lists of
+positive integers and finding a pair of integers—one from the first list and
+one from the second list—whose sum is prime.  We saw how to handle this with
+finite sequence operations in <a href="2_002e2_002e3.xhtml#g_t2_002e2_002e3">2.2.3</a> and with infinite streams in
+<a href="3_002e5_002e3.xhtml#g_t3_002e5_002e3">3.5.3</a>.  Our approach was to generate the sequence of all possible
+pairs and filter these to select the pairs whose sum is prime.  Whether we
+actually generate the entire sequence of pairs first as in <a href="Chapter-2.xhtml#Chapter-2">Chapter 2</a>, or
+interleave the generating and filtering as in <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>, is immaterial to
+the essential image of how the computation is organized.
+</p>
+<p>The nondeterministic approach evokes a different image.  Imagine simply that we
+choose (in some way) a number from the first list and a number from the second
+list and require (using some mechanism) that their sum be prime.  This is
+expressed by following procedure:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">prime-sum-pair list1 list2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">a </span><span class="opn">(</span><span class="pln">an-element-of list1</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">b </span><span class="opn">(</span><span class="pln">an-element-of list2</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">require </span><span class="opn">(</span><span class="pln">prime? </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a b</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">list a b</span><span class="clo">)))</span></pre></div>
+
+<p>It might seem as if this procedure merely restates the problem, rather than
+specifying a way to solve it.  Nevertheless, this is a legitimate
+nondeterministic program.<a class="footnote_link" id="DOCF246" href="#FOOT246"><sup>246</sup></a>
+</p>
+<p>The key idea here is that expressions in a nondeterministic language can have
+more than one possible value.  For instance, <code>an-element-of</code> might return
+any element of the given list.  Our nondeterministic program evaluator will
+work by automatically choosing a possible value and keeping track of the
+choice.  If a subsequent requirement is not met, the evaluator will try a
+different choice, and it will keep trying new choices until the evaluation
+succeeds, or until we run out of choices.  Just as the lazy evaluator freed the
+programmer from the details of how values are delayed and forced, the
+nondeterministic program evaluator will free the programmer from the details of
+how choices are made.
+</p>
+<p>It is instructive to contrast the different images of time evoked by
+nondeterministic evaluation and stream processing.  Stream processing uses lazy
+evaluation to decouple the time when the stream of possible answers is
+assembled from the time when the actual stream elements are produced.  The
+evaluator supports the illusion that all the possible answers are laid out
+before us in a timeless sequence.  With nondeterministic evaluation, an
+expression represents the exploration of a set of possible worlds, each
+determined by a set of choices.  Some of the possible worlds lead to dead ends,
+while others have useful values.  The nondeterministic program evaluator
+supports the illusion that time branches, and that our programs have different
+possible execution histories.  When we reach a dead end, we can revisit a
+previous choice point and proceed along a different branch.
+</p>
+<p>The nondeterministic program evaluator implemented below is called the
+<code>amb</code> evaluator because it is based on a new special form called
+<code>amb</code>.  We can type the above definition of <code>prime-sum-pair</code> at the
+<code>amb</code> evaluator driver loop (along with definitions of <code>prime?</code>,
+<code>an-element-of</code>, and <code>require</code>) and run the procedure as follows:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><i><span class="com">;;; Amb-Eval input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">prime-sum-pair </span><span class="lit">'</span><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">8</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="lit">20</span><span class="pln"> </span><span class="lit">35</span><span class="pln"> </span><span class="lit">110</span><span class="clo">))</span><span class="pln">
+
+</span><i><span class="com">;;; Starting a new problem</span></i><span class="pln">
+</span><i><span class="com">;;; Amb-Eval value:</span></i><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">3</span><span class="pln"> </span><span class="lit">20</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>The value returned was obtained after the evaluator repeatedly chose elements
+from each of the lists, until a successful choice was made.
+</p>
+<p>Section <a href="4_002e3_002e1.xhtml#g_t4_002e3_002e1">4.3.1</a> introduces <code>amb</code> and explains how it supports
+nondeterminism through the evaluator’s automatic search mechanism.  
+<a href="4_002e3_002e2.xhtml#g_t4_002e3_002e2">4.3.2</a> presents examples of nondeterministic programs, and 
+<a href="4_002e3_002e3.xhtml#g_t4_002e3_002e3">4.3.3</a> gives the details of how to implement the <code>amb</code> evaluator by
+modifying the ordinary Scheme evaluator.
+</p>
+<table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="4_002e3_002e1.xhtml#g_t4_002e3_002e1" accesskey="1">4.3.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Amb and Search
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="4_002e3_002e2.xhtml#g_t4_002e3_002e2" accesskey="2">4.3.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Examples of Nondeterministic Programs
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="4_002e3_002e3.xhtml#g_t4_002e3_002e3" accesskey="3">4.3.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Implementing the <code>Amb</code> Evaluator
+</td></tr>
+</table>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT246"><p><a class="footnote_backlink" href="#DOCF246"><sup>246</sup></a>
+We assume that we have previously defined a
+procedure <code>prime?</code> that tests whether numbers are prime.  Even with
+<code>prime?</code> defined, the <code>prime-sum-pair</code> procedure may look
+suspiciously like the unhelpful “pseudo-Lisp” attempt to define the
+square-root function, which we described at the beginning of 
+<a href="1_002e1_002e7.xhtml#g_t1_002e1_002e7">1.1.7</a>.  In fact, a square-root procedure along those lines can actually
+be formulated as a nondeterministic program.  By incorporating a search
+mechanism into the evaluator, we are eroding the distinction between purely
+declarative descriptions and imperative specifications of how to compute
+answers.  We’ll go even farther in this direction in <a href="4_002e4.xhtml#g_t4_002e4">4.4</a>.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="4_002e3_002e1.xhtml#g_t4_002e3_002e1" accesskey="n" rel="next">4.3.1</a>, Previous: <a href="4_002e2_002e3.xhtml#g_t4_002e2_002e3" accesskey="p" rel="prev">4.2.3</a>, Up: <a href="Chapter-4.xhtml#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

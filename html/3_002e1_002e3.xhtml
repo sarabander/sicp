@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 3.1.3</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 3.1.3" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 3.1.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="3_002e1.xhtml#g_t3_002e1" rel="prev" title="3.1" />
+<link href="3_002e2.xhtml#g_t3_002e2" rel="next" title="3.2" />
+<link href="3_002e1_002e2.xhtml#g_t3_002e1_002e2" rel="prev" title="3.1.2" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t3_002e1_002e3"></a>
+<nav class="header">
+<p>
+Next: <a href="3_002e2.xhtml#g_t3_002e2" accesskey="n" rel="next">3.2</a>, Previous: <a href="3_002e1_002e2.xhtml#g_t3_002e1_002e2" accesskey="p" rel="prev">3.1.2</a>, Up: <a href="3_002e1.xhtml#g_t3_002e1" accesskey="u" rel="prev">3.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="The-Costs-of-Introducing-Assignment"></a>
+<h4 class="subsection"><span class="secnum">3.1.3</span><span class="sectitle">The Costs of Introducing Assignment</span></h4>
+
+<p>As we have seen, the <code>set!</code> operation enables us to model objects that
+have local state.  However, this advantage comes at a price.  Our programming
+language can no longer be interpreted in terms of the substitution model of
+procedure application that we introduced in <a href="1_002e1_002e5.xhtml#g_t1_002e1_002e5">1.1.5</a>.  Moreover, no
+simple model with “nice” mathematical properties can be an adequate framework
+for dealing with objects and assignment in programming languages.
+</p>
+<p>So long as we do not use assignments, two evaluations of the same procedure
+with the same arguments will produce the same result, so that procedures can be
+viewed as computing mathematical functions.  Programming without any use of
+assignments, as we did throughout the first two chapters of this book, is
+accordingly known as <a id="index-functional-programming"></a>
+<em>functional programming</em>.
+</p>
+<p>To understand how assignment complicates matters, consider a simplified version
+of the <code>make-withdraw</code> procedure of <a href="3_002e1_002e1.xhtml#g_t3_002e1_002e1">3.1.1</a> that does not
+bother to check for an insufficient amount:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-simplified-withdraw balance</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">amount</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> balance </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> balance amount</span><span class="clo">))</span><span class="pln">
+    balance</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> W </span><span class="opn">(</span><span class="pln">make-simplified-withdraw </span><span class="lit">25</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">W </span><span class="lit">20</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">5</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">W </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">-5</span></i>
+</pre></div>
+
+<p>Compare this procedure with the following <code>make-decrementer</code> procedure,
+which does not use <code>set!</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-decrementer balance</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">amount</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> balance amount</span><span class="clo">)))</span></pre></div>
+
+<p><code>Make-decrementer</code> returns a procedure that subtracts its input from a
+designated amount <code>balance</code>, but there is no accumulated effect over
+successive calls, as with <code>make-simplified-withdraw</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> D </span><span class="opn">(</span><span class="pln">make-decrementer </span><span class="lit">25</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">D </span><span class="lit">20</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">5</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">D </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">15</span></i>
+</pre></div>
+
+<p>We can use the substitution model to explain how <code>make-decrementer</code> works.
+For instance, let us analyze the evaluation of the expression
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">make-decrementer </span><span class="lit">25</span><span class="clo">)</span><span class="pln"> </span><span class="lit">20</span><span class="clo">)</span></pre></div>
+
+<p>We first simplify the operator of the combination by substituting 25 for
+<code>balance</code> in the body of <code>make-decrementer</code>.  This reduces the
+expression to
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">amount</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">25</span><span class="pln"> amount</span><span class="clo">))</span><span class="pln"> </span><span class="lit">20</span><span class="clo">)</span></pre></div>
+
+<p>Now we apply the operator by substituting 20 for <code>amount</code> in the body of
+the <code>lambda</code> expression:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">25</span><span class="pln"> </span><span class="lit">20</span><span class="clo">)</span></pre></div>
+
+<p>The final answer is 5.
+</p>
+<p>Observe, however, what happens if we attempt a similar substitution analysis
+with <code>make-simplified-withdraw</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">make-simplified-withdraw </span><span class="lit">25</span><span class="clo">)</span><span class="pln"> </span><span class="lit">20</span><span class="clo">)</span></pre></div>
+
+<p>We first simplify the operator by substituting 25 for <code>balance</code> in the
+body of <code>make-simplified-withdraw</code>.  This reduces the expression
+to<a class="footnote_link" id="DOCF137" href="#FOOT137"><sup>137</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">amount</span><span class="clo">)</span><span class="pln"> 
+   </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> balance </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">25</span><span class="pln"> amount</span><span class="clo">))</span><span class="pln"> </span><span class="lit">25</span><span class="clo">)</span><span class="pln"> </span><span class="lit">20</span><span class="clo">)</span></pre></div>
+
+<p>Now we apply the operator by substituting 20 for <code>amount</code> in the body of
+the <code>lambda</code> expression:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> balance </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="lit">25</span><span class="pln"> </span><span class="lit">20</span><span class="clo">))</span><span class="pln"> </span><span class="lit">25</span></pre></div>
+
+<p>If we adhered to the substitution model, we would have to say that the meaning
+of the procedure application is to first set <code>balance</code> to 5 and then
+return 25 as the value of the expression.  This gets the wrong answer.  In
+order to get the correct answer, we would have to somehow distinguish the first
+occurrence of <code>balance</code> (before the effect of the <code>set!</code>)  from the
+second occurrence of <code>balance</code> (after the effect of the <code>set!</code>), and
+the substitution model cannot do this.
+</p>
+<p>The trouble here is that substitution is based ultimately on the notion that
+the symbols in our language are essentially names for values.  But as soon as
+we introduce <code>set!</code> and the idea that the value of a variable can change,
+a variable can no longer be simply a name.  Now a variable somehow refers to a
+place where a value can be stored, and the value stored at this place can
+change.  In <a href="3_002e2.xhtml#g_t3_002e2">3.2</a> we will see how environments play this role of
+“place” in our computational model.
+</p>
+<a id="Sameness-and-change"></a>
+<h5 class="subsubheading">Sameness and change</h5>
+
+<p>The issue surfacing here is more profound than the mere breakdown of a
+particular model of computation.  As soon as we introduce change into our
+computational models, many notions that were previously straightforward become
+problematical.  Consider the concept of two things being “the same.”
+</p>
+<p>Suppose we call <code>make-decrementer</code> twice with the same argument to create
+two procedures:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> D1 </span><span class="opn">(</span><span class="pln">make-decrementer </span><span class="lit">25</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> D2 </span><span class="opn">(</span><span class="pln">make-decrementer </span><span class="lit">25</span><span class="clo">))</span></pre></div>
+
+<p>Are <code>D1</code> and <code>D2</code> the same?  An acceptable answer is yes, because
+<code>D1</code> and <code>D2</code> have the same computational behavior—each is a
+procedure that subtracts its input from 25.  In fact, <code>D1</code> could be
+substituted for <code>D2</code> in any computation without changing the result.
+</p>
+<p>Contrast this with making two calls to <code>make-simplified-withdraw</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> W1 </span><span class="opn">(</span><span class="pln">make-simplified-withdraw </span><span class="lit">25</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> W2 </span><span class="opn">(</span><span class="pln">make-simplified-withdraw </span><span class="lit">25</span><span class="clo">))</span></pre></div>
+
+<p>Are <code>W1</code> and <code>W2</code> the same?  Surely not, because calls to <code>W1</code>
+and <code>W2</code> have distinct effects, as shown by the following sequence of
+interactions:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">W1 </span><span class="lit">20</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">5</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">W1 </span><span class="lit">20</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">-15</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">W2 </span><span class="lit">20</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">5</span></i>
+</pre></div>
+
+<p>Even though <code>W1</code> and <code>W2</code> are “equal” in the sense that they are
+both created by evaluating the same expression, <code>(make-simplified-withdraw
+25)</code>, it is not true that <code>W1</code> could be substituted for <code>W2</code> in any
+expression without changing the result of evaluating the expression.
+</p>
+<p>A language that supports the concept that “equals can be substituted for
+equals” in an expression without changing the value of the expression is said
+to be <a id="index-referentially-transparent"></a>
+<em>referentially transparent</em>.  Referential transparency is
+violated when we include <code>set!</code> in our computer language.  This makes it
+tricky to determine when we can simplify expressions by substituting equivalent
+expressions.  Consequently, reasoning about programs that use assignment
+becomes drastically more difficult.
+</p>
+<p>Once we forgo referential transparency, the notion of what it means for
+computational objects to be “the same” becomes difficult to capture in a
+formal way.  Indeed, the meaning of “same” in the real world that our
+programs model is hardly clear in itself.  In general, we can determine that
+two apparently identical objects are indeed “the same one” only by modifying
+one object and then observing whether the other object has changed in the same
+way.  But how can we tell if an object has “changed” other than by observing
+the “same” object twice and seeing whether some property of the object
+differs from one observation to the next?  Thus, we cannot determine “change”
+without some <em>a priori</em> notion of “sameness,” and we cannot determine
+sameness without observing the effects of change.
+</p>
+<p>As an example of how this issue arises in programming, consider the situation
+where Peter and Paul have a bank account with $100 in it.  There is a
+substantial difference between modeling this as
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> peter-acc </span><span class="opn">(</span><span class="pln">make-account </span><span class="lit">100</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> paul-acc </span><span class="opn">(</span><span class="pln">make-account </span><span class="lit">100</span><span class="clo">))</span></pre></div>
+
+<p>and modeling it as
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> peter-acc </span><span class="opn">(</span><span class="pln">make-account </span><span class="lit">100</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> paul-acc peter-acc</span><span class="clo">)</span></pre></div>
+
+<p>In the first situation, the two bank accounts are distinct.  Transactions made
+by Peter will not affect Paul’s account, and vice versa.  In the second
+situation, however, we have defined <code>paul-acc</code> to be <em>the same thing</em>
+as <code>peter-acc</code>.  In effect, Peter and Paul now have a joint bank account,
+and if Peter makes a withdrawal from <code>peter-acc</code> Paul will observe less
+money in <code>paul-acc</code>.  These two similar but distinct situations can cause
+confusion in building computational models.  With the shared account, in
+particular, it can be especially confusing that there is one object (the bank
+account) that has two different names (<code>peter-acc</code> and <code>paul-acc</code>);
+if we are searching for all the places in our program where <code>paul-acc</code> can
+be changed, we must remember to look also at things that change
+<code>peter-acc</code>.<a class="footnote_link" id="DOCF138" href="#FOOT138"><sup>138</sup></a>
+</p>
+<p>With reference to the above remarks on “sameness” and “change,” observe
+that if Peter and Paul could only examine their bank balances, and could not
+perform operations that changed the balance, then the issue of whether the two
+accounts are distinct would be moot.  In general, so long as we never modify
+data objects, we can regard a compound data object to be precisely the totality
+of its pieces.  For example, a rational number is determined by giving its
+numerator and its denominator.  But this view is no longer valid in the
+presence of change, where a compound data object has an “identity” that is
+something different from the pieces of which it is composed.  A bank account is
+still “the same” bank account even if we change the balance by making a
+withdrawal; conversely, we could have two different bank accounts with the same
+state information.  This complication is a consequence, not of our programming
+language, but of our perception of a bank account as an object.  We do not, for
+example, ordinarily regard a rational number as a changeable object with
+identity, such that we could change the numerator and still have “the same”
+rational number.
+</p>
+<a id="Pitfalls-of-imperative-programming"></a>
+<h5 class="subsubheading">Pitfalls of imperative programming</h5>
+
+<p>In contrast to functional programming, programming that makes extensive use of
+assignment is known as <a id="index-imperative-programming"></a>
+<em>imperative programming</em>.  In addition to
+raising complications about computational models, programs written in
+imperative style are susceptible to bugs that cannot occur in functional
+programs.  For example, recall the iterative factorial program from 
+<a href="1_002e2_002e1.xhtml#g_t1_002e2_002e1">1.2.1</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">iter product counter</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> counter n</span><span class="clo">)</span><span class="pln">
+        product
+        </span><span class="opn">(</span><span class="pln">iter </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> counter product</span><span class="clo">)</span><span class="pln">
+              </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> counter </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">iter </span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))</span></pre></div>
+
+<p>Instead of passing arguments in the internal iterative loop, we could adopt a
+more imperative style by using explicit assignment to update the values of the
+variables <code>product</code> and <code>counter</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">product </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">counter </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">iter</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> counter n</span><span class="clo">)</span><span class="pln">
+          product
+          </span><span class="opn">(</span><span class="kwd">begin</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> product </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> counter 
+                                  product</span><span class="clo">))</span><span class="pln">
+                 </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> counter </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> counter </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pln">iter</span><span class="clo">))))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">iter</span><span class="clo">)))</span></pre></div>
+
+<p>This does not change the results produced by the program, but it does introduce
+a subtle trap.  How do we decide the order of the assignments?  As it happens,
+the program is correct as written.  But writing the assignments in the opposite
+order
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> counter </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> counter </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> product </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> counter product</span><span class="clo">))</span></pre></div>
+
+<p>would have produced a different, incorrect result.  In general, programming
+with assignment forces us to carefully consider the relative orders of the
+assignments to make sure that each statement is using the correct version of
+the variables that have been changed.  This issue simply does not arise in
+functional programs.<a class="footnote_link" id="DOCF139" href="#FOOT139"><sup>139</sup></a>
+</p>
+<p>The complexity of imperative programs becomes even worse if we consider
+applications in which several processes execute concurrently.  We will return
+to this in <a href="3_002e4.xhtml#g_t3_002e4">3.4</a>.  First, however, we will address the issue of
+providing a computational model for expressions that involve assignment, and
+explore the uses of objects with local state in designing simulations.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-3_002e7"></a>Exercise 3.7:</strong> Consider the bank account objects
+created by <code>make-account</code>, with the password modification described in
+<a href="3_002e1_002e1.xhtml#Exercise-3_002e3">Exercise 3.3</a>.  Suppose that our banking system requires the ability to
+make joint accounts.  Define a procedure <code>make-joint</code> that accomplishes
+this.  <code>Make-joint</code> should take three arguments.  The first is a
+password-protected account.  The second argument must match the password with
+which the account was defined in order for the <code>make-joint</code> operation to
+proceed.  The third argument is a new password.  <code>Make-joint</code> is to create
+an additional access to the original account using the new password.  For
+example, if <code>peter-acc</code> is a bank account with password
+<code>open-sesame</code>, then
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> paul-acc
+  </span><span class="opn">(</span><span class="pln">make-joint peter-acc 
+              </span><span class="lit">'open-sesame</span><span class="pln"> 
+              </span><span class="lit">'rosebud</span><span class="clo">))</span></pre></div>
+
+<p>will allow one to make transactions on <code>peter-acc</code> using the name
+<code>paul-acc</code> and the password <code>rosebud</code>.  You may wish to modify your
+solution to <a href="3_002e1_002e1.xhtml#Exercise-3_002e3">Exercise 3.3</a> to accommodate this new feature.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-3_002e8"></a>Exercise 3.8:</strong> When we defined the evaluation
+model in <a href="1_002e1_002e3.xhtml#g_t1_002e1_002e3">1.1.3</a>, we said that the first step in evaluating an
+expression is to evaluate its subexpressions.  But we never specified the order
+in which the subexpressions should be evaluated (e.g., left to right or right
+to left).  When we introduce assignment, the order in which the arguments to a
+procedure are evaluated can make a difference to the result.  Define a simple
+procedure <code>f</code> such that evaluating 
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f </span><span class="lit">1</span><span class="clo">))</span></pre></div>
+
+<p>will return 0 if
+the arguments to <code>+</code> are evaluated from left to right but will return 1 if
+the arguments are evaluated from right to left.
+</p></blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT137"><p><a class="footnote_backlink" href="#DOCF137"><sup>137</sup></a>
+We don’t substitute for the occurrence of <code>balance</code> in the
+<code>set!</code> expression because the <code>⟨</code><var>name</var><code>⟩</code> in a <code>set!</code> is not
+evaluated.  If we did substitute for it, we would get <code>(set! 25 (- 25
+amount))</code>, which makes no sense.</p>
+</div>
+<div id="FOOT138"><p><a class="footnote_backlink" href="#DOCF138"><sup>138</sup></a>
+The phenomenon of a single computational object
+being accessed by more than one name is known as <a id="index-aliasing"></a>
+<em>aliasing</em>.  The joint
+bank account situation illustrates a very simple example of an alias.  In
+<a href="3_002e3.xhtml#g_t3_002e3">3.3</a> we will see much more complex examples, such as “distinct”
+compound data structures that share parts.  Bugs can occur in our programs if
+we forget that a change to an object may also, as a “side effect,” change a
+“different” object because the two “different” objects are actually a
+single object appearing under different aliases.  These so-called
+<a id="index-side_002deffect-bugs"></a>
+<em>side-effect bugs</em> are so difficult to locate and to analyze that some
+people have proposed that programming languages be designed in such a way as to
+not allow side effects or aliasing (<a href="References.xhtml#Lampson-et-al_002e-1981">Lampson et al. 1981</a>; 
+<a href="References.xhtml#Morris-et-al_002e-1980">Morris et al. 1980</a>).</p>
+</div>
+<div id="FOOT139"><p><a class="footnote_backlink" href="#DOCF139"><sup>139</sup></a>
+In view of this, it is ironic that introductory
+programming is most often taught in a highly imperative style.  This may be a
+vestige of a belief, common throughout the 1960s and 1970s, that programs that
+call procedures must inherently be less efficient than programs that perform
+assignments.  (<a href="References.xhtml#Steele-1977">Steele 1977</a> debunks this argument.)  Alternatively it may
+reflect a view that step-by-step assignment is easier for beginners to
+visualize than procedure call.  Whatever the reason, it often saddles beginning
+programmers with “should I set this variable before or after that one”
+concerns that can complicate programming and obscure the important ideas.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="3_002e2.xhtml#g_t3_002e2" accesskey="n" rel="next">3.2</a>, Previous: <a href="3_002e1_002e2.xhtml#g_t3_002e1_002e2" accesskey="p" rel="prev">3.1.2</a>, Up: <a href="3_002e1.xhtml#g_t3_002e1" accesskey="u" rel="prev">3.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

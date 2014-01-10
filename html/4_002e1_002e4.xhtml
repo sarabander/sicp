@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 4.1.4</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.1.4" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.1.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="4_002e1.xhtml#g_t4_002e1" rel="prev" title="4.1" />
+<link href="4_002e1_002e5.xhtml#g_t4_002e1_002e5" rel="next" title="4.1.5" />
+<link href="4_002e1_002e3.xhtml#g_t4_002e1_002e3" rel="prev" title="4.1.3" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t4_002e1_002e4"></a>
+<nav class="header">
+<p>
+Next: <a href="4_002e1_002e5.xhtml#g_t4_002e1_002e5" accesskey="n" rel="next">4.1.5</a>, Previous: <a href="4_002e1_002e3.xhtml#g_t4_002e1_002e3" accesskey="p" rel="prev">4.1.3</a>, Up: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="u" rel="prev">4.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Running-the-Evaluator-as-a-Program"></a>
+<h4 class="subsection"><span class="secnum">4.1.4</span><span class="sectitle">Running the Evaluator as a Program</span></h4>
+
+<p>Given the evaluator, we have in our hands a description (expressed in Lisp) of
+the process by which Lisp expressions are evaluated.  One advantage of
+expressing the evaluator as a program is that we can run the program.  This
+gives us, running within Lisp, a working model of how Lisp itself evaluates
+expressions.  This can serve as a framework for experimenting with evaluation
+rules, as we shall do later in this chapter.
+</p>
+<p>Our evaluator program reduces expressions ultimately to the application of
+primitive procedures.  Therefore, all that we need to run the evaluator is to
+create a mechanism that calls on the underlying Lisp system to model the
+application of primitive procedures.
+</p>
+<p>There must be a binding for each primitive procedure name, so that when
+<code>eval</code> evaluates the operator of an application of a primitive, it will
+find an object to pass to <code>apply</code>.  We thus set up a global environment
+that associates unique objects with the names of the primitive procedures that
+can appear in the expressions we will be evaluating.  The global environment
+also includes bindings for the symbols <code>true</code> and <code>false</code>, so that
+they can be used as variables in expressions to be evaluated.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">setup-environment</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">initial-env
+         </span><span class="opn">(</span><span class="pln">extend-environment 
+          </span><span class="opn">(</span><span class="pln">primitive-procedure-names</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">primitive-procedure-objects</span><span class="clo">)</span><span class="pln">
+          the-empty-environment</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">define-variable! </span><span class="lit">'true</span><span class="pln"> true initial-env</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">define-variable! </span><span class="lit">'false</span><span class="pln"> false initial-env</span><span class="clo">)</span><span class="pln">
+    initial-env</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> the-global-environment 
+  </span><span class="opn">(</span><span class="pln">setup-environment</span><span class="clo">))</span></pre></div>
+
+<p>It does not matter how we represent the primitive procedure objects, so long as
+<code>apply</code> can identify and apply them by using the procedures
+<code>primitive-procedure?</code> and <code>apply-primitive-procedure</code>.  We have
+chosen to represent a primitive procedure as a list beginning with the symbol
+<code>primitive</code> and containing a procedure in the underlying Lisp that
+implements that primitive.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">primitive-procedure? proc</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">tagged-list? proc </span><span class="lit">'primitive</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">primitive-implementation proc</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> proc</span><span class="clo">))</span></pre></div>
+
+<p><code>Setup-environment</code> will get the primitive names and implementation
+procedures from a list:<a class="footnote_link" id="DOCF220" href="#FOOT220"><sup>220</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> primitive-procedures
+  </span><span class="opn">(</span><span class="pln">list </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'car</span><span class="pln"> </span><span class="kwd">car</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'cdr</span><span class="pln"> </span><span class="kwd">cdr</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'cons</span><span class="pln"> </span><span class="kwd">cons</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'null?</span><span class="pln"> null?</span><span class="clo">)</span><span class="pln">
+        ⟨</span><var><span class="pln">more primitives</span></var><span class="pln">⟩ </span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">primitive-procedure-names</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">map </span><span class="kwd">car</span><span class="pln"> primitive-procedures</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">primitive-procedure-objects</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">proc</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'primitive</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> proc</span><span class="clo">)))</span><span class="pln">
+       primitive-procedures</span><span class="clo">))</span></pre></div>
+
+<p>To apply a primitive procedure, we simply apply the implementation procedure to
+the arguments, using the underlying Lisp
+system:<a class="footnote_link" id="DOCF221" href="#FOOT221"><sup>221</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply-primitive-procedure proc args</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">apply-in-underlying-scheme
+   </span><span class="opn">(</span><span class="pln">primitive-implementation proc</span><span class="clo">)</span><span class="pln"> args</span><span class="clo">))</span></pre></div>
+
+<p>For convenience in running the metacircular evaluator, we provide a
+<a id="index-driver-loop"></a>
+<em>driver loop</em> that models the read-eval-print loop of the underlying
+Lisp system.  It prints a <a id="index-prompt"></a>
+<em>prompt</em>, reads an input expression,
+evaluates this expression in the global environment, and prints the result.  We
+precede each printed result by an <a id="index-output-prompt"></a>
+<em>output prompt</em> so as to distinguish
+the value of the expression from other output that may be printed.<a class="footnote_link" id="DOCF222" href="#FOOT222"><sup>222</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> input-prompt  </span><span class="str">";;; M-Eval input:"</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> output-prompt </span><span class="str">";;; M-Eval value:"</span><span class="clo">)</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">driver-loop</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">prompt-for-input input-prompt</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">input </span><span class="opn">(</span><span class="pln">read</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">output 
+           </span><span class="opn">(</span><span class="pln">eval input 
+                 the-global-environment</span><span class="clo">)))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">announce-output output-prompt</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">user-print output</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">driver-loop</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">prompt-for-input string</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">display string</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">announce-output string</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">display string</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">))</span></pre></div>
+
+<p>We use a special printing procedure, <code>user-print</code>, to avoid printing the
+environment part of a compound procedure, which may be a very long list (or may
+even contain cycles).
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">user-print object</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">compound-procedure? object</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">display 
+       </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'compound-procedure</span><span class="pln">
+             </span><span class="opn">(</span><span class="pln">procedure-parameters object</span><span class="clo">)</span><span class="pln">
+             </span><span class="opn">(</span><span class="pln">procedure-body object</span><span class="clo">)</span><span class="pln">
+             </span><span class="lit">'</span><span class="pun">&lt;</span><span class="pln">procedure-env</span><span class="pun">&gt;</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">display object</span><span class="clo">)))</span></pre></div>
+
+<p>Now all we need to do to run the evaluator is to initialize the global
+environment and start the driver loop.  Here is a sample interaction:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> the-global-environment 
+  </span><span class="opn">(</span><span class="pln">setup-environment</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">driver-loop</span><span class="clo">)</span><span class="pln">
+
+</span><i><span class="com">;;; M-Eval input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">append x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? x</span><span class="clo">)</span><span class="pln">
+      y
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">append </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> y</span><span class="clo">))))</span><span class="pln">
+
+</span><i><span class="com">;;; M-Eval value:</span></i><span class="pln">
+</span><i><span class="pln">ok</span></i><span class="pln">
+
+</span><i><span class="com">;;; M-Eval input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">append </span><span class="lit">'</span><span class="opn">(</span><span class="pln">a b c</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">d e f</span><span class="clo">))</span><span class="pln">
+
+</span><i><span class="com">;;; M-Eval value:</span></i><span class="pln">
+</span><i><span class="opn">(</span><span class="pln">a b c d e f</span><span class="clo">)</span></i>
+</pre></div>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e14"></a>Exercise 4.14:</strong> Eva Lu Ator and Louis Reasoner
+are each experimenting with the metacircular evaluator.  Eva types in the
+definition of <code>map</code>, and runs some test programs that use it.  They work
+fine.  Louis, in contrast, has installed the system version of <code>map</code> as a
+primitive for the metacircular evaluator.  When he tries it, things go terribly
+wrong.  Explain why Louis’s <code>map</code> fails even though Eva’s works.
+</p></blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT220"><p><a class="footnote_backlink" href="#DOCF220"><sup>220</sup></a>
+Any procedure defined in the underlying Lisp
+can be used as a primitive for the metacircular evaluator.  The name of a
+primitive installed in the evaluator need not be the same as the name of its
+implementation in the underlying Lisp; the names are the same here because the
+metacircular evaluator implements Scheme itself.  Thus, for example, we could
+put <code>(list 'first car)</code> or <code>(list 'square (lambda (x) (* x x)))</code> in
+the list of <code>primitive-procedures</code>.</p>
+</div>
+<div id="FOOT221"><p><a class="footnote_backlink" href="#DOCF221"><sup>221</sup></a>
+<code>Apply-in-underlying-scheme</code> is the <code>apply</code>
+procedure we have used in earlier chapters.  The metacircular evaluator’s
+<code>apply</code> procedure (<a href="4_002e1_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>) models the working of this
+primitive.  Having two different things called <code>apply</code> leads to a
+technical problem in running the metacircular evaluator, because defining the
+metacircular evaluator’s <code>apply</code> will mask the definition of the
+primitive.  One way around this is to rename the metacircular <code>apply</code> to
+avoid conflict with the name of the primitive procedure.  We have assumed
+instead that we have saved a reference to the underlying <code>apply</code> by doing
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> apply-in-underlying-scheme apply</span><span class="clo">)</span></pre></div>
+
+<p>before defining the metacircular <code>apply</code>.  This allows us to access the
+original version of <code>apply</code> under a different name.</p>
+</div>
+<div id="FOOT222"><p><a class="footnote_backlink" href="#DOCF222"><sup>222</sup></a>
+The
+primitive procedure <code>read</code> waits for input from the user, and returns the
+next complete expression that is typed.  For example, if the user types
+<code>(+ 23 x)</code>, <code>read</code> returns a three-element list containing the symbol
+<code>+</code>, the number 23, and the symbol <code>x</code>.  If the user types <code>'x</code>,
+<code>read</code> returns a two-element list containing the symbol <code>quote</code> and
+the symbol <code>x</code>.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="4_002e1_002e5.xhtml#g_t4_002e1_002e5" accesskey="n" rel="next">4.1.5</a>, Previous: <a href="4_002e1_002e3.xhtml#g_t4_002e1_002e3" accesskey="p" rel="prev">4.1.3</a>, Up: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="u" rel="prev">4.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

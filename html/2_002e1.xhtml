@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 2.1</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 2.1" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 2.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-2.xhtml#Chapter-2" rel="prev" title="Chapter 2" />
+<link href="2_002e1_002e1.xhtml#g_t2_002e1_002e1" rel="next" title="2.1.1" />
+<link href="Chapter-2.xhtml#Chapter-2" rel="prev" title="Chapter 2" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t2_002e1"></a>
+<nav class="header">
+<p>
+Next: <a href="2_002e1_002e1.xhtml#g_t2_002e1_002e1" accesskey="n" rel="next">2.1.1</a>, Previous: <a href="Chapter-2.xhtml#Chapter-2" accesskey="p" rel="prev">Chapter 2</a>, Up: <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev">Chapter 2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Introduction-to-Data-Abstraction"></a>
+<h3 class="section"><span class="secnum">2.1</span><span class="sectitle">Introduction to Data Abstraction</span></h3>
+
+<p>In <a href="1_002e1_002e8.xhtml#g_t1_002e1_002e8">1.1.8</a>, we noted that a procedure used as an element in
+creating a more complex procedure could be regarded not only as a collection of
+particular operations but also as a procedural abstraction.  That is, the
+details of how the procedure was implemented could be suppressed, and the
+particular procedure itself could be replaced by any other procedure with the
+same overall behavior.  In other words, we could make an abstraction that would
+separate the way the procedure would be used from the details of how the
+procedure would be implemented in terms of more primitive procedures.  The
+analogous notion for compound data is called <a id="index-data-abstraction-1"></a>
+<em>data abstraction</em>.  Data
+abstraction is a methodology that enables us to isolate how a compound data
+object is used from the details of how it is constructed from more primitive
+data objects.
+</p>
+<p>The basic idea of data abstraction is to structure the programs that are to use
+compound data objects so that they operate on “abstract data.” That is, our
+programs should use data in such a way as to make no assumptions about the data
+that are not strictly necessary for performing the task at hand.  At the same
+time, a “concrete” data representation is defined independent of the programs
+that use the data.  The interface between these two parts of our system will be
+a set of procedures, called <a id="index-selectors"></a>
+<em>selectors</em> and <a id="index-constructors"></a>
+<em>constructors</em>,
+that implement the abstract data in terms of the concrete representation.  To
+illustrate this technique, we will consider how to design a set of procedures
+for manipulating rational numbers.
+</p>
+<table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="2_002e1_002e1.xhtml#g_t2_002e1_002e1" accesskey="1">2.1.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Example: Arithmetic Operations for Rational Numbers
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="2_002e1_002e2.xhtml#g_t2_002e1_002e2" accesskey="2">2.1.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Abstraction Barriers
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="2_002e1_002e3.xhtml#g_t2_002e1_002e3" accesskey="3">2.1.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">What Is Meant by Data?
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="2_002e1_002e4.xhtml#g_t2_002e1_002e4" accesskey="4">2.1.4</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Extended Exercise: Interval Arithmetic
+</td></tr>
+</table>
+
+<hr />
+<nav class="header">
+<p>
+Next: <a href="2_002e1_002e1.xhtml#g_t2_002e1_002e1" accesskey="n" rel="next">2.1.1</a>, Previous: <a href="Chapter-2.xhtml#Chapter-2" accesskey="p" rel="prev">Chapter 2</a>, Up: <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev">Chapter 2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

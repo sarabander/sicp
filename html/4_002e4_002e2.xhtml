@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 4.4.2</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.4.2" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.4.2" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="4_002e4.xhtml#g_t4_002e4" rel="prev" title="4.4" />
+<link href="4_002e4_002e3.xhtml#g_t4_002e4_002e3" rel="next" title="4.4.3" />
+<link href="4_002e4_002e1.xhtml#g_t4_002e4_002e1" rel="prev" title="4.4.1" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t4_002e4_002e2"></a>
+<nav class="header">
+<p>
+Next: <a href="4_002e4_002e3.xhtml#g_t4_002e4_002e3" accesskey="n" rel="next">4.4.3</a>, Previous: <a href="4_002e4_002e1.xhtml#g_t4_002e4_002e1" accesskey="p" rel="prev">4.4.1</a>, Up: <a href="4_002e4.xhtml#g_t4_002e4" accesskey="u" rel="prev">4.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="How-the-Query-System-Works"></a>
+<h4 class="subsection"><span class="secnum">4.4.2</span><span class="sectitle">How the Query System Works</span></h4>
+
+<p>In section <a href="4_002e4_002e4.xhtml#g_t4_002e4_002e4">4.4.4</a> we will present an implementation of the query
+interpreter as a collection of procedures.  In this section we give an overview
+that explains the general structure of the system independent of low-level
+implementation details.  After describing the implementation of the
+interpreter, we will be in a position to understand some of its limitations and
+some of the subtle ways in which the query language’s logical operations differ
+from the operations of mathematical logic.
+</p>
+<p>It should be apparent that the query evaluator must perform some kind of search
+in order to match queries against facts and rules in the data base.  One way to
+do this would be to implement the query system as a nondeterministic program,
+using the <code>amb</code> evaluator of <a href="4_002e3.xhtml#g_t4_002e3">4.3</a> (see <a href="4_002e4_002e4_002e8.xhtml#Exercise-4_002e78">Exercise 4.78</a>).
+Another possibility is to manage the search with the aid of streams.  Our
+implementation follows this second approach.
+</p>
+<p>The query system is organized around two central operations called
+<a id="index-pattern-matching"></a>
+<em>pattern matching</em> and <a id="index-unification-1"></a>
+<em>unification</em>.  We first describe
+pattern matching and explain how this operation, together with the organization
+of information in terms of streams of frames, enables us to implement both
+simple and compound queries.  We next discuss unification, a generalization of
+pattern matching needed to implement rules.  Finally, we show how the entire
+query interpreter fits together through a procedure that classifies expressions
+in a manner analogous to the way <code>eval</code> classifies expressions for the
+interpreter described in <a href="4_002e1.xhtml#g_t4_002e1">4.1</a>.
+</p>
+<a id="Pattern-matching"></a>
+<h5 class="subsubheading">Pattern matching</h5>
+
+<p>A <a id="index-pattern-matcher"></a>
+<em>pattern matcher</em> is a program that tests whether some datum fits a
+specified pattern.  For example, the data list <code>((a b) c (a b))</code> matches
+the pattern <code>(?x c ?x)</code> with the pattern variable <code>?x</code> bound to
+<code>(a b)</code>.  The same data list matches the pattern <code>(?x ?y ?z)</code> with
+<code>?x</code> and <code>?z</code> both bound to <code>(a b)</code> and <code>?y</code> bound to
+<code>c</code>.  It also matches the pattern <code>((?x ?y) c (?x ?y))</code> with
+<code>?x</code> bound to <code>a</code> and <code>?y</code> bound to <code>b</code>.  However, it does
+not match the pattern <code>(?x a ?y)</code>, since that pattern specifies a list
+whose second element is the symbol <code>a</code>.
+</p>
+<p>The pattern matcher used by the query system takes as inputs a pattern, a
+datum, and a <a id="index-frame"></a>
+<em>frame</em> that specifies bindings for various pattern
+variables.  It checks whether the datum matches the pattern in a way that is
+consistent with the bindings already in the frame.  If so, it returns the given
+frame augmented by any bindings that may have been determined by the match.
+Otherwise, it indicates that the match has failed.
+</p>
+<p>For example, using the pattern <code>(?x ?y ?x)</code> to match <code>(a b a)</code> given
+an empty frame will return a frame specifying that <code>?x</code> is bound to
+<code>a</code> and <code>?y</code> is bound to <code>b</code>.  Trying the match with the same
+pattern, the same datum, and a frame specifying that <code>?y</code> is bound to
+<code>a</code> will fail.  Trying the match with the same pattern, the same datum,
+and a frame in which <code>?y</code> is bound to <code>b</code> and <code>?x</code> is unbound
+will return the given frame augmented by a binding of <code>?x</code> to <code>a</code>.
+</p>
+<p>The pattern matcher is all the mechanism that is needed to process simple
+queries that don’t involve rules.  For instance, to process the query
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">job </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span></pre></div>
+
+<p>we scan through all assertions in the data base and select those that match the
+pattern with respect to an initially empty frame.  For each match we find, we
+use the frame returned by the match to instantiate the pattern with a value for
+<code>?x</code>.
+</p>
+<a id="Streams-of-frames"></a>
+<h5 class="subsubheading">Streams of frames</h5>
+
+<p>The testing of patterns against frames is organized through the use of streams.
+Given a single frame, the matching process runs through the data-base entries
+one by one.  For each data-base entry, the matcher generates either a special
+symbol indicating that the match has failed or an extension to the frame.  The
+results for all the data-base entries are collected into a stream, which is
+passed through a filter to weed out the failures.  The result is a stream of
+all the frames that extend the given frame via a match to some assertion in the
+data base.<a class="footnote_link" id="DOCF271" href="#FOOT271"><sup>271</sup></a>
+</p>
+<p>In our system, a query takes an input stream of frames and performs the above
+matching operation for every frame in the stream, as indicated in <a href="#Figure-4_002e4">Figure 4.4</a>.  
+That is, for each frame in the input stream, the query generates a new
+stream consisting of all extensions to that frame by matches to assertions in
+the data base.  All these streams are then combined to form one huge stream,
+which contains all possible extensions of every frame in the input stream.
+This stream is the output of the query.
+</p>
+<figure class="float">
+<a id="Figure-4_002e4"></a>
+<object style="width: 56.21ex; height: 22.19ex;" data="fig/chap4/Fig4.4a.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 4.4:</strong> A query processes a stream of frames.</p>
+</figcaption>
+</figure>
+
+<p>To answer a simple query, we use the query with an input stream consisting of a
+single empty frame.  The resulting output stream contains all extensions to the
+empty frame (that is, all answers to our query).  This stream of frames is then
+used to generate a stream of copies of the original query pattern with the
+variables instantiated by the values in each frame, and this is the stream that
+is finally printed.
+</p>
+<a id="Compound-queries-1"></a>
+<h5 class="subsubheading">Compound queries</h5>
+
+<p>The real elegance of the stream-of-frames implementation is evident when we
+deal with compound queries.  The processing of compound queries makes use of
+the ability of our matcher to demand that a match be consistent with a
+specified frame.  For example, to handle the <code>and</code> of two queries, such as
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">can-do-job 
+      </span><span class="pun">?</span><span class="pln">x 
+      </span><span class="opn">(</span><span class="pln">computer programmer trainee</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">job </span><span class="pun">?</span><span class="pln">person </span><span class="pun">?</span><span class="pln">x</span><span class="clo">))</span></pre></div>
+
+<p>(informally, “Find all people who can do the job of a computer programmer
+trainee”), we first find all entries that match the pattern
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">can-do-job </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">computer programmer trainee</span><span class="clo">))</span></pre></div>
+
+<p>This produces a stream of frames, each of which contains a binding for
+<code>?x</code>.  Then for each frame in the stream we find all entries that match
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">job </span><span class="pun">?</span><span class="pln">person </span><span class="pun">?</span><span class="pln">x</span><span class="clo">)</span></pre></div>
+
+<p>in a way that is consistent with the given binding for <code>?x</code>.  Each such
+match will produce a frame containing bindings for <code>?x</code> and
+<code>?person</code>.  The <code>and</code> of two queries can be viewed as a series
+combination of the two component queries, as shown in <a href="#Figure-4_002e5">Figure 4.5</a>.  The
+frames that pass through the first query filter are filtered and further
+extended by the second query.
+</p>
+<figure class="float">
+<a id="Figure-4_002e5"></a>
+<object style="width: 55.69ex; height: 22.28ex;" data="fig/chap4/Fig4.5a.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 4.5:</strong> The <code>and</code> combination of two queries is produced by operating on the stream of frames in series.</p>
+</figcaption>
+</figure>
+
+<p><a href="#Figure-4_002e6">Figure 4.6</a> shows the analogous method for computing the <code>or</code> of two
+queries as a parallel combination of the two component queries.  The input
+stream of frames is extended separately by each query.  The two resulting
+streams are then merged to produce the final output stream.
+</p>
+<figure class="float">
+<a id="Figure-4_002e6"></a>
+<object style="width: 58.02ex; height: 35.92ex;" data="fig/chap4/Fig4.6a.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 4.6:</strong> The <code>or</code> combination of two queries is produced by operating on the stream of frames in parallel and merging the results.</p>
+</figcaption>
+</figure>
+
+<p>Even from this high-level description, it is apparent that the processing of
+compound queries can be slow.  For example, since a query may produce more than
+one output frame for each input frame, and each query in an <code>and</code> gets its
+input frames from the previous query, an <code>and</code> query could, in the worst
+case, have to perform a number of matches that is exponential in the number of
+queries (see <a href="4_002e4_002e4_002e8.xhtml#Exercise-4_002e76">Exercise 4.76</a>).<a class="footnote_link" id="DOCF272" href="#FOOT272"><sup>272</sup></a> Though systems for
+handling only simple queries are quite practical, dealing with complex queries
+is extremely difficult.<a class="footnote_link" id="DOCF273" href="#FOOT273"><sup>273</sup></a>
+</p>
+<p>From the stream-of-frames viewpoint, the <code>not</code> of some query acts as a
+filter that removes all frames for which the query can be satisfied.  For
+instance, given the pattern
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">not </span><span class="opn">(</span><span class="pln">job </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">)))</span></pre></div>
+
+<p>we attempt, for each frame in the input stream, to produce extension frames
+that satisfy <code>(job ?x (computer programmer))</code>.  We remove from the input
+stream all frames for which such extensions exist.  The result is a stream
+consisting of only those frames in which the binding for <code>?x</code> does not
+satisfy <code>(job ?x (computer programmer))</code>.  For example, in processing the
+query
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor </span><span class="pun">?</span><span class="pln">x </span><span class="pun">?</span><span class="pln">y</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">not </span><span class="opn">(</span><span class="pln">job </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))))</span></pre></div>
+
+<p>the first clause will generate frames with bindings for <code>?x</code> and
+<code>?y</code>.  The <code>not</code> clause will then filter these by removing all frames
+in which the binding for <code>?x</code> satisfies the restriction that <code>?x</code> is
+a computer programmer.<a class="footnote_link" id="DOCF274" href="#FOOT274"><sup>274</sup></a>
+</p>
+<p>The <code>lisp-value</code> special form is implemented as a similar filter on frame
+streams.  We use each frame in the stream to instantiate any variables in the
+pattern, then apply the Lisp predicate.  We remove from the input stream all
+frames for which the predicate fails.
+</p>
+<a id="Unification"></a>
+<h5 class="subsubheading">Unification</h5>
+
+<p>In order to handle rules in the query language, we must be able to find the
+rules whose conclusions match a given query pattern.  Rule conclusions are like
+assertions except that they can contain variables, so we will need a
+generalization of pattern matching—called <a id="index-unification-2"></a>
+<em>unification</em>—in which
+both the “pattern” and the “datum” may contain variables.
+</p>
+<p>A unifier takes two patterns, each containing constants and variables, and
+determines whether it is possible to assign values to the variables that will
+make the two patterns equal.  If so, it returns a frame containing these
+bindings.  For example, unifying <code>(?x a ?y)</code> and <code>(?y ?z a)</code> will
+specify a frame in which <code>?x</code>, <code>?y</code>, and <code>?z</code> must all be bound
+to <code>a</code>.  On the other hand, unifying <code>(?x ?y a)</code> and <code>(?x b ?y)</code>
+will fail, because there is no value for <code>?y</code> that can make the two
+patterns equal.  (For the second elements of the patterns to be equal,
+<code>?y</code> would have to be <code>b</code>; however, for the third elements to be
+equal, <code>?y</code> would have to be <code>a</code>.)  The unifier used in the query
+system, like the pattern matcher, takes a frame as input and performs
+unifications that are consistent with this frame.
+</p>
+<p>The unification algorithm is the most technically difficult part of the query
+system.  With complex patterns, performing unification may seem to require
+deduction.  To unify <code>(?x ?x)</code> and <code>((a ?y c) (a b ?z))</code>, for
+example, the algorithm must infer that <code>?x</code> should be <code>(a b c)</code>,
+<code>?y</code> should be <code>b</code>, and <code>?z</code> should be <code>c</code>.  We may think
+of this process as solving a set of equations among the pattern components.  In
+general, these are simultaneous equations, which may require substantial
+manipulation to solve.<a class="footnote_link" id="DOCF275" href="#FOOT275"><sup>275</sup></a> For example, unifying <code>(?x ?x)</code> and
+<code>((a ?y c) (a b ?z))</code> may be thought of as specifying the simultaneous
+equations
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="pun">?</span><span class="pln">x </span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a </span><span class="pun">?</span><span class="pln">y c</span><span class="clo">)</span><span class="pln">
+</span><span class="pun">?</span><span class="pln">x </span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b </span><span class="pun">?</span><span class="pln">z</span><span class="clo">)</span></pre></div>
+
+<p>These equations imply that
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">a </span><span class="pun">?</span><span class="pln">y c</span><span class="clo">)</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b </span><span class="pun">?</span><span class="pln">z</span><span class="clo">)</span></pre></div>
+
+<p>which in turn implies that
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="pln">a </span><span class="pun">=</span><span class="pln"> a</span><span class="pun">,</span><span class="pln"> </span><span class="pun">?</span><span class="pln">y </span><span class="pun">=</span><span class="pln"> b</span><span class="pun">,</span><span class="pln"> c </span><span class="pun">=</span><span class="pln"> </span><span class="pun">?</span><span class="pln">z</span><span class="pun">,</span></pre></div>
+
+<p>and hence that
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="pun">?</span><span class="pln">x </span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c</span><span class="clo">)</span></pre></div>
+
+<p>In a successful pattern match, all pattern variables become bound, and the
+values to which they are bound contain only constants.  This is also true of
+all the examples of unification we have seen so far.  In general, however, a
+successful unification may not completely determine the variable values; some
+variables may remain unbound and others may be bound to values that contain
+variables.
+</p>
+<p>Consider the unification of <code>(?x a)</code> and <code>((b ?y) ?z)</code>.  We can
+deduce that <code>?x = (b ?y)</code> and <code>a = ?z</code>, but we cannot further solve
+for <code>?x</code> or <code>?y</code>.  The unification doesn’t fail, since it is
+certainly possible to make the two patterns equal by assigning values to
+<code>?x</code> and <code>?y</code>.  Since this match in no way restricts the values
+<code>?y</code> can take on, no binding for <code>?y</code> is put into the result frame.
+The match does, however, restrict the value of <code>?x</code>.  Whatever value
+<code>?y</code> has, <code>?x</code> must be <code>(b ?y)</code>.  A binding of <code>?x</code> to the
+pattern <code>(b ?y)</code> is thus put into the frame.  If a value for <code>?y</code> is
+later determined and added to the frame (by a pattern match or unification that
+is required to be consistent with this frame), the previously bound <code>?x</code>
+will refer to this value.<a class="footnote_link" id="DOCF276" href="#FOOT276"><sup>276</sup></a>
+</p>
+<a id="Applying-rules"></a>
+<h5 class="subsubheading">Applying rules</h5>
+
+<p>Unification is the key to the component of the query system that makes
+inferences from rules. To see how this is accomplished, consider processing a
+query that involves applying a rule, such as
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">lives-near </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">))</span></pre></div>
+
+<p>To process this query, we first use the ordinary pattern-match procedure
+described above to see if there are any assertions in the data base that match
+this pattern.  (There will not be any in this case, since our data base
+includes no direct assertions about who lives near whom.)  The next step is to
+attempt to unify the query pattern with the conclusion of each rule.  We find
+that the pattern unifies with the conclusion of the rule
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">lives-near </span><span class="pun">?</span><span class="pln">person-1 </span><span class="pun">?</span><span class="pln">person-2</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">address </span><span class="pun">?</span><span class="pln">person-1 
+                    </span><span class="opn">(</span><span class="pun">?</span><span class="pln">town </span><span class="pun">.</span><span class="pln"> </span><span class="pun">?</span><span class="pln">rest-1</span><span class="clo">))</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">address </span><span class="pun">?</span><span class="pln">person-2 
+                    </span><span class="opn">(</span><span class="pun">?</span><span class="pln">town </span><span class="pun">.</span><span class="pln"> </span><span class="pun">?</span><span class="pln">rest-2</span><span class="clo">))</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">not </span><span class="opn">(</span><span class="pln">same </span><span class="pun">?</span><span class="pln">person-1 </span><span class="pun">?</span><span class="pln">person-2</span><span class="clo">))))</span></pre></div>
+
+<p>resulting in a frame specifying that <code>?person-2</code> is bound to <code>(Hacker
+Alyssa P)</code> and that <code>?x</code> should be bound to (have the same value as)
+<code>?person-1</code>.  Now, relative to this frame, we evaluate the compound query
+given by the body of the rule.  Successful matches will extend this frame by
+providing a binding for <code>?person-1</code>, and consequently a value for
+<code>?x</code>, which we can use to instantiate the original query pattern.
+</p>
+<p>In general, the query evaluator uses the following method to apply a rule when
+trying to establish a query pattern in a frame that specifies bindings for some
+of the pattern variables:
+</p>
+<ul>
+<li> Unify the query with the conclusion of the rule to form, if successful, an
+extension of the original frame.
+
+</li><li> Relative to the extended frame, evaluate the query formed by the body of the
+rule.
+
+</li></ul>
+
+<p>Notice how similar this is to the method for applying a procedure in the
+<code>eval</code>/<code>apply</code> evaluator for Lisp:
+</p>
+<ul>
+<li> Bind the procedure’s parameters to its arguments to form a frame that extends
+the original procedure environment.
+
+</li><li> Relative to the extended environment, evaluate the expression formed by the
+body of the procedure.
+
+</li></ul>
+
+<p>The similarity between the two evaluators should come as no surprise.  Just as
+procedure definitions are the means of abstraction in Lisp, rule definitions
+are the means of abstraction in the query language.  In each case, we unwind
+the abstraction by creating appropriate bindings and evaluating the rule or
+procedure body relative to these.
+</p>
+<a id="Simple-queries-1"></a>
+<h5 class="subsubheading">Simple queries</h5>
+
+<p>We saw earlier in this section how to evaluate simple queries in the absence of
+rules.  Now that we have seen how to apply rules, we can describe how to
+evaluate simple queries by using both rules and assertions.
+</p>
+<p>Given the query pattern and a stream of frames, we produce, for each frame in
+the input stream, two streams:
+</p>
+<ul>
+<li> a stream of extended frames obtained by matching the pattern against all
+assertions in the data base (using the pattern matcher), and
+
+</li><li> a stream of extended frames obtained by applying all possible rules (using the
+unifier).<a class="footnote_link" id="DOCF277" href="#FOOT277"><sup>277</sup></a>
+
+</li></ul>
+
+<p>Appending these two streams produces a stream that consists of all the ways
+that the given pattern can be satisfied consistent with the original frame.
+These streams (one for each frame in the input stream) are now all combined to
+form one large stream, which therefore consists of all the ways that any of the
+frames in the original input stream can be extended to produce a match with the
+given pattern.
+</p>
+<a id="The-query-evaluator-and-the-driver-loop"></a>
+<h5 class="subsubheading">The query evaluator and the driver loop</h5>
+
+<p>Despite the complexity of the underlying matching operations, the system is
+organized much like an evaluator for any language.  The procedure that
+coordinates the matching operations is called <code>qeval</code>, and it plays a role
+analogous to that of the <code>eval</code> procedure for Lisp.  <code>Qeval</code> takes as
+inputs a query and a stream of frames.  Its output is a stream of frames,
+corresponding to successful matches to the query pattern, that extend some
+frame in the input stream, as indicated in <a href="#Figure-4_002e4">Figure 4.4</a>.  Like <code>eval</code>,
+<code>qeval</code> classifies the different types of expressions (queries) and
+dispatches to an appropriate procedure for each.  There is a procedure for each
+special form (<code>and</code>, <code>or</code>, <code>not</code>, and <code>lisp-value</code>) and one
+for simple queries.
+</p>
+<p>The driver loop, which is analogous to the <code>driver-loop</code> procedure for the
+other evaluators in this chapter, reads queries from the terminal.  For each
+query, it calls <code>qeval</code> with the query and a stream that consists of a
+single empty frame.  This will produce the stream of all possible matches (all
+possible extensions to the empty frame).  For each frame in the resulting
+stream, it instantiates the original query using the values of the variables
+found in the frame.  This stream of instantiated queries is then
+printed.<a class="footnote_link" id="DOCF278" href="#FOOT278"><sup>278</sup></a>
+</p>
+<p>The driver also checks for the special command <code>assert!</code>, which signals
+that the input is not a query but rather an assertion or rule to be added to
+the data base.  For instance,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">assert! </span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">)</span><span class="pln">
+              </span><span class="opn">(</span><span class="pln">computer wizard</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">assert! </span><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">wheel </span><span class="pun">?</span><span class="pln">person</span><span class="clo">)</span><span class="pln">
+               </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor 
+                     </span><span class="pun">?</span><span class="pln">middle-manager </span><span class="pun">?</span><span class="pln">person</span><span class="clo">)</span><span class="pln">
+                    </span><span class="opn">(</span><span class="pln">supervisor
+                     </span><span class="pun">?</span><span class="pln">x </span><span class="pun">?</span><span class="pln">middle-manager</span><span class="clo">))))</span></pre></div>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT271"><p><a class="footnote_backlink" href="#DOCF271"><sup>271</sup></a>
+Because matching is generally very expensive, we would like
+to avoid applying the full matcher to every element of the data base.  This is
+usually arranged by breaking up the process into a fast, coarse match and the
+final match.  The coarse match filters the data base to produce a small set of
+candidates for the final match.  With care, we can arrange our data base so
+that some of the work of coarse matching can be done when the data base is
+constructed rather then when we want to select the candidates.  This is called
+<a id="index-indexing"></a>
+<em>indexing</em> the data base.  There is a vast technology built around
+data-base-indexing schemes.  Our implementation, described in 
+<a href="4_002e4_002e4.xhtml#g_t4_002e4_002e4">4.4.4</a>, contains a simple-minded form of such an optimization.</p>
+</div>
+<div id="FOOT272"><p><a class="footnote_backlink" href="#DOCF272"><sup>272</sup></a>
+But this kind of exponential
+explosion is not common in <code>and</code> queries because the added conditions tend
+to reduce rather than expand the number of frames produced.</p>
+</div>
+<div id="FOOT273"><p><a class="footnote_backlink" href="#DOCF273"><sup>273</sup></a>
+There is a large literature on
+data-base-management systems that is concerned with how to handle complex
+queries efficiently.</p>
+</div>
+<div id="FOOT274"><p><a class="footnote_backlink" href="#DOCF274"><sup>274</sup></a>
+There is a subtle difference between this
+filter implementation of <code>not</code> and the usual meaning of <code>not</code> in
+mathematical logic.  See <a href="4_002e4_002e3.xhtml#g_t4_002e4_002e3">4.4.3</a>.</p>
+</div>
+<div id="FOOT275"><p><a class="footnote_backlink" href="#DOCF275"><sup>275</sup></a>
+In one-sided pattern matching, all the
+equations that contain pattern variables are explicit and already solved for
+the unknown (the pattern variable).</p>
+</div>
+<div id="FOOT276"><p><a class="footnote_backlink" href="#DOCF276"><sup>276</sup></a>
+Another way to think of unification is that
+it generates the most general pattern that is a specialization of the two input
+patterns.  That is, the unification of <code>(?x a)</code> and <code>((b ?y) ?z)</code> is
+<code>((b ?y) a)</code>, and the unification of <code>(?x a ?y)</code> and <code>(?y ?z
+a)</code>, discussed above, is <code>(a a a)</code>.  For our implementation, it is more
+convenient to think of the result of unification as a frame rather than a
+pattern.</p>
+</div>
+<div id="FOOT277"><p><a class="footnote_backlink" href="#DOCF277"><sup>277</sup></a>
+Since unification is a generalization of matching, we could
+simplify the system by using the unifier to produce both streams.  Treating the
+easy case with the simple matcher, however, illustrates how matching (as
+opposed to full-blown unification) can be useful in its own right.</p>
+</div>
+<div id="FOOT278"><p><a class="footnote_backlink" href="#DOCF278"><sup>278</sup></a>
+The reason we use streams (rather than lists) of frames is
+that the recursive application of rules can generate infinite numbers of values
+that satisfy a query.  The delayed evaluation embodied in streams is crucial
+here: The system will print responses one by one as they are generated,
+regardless of whether there are a finite or infinite number of responses.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="4_002e4_002e3.xhtml#g_t4_002e4_002e3" accesskey="n" rel="next">4.4.3</a>, Previous: <a href="4_002e4_002e1.xhtml#g_t4_002e4_002e1" accesskey="p" rel="prev">4.4.1</a>, Up: <a href="4_002e4.xhtml#g_t4_002e4" accesskey="u" rel="prev">4.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

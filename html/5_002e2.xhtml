@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 5.2</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 5.2" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 5.2" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-5.xhtml#Chapter-5" rel="prev" title="Chapter 5" />
+<link href="5_002e2_002e1.xhtml#g_t5_002e2_002e1" rel="next" title="5.2.1" />
+<link href="5_002e1_002e5.xhtml#g_t5_002e1_002e5" rel="prev" title="5.1.5" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t5_002e2"></a>
+<nav class="header">
+<p>
+Next: <a href="5_002e2_002e1.xhtml#g_t5_002e2_002e1" accesskey="n" rel="next">5.2.1</a>, Previous: <a href="5_002e1_002e5.xhtml#g_t5_002e1_002e5" accesskey="p" rel="prev">5.1.5</a>, Up: <a href="Chapter-5.xhtml#Chapter-5" accesskey="u" rel="prev">Chapter 5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="A-Register_002dMachine-Simulator"></a>
+<h3 class="section"><span class="secnum">5.2</span><span class="sectitle">A Register-Machine Simulator</span></h3>
+
+<p>In order to gain a good understanding of the design of register machines, we
+must test the machines we design to see if they perform as expected.  One way
+to test a design is to hand-simulate the operation of the controller, as in
+<a href="5_002e1_002e4.xhtml#Exercise-5_002e5">Exercise 5.5</a>.  But this is extremely tedious for all but the simplest
+machines.  In this section we construct a simulator for machines described in
+the register-machine language.  The simulator is a Scheme program with four
+interface procedures.  The first uses a description of a register machine to
+construct a model of the machine (a data structure whose parts correspond to
+the parts of the machine to be simulated), and the other three allow us to
+simulate the machine by manipulating the model:
+</p>
+<blockquote>
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">make-machine ⟨</span><var><span class="pln">register-names</span></var><span class="pln">⟩
+              ⟨</span><var><span class="pln">operations</span></var><span class="pln">⟩
+              ⟨</span><var><span class="pln">controller</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>constructs and returns a model of the machine with the given registers,
+operations, and controller.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">set-register-contents! ⟨</span><var><span class="pln">machine-model</span></var><span class="pln">⟩ 
+                        ⟨</span><var><span class="pln">register-name</span></var><span class="pln">⟩ 
+                        ⟨</span><var><span class="pln">value</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>stores a value in a simulated register in the given machine.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">get-register-contents ⟨</span><var><span class="pln">machine-model</span></var><span class="pln">⟩
+                       ⟨</span><var><span class="pln">register-name</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>returns the contents of a simulated register in the given machine.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">start ⟨</span><var><span class="pln">machine-model</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>simulates the execution of the given machine, starting from the beginning of
+the controller sequence and stopping when it reaches the end of the sequence.
+</p></blockquote>
+
+<p>As an example of how these procedures are used, we can define
+<code>gcd-machine</code> to be a model of the <abbr>GCD</abbr> machine of 
+<a href="5_002e1_002e1.xhtml#g_t5_002e1_002e1">5.1.1</a> as follows:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> gcd-machine
+  </span><span class="opn">(</span><span class="pln">make-machine
+   </span><span class="lit">'</span><span class="opn">(</span><span class="pln">a b t</span><span class="clo">)</span><span class="pln">
+   </span><span class="opn">(</span><span class="pln">list </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'rem</span><span class="pln"> remainder</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'</span><span class="pun">=</span><span class="pln"> </span><span class="pun">=</span><span class="clo">))</span><span class="pln">
+   </span><span class="lit">'</span><span class="opn">(</span><span class="pln">test-b
+       </span><span class="opn">(</span><span class="pln">test </span><span class="opn">(</span><span class="pln">op </span><span class="pun">=</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reg b</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">const </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">branch </span><span class="opn">(</span><span class="pln">label gcd-done</span><span class="clo">))</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">assign t </span><span class="opn">(</span><span class="pln">op rem</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reg a</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reg b</span><span class="clo">))</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">assign a </span><span class="opn">(</span><span class="pln">reg b</span><span class="clo">))</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">assign b </span><span class="opn">(</span><span class="pln">reg t</span><span class="clo">))</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">label test-b</span><span class="clo">))</span><span class="pln">
+     gcd-done</span><span class="clo">)))</span></pre></div>
+
+<p>The first argument to <code>make-machine</code> is a list of register names.  The
+next argument is a table (a list of two-element lists) that pairs each
+operation name with a Scheme procedure that implements the operation (that is,
+produces the same output value given the same input values).  The last argument
+specifies the controller as a list of labels and machine instructions, as in
+<a href="5_002e1.xhtml#g_t5_002e1">5.1</a>.
+</p>
+<p>To compute <abbr>GCD</abbr>s with this machine, we set the input registers, start
+the machine, and examine the result when the simulation terminates:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">set-register-contents! gcd-machine </span><span class="lit">'a</span><span class="pln"> </span><span class="lit">206</span><span class="clo">)</span><span class="pln">
+</span><i><span class="pln">done</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">set-register-contents! gcd-machine </span><span class="lit">'b</span><span class="pln"> </span><span class="lit">40</span><span class="clo">)</span><span class="pln">
+</span><i><span class="pln">done</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">start gcd-machine</span><span class="clo">)</span><span class="pln">
+</span><i><span class="pln">done</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">get-register-contents gcd-machine </span><span class="lit">'a</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">2</span></i>
+</pre></div>
+
+<p>This computation will run much more slowly than a <code>gcd</code> procedure written
+in Scheme, because we will simulate low-level machine instructions, such as
+<code>assign</code>, by much more complex operations.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-5_002e7"></a>Exercise 5.7:</strong> Use the simulator to test the
+machines you designed in <a href="5_002e1_002e4.xhtml#Exercise-5_002e4">Exercise 5.4</a>.
+</p></blockquote>
+
+<table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e2_002e1.xhtml#g_t5_002e2_002e1" accesskey="1">5.2.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">The Machine Model
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e2_002e2.xhtml#g_t5_002e2_002e2" accesskey="2">5.2.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">The Assembler
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e2_002e3.xhtml#g_t5_002e2_002e3" accesskey="3">5.2.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Generating Execution Procedures for Instructions
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e2_002e4.xhtml#g_t5_002e2_002e4" accesskey="4">5.2.4</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Monitoring Machine Performance
+</td></tr>
+</table>
+
+<hr />
+<nav class="header">
+<p>
+Next: <a href="5_002e2_002e1.xhtml#g_t5_002e2_002e1" accesskey="n" rel="next">5.2.1</a>, Previous: <a href="5_002e1_002e5.xhtml#g_t5_002e1_002e5" accesskey="p" rel="prev">5.1.5</a>, Up: <a href="Chapter-5.xhtml#Chapter-5" accesskey="u" rel="prev">Chapter 5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

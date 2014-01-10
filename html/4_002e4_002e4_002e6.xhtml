@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 4.4.4.6</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.4.4.6" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.4.4.6" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="4_002e4_002e4.xhtml#g_t4_002e4_002e4" rel="prev" title="4.4.4" />
+<link href="4_002e4_002e4_002e7.xhtml#g_t4_002e4_002e4_002e7" rel="next" title="4.4.4.7" />
+<link href="4_002e4_002e4_002e5.xhtml#g_t4_002e4_002e4_002e5" rel="prev" title="4.4.4.5" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t4_002e4_002e4_002e6"></a>
+<nav class="header">
+<p>
+Next: <a href="4_002e4_002e4_002e7.xhtml#g_t4_002e4_002e4_002e7" accesskey="n" rel="next">4.4.4.7</a>, Previous: <a href="4_002e4_002e4_002e5.xhtml#g_t4_002e4_002e4_002e5" accesskey="p" rel="prev">4.4.4.5</a>, Up: <a href="4_002e4_002e4.xhtml#g_t4_002e4_002e4" accesskey="u" rel="prev">4.4.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Stream-Operations"></a>
+<h5 class="subsubsection"><span class="secnum">4.4.4.6</span><span class="sectitle">Stream Operations</span></h5>
+
+<p>The query system uses a few stream operations that were not presented in
+<a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>.
+</p>
+<p><code>Stream-append-delayed</code> and <code>interleave-delayed</code> are just like
+<code>stream-append</code> and <code>interleave</code> (<a href="3_002e5_002e3.xhtml#g_t3_002e5_002e3">3.5.3</a>), except that
+they take a delayed argument (like the <code>integral</code> procedure in 
+<a href="3_002e5_002e4.xhtml#g_t3_002e5_002e4">3.5.4</a>).  This postpones looping in some cases (see <a href="4_002e4_002e4_002e8.xhtml#Exercise-4_002e71">Exercise 4.71</a>).
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">stream-append-delayed s1 delayed-s2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">stream-null? s1</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">force delayed-s2</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">cons-stream
+       </span><span class="opn">(</span><span class="pln">stream-car s1</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">stream-append-delayed </span><span class="opn">(</span><span class="pln">stream-cdr s1</span><span class="clo">)</span><span class="pln">
+                              delayed-s2</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">interleave-delayed s1 delayed-s2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">stream-null? s1</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">force delayed-s2</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">cons-stream
+       </span><span class="opn">(</span><span class="pln">stream-car s1</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">interleave-delayed 
+        </span><span class="opn">(</span><span class="pln">force delayed-s2</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">delay</span><span class="pln"> </span><span class="opn">(</span><span class="pln">stream-cdr s1</span><span class="clo">))))))</span></pre></div>
+
+<p><code>Stream-flatmap</code>, which is used throughout the query evaluator to map a
+procedure over a stream of frames and combine the resulting streams of frames,
+is the stream analog of the <code>flatmap</code> procedure introduced for ordinary
+lists in <a href="2_002e2_002e3.xhtml#g_t2_002e2_002e3">2.2.3</a>.  Unlike ordinary <code>flatmap</code>, however, we
+accumulate the streams with an interleaving process, rather than simply
+appending them (see <a href="4_002e4_002e4_002e8.xhtml#Exercise-4_002e72">Exercise 4.72</a> and <a href="4_002e4_002e4_002e8.xhtml#Exercise-4_002e73">Exercise 4.73</a>).
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">stream-flatmap proc s</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">flatten-stream </span><span class="opn">(</span><span class="pln">stream-map proc s</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">flatten-stream stream</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">stream-null? stream</span><span class="clo">)</span><span class="pln">
+      the-empty-stream
+      </span><span class="opn">(</span><span class="pln">interleave-delayed
+       </span><span class="opn">(</span><span class="pln">stream-car stream</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">delay</span><span class="pln"> </span><span class="opn">(</span><span class="pln">flatten-stream
+               </span><span class="opn">(</span><span class="pln">stream-cdr stream</span><span class="clo">))))))</span></pre></div>
+
+<p>The evaluator also uses the following simple procedure to generate a stream
+consisting of a single element:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">singleton-stream x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">cons-stream x the-empty-stream</span><span class="clo">))</span></pre></div>
+
+<hr />
+<nav class="header">
+<p>
+Next: <a href="4_002e4_002e4_002e7.xhtml#g_t4_002e4_002e4_002e7" accesskey="n" rel="next">4.4.4.7</a>, Previous: <a href="4_002e4_002e4_002e5.xhtml#g_t4_002e4_002e4_002e5" accesskey="p" rel="prev">4.4.4.5</a>, Up: <a href="4_002e4_002e4.xhtml#g_t4_002e4_002e4" accesskey="u" rel="prev">4.4.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

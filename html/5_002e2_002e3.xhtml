@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 5.2.3</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 5.2.3" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 5.2.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="5_002e2.xhtml#g_t5_002e2" rel="prev" title="5.2" />
+<link href="5_002e2_002e4.xhtml#g_t5_002e2_002e4" rel="next" title="5.2.4" />
+<link href="5_002e2_002e2.xhtml#g_t5_002e2_002e2" rel="prev" title="5.2.2" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t5_002e2_002e3"></a>
+<nav class="header">
+<p>
+Next: <a href="5_002e2_002e4.xhtml#g_t5_002e2_002e4" accesskey="n" rel="next">5.2.4</a>, Previous: <a href="5_002e2_002e2.xhtml#g_t5_002e2_002e2" accesskey="p" rel="prev">5.2.2</a>, Up: <a href="5_002e2.xhtml#g_t5_002e2" accesskey="u" rel="prev">5.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Generating-Execution-Procedures-for-Instructions"></a>
+<h4 class="subsection"><span class="secnum">5.2.3</span><span class="sectitle">Generating Execution Procedures for Instructions</span></h4>
+
+<p>The assembler calls <code>make-execution-procedure</code> to generate the execution
+procedure for an instruction.  Like the <code>analyze</code> procedure in the
+evaluator of <a href="4_002e1_002e7.xhtml#g_t4_002e1_002e7">4.1.7</a>, this dispatches on the type of instruction to
+generate the appropriate execution procedure.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-execution-procedure 
+         inst labels machine pc flag stack ops</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> inst</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'assign</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-assign 
+          inst machine labels ops pc</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> inst</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'test</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-test 
+          inst machine labels ops flag pc</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> inst</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'branch</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-branch 
+          inst machine labels flag pc</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> inst</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'goto</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-goto inst machine labels pc</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> inst</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'save</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-save inst machine stack pc</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> inst</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'restore</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-restore inst machine stack pc</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> inst</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'perform</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-perform
+          inst machine labels ops pc</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown instruction 
+                      type: ASSEMBLE"</span><span class="pln">
+                     inst</span><span class="clo">))))</span></pre></div>
+
+<p>For each type of instruction in the register-machine language, there is a
+generator that builds an appropriate execution procedure.  The details of these
+procedures determine both the syntax and meaning of the individual instructions
+in the register-machine language.  We use data abstraction to isolate the
+detailed syntax of register-machine expressions from the general execution
+mechanism, as we did for evaluators in <a href="4_002e1_002e2.xhtml#g_t4_002e1_002e2">4.1.2</a>, by using syntax
+procedures to extract and classify the parts of an instruction.
+</p>
+<a id="Assign-instructions"></a>
+<h5 class="subsubheading"><code>Assign</code> instructions</h5>
+
+<p>The <code>make-assign</code> procedure handles <code>assign</code> instructions:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-assign 
+         inst machine labels operations pc</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">target 
+         </span><span class="opn">(</span><span class="pln">get-register 
+          machine 
+          </span><span class="opn">(</span><span class="pln">assign-reg-name inst</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">value-exp </span><span class="opn">(</span><span class="pln">assign-value-exp inst</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">value-proc
+           </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">operation-exp? value-exp</span><span class="clo">)</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">make-operation-exp
+                value-exp 
+                machine
+                labels
+                operations</span><span class="clo">)</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">make-primitive-exp
+                </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> value-exp</span><span class="clo">)</span><span class="pln">
+                machine
+                labels</span><span class="clo">))))</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln">   </span><span class="roman"><span class="com">; execution procedure</span></span><span class="pln">
+                   </span><span class="roman"><span class="com">; for </span><code><span class="com">assign</span></code></span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">set-contents! target </span><span class="opn">(</span><span class="pln">value-proc</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">advance-pc pc</span><span class="clo">)))))</span></pre></div>
+
+<p><code>Make-assign</code> extracts the target register name (the second element of the
+instruction) and the value expression (the rest of the list that forms the
+instruction) from the <code>assign</code> instruction using the selectors
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">assign-reg-name assign-instruction</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> assign-instruction</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">assign-value-exp assign-instruction</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cddr</span><span class="pln"> assign-instruction</span><span class="clo">))</span></pre></div>
+
+<p>The register name is looked up with <code>get-register</code> to produce the target
+register object.  The value expression is passed to <code>make-operation-exp</code>
+if the value is the result of an operation, and to <code>make-primitive-exp</code>
+otherwise.  These procedures (shown below) parse the value expression and
+produce an execution procedure for the value.  This is a procedure of no
+arguments, called <code>value-proc</code>, which will be evaluated during the
+simulation to produce the actual value to be assigned to the register.  Notice
+that the work of looking up the register name and parsing the value expression
+is performed just once, at assembly time, not every time the instruction is
+simulated.  This saving of work is the reason we use execution procedures, and
+corresponds directly to the saving in work we obtained by separating program
+analysis from execution in the evaluator of <a href="4_002e1_002e7.xhtml#g_t4_002e1_002e7">4.1.7</a>.
+</p>
+<p>The result returned by <code>make-assign</code> is the execution procedure for the
+<code>assign</code> instruction.  When this procedure is called (by the machine
+model’s <code>execute</code> procedure), it sets the contents of the target register
+to the result obtained by executing <code>value-proc</code>.  Then it advances the
+<code>pc</code> to the next instruction by running the procedure
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">advance-pc pc</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">set-contents! pc </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> </span><span class="opn">(</span><span class="pln">get-contents pc</span><span class="clo">))))</span></pre></div>
+
+<p><code>Advance-pc</code> is the normal termination for all instructions except
+<code>branch</code> and <code>goto</code>.
+</p>
+<a id="Test_002c-branch_002c-and-goto-instructions"></a>
+<h5 class="subsubheading"><code>Test</code>, <code>branch</code>, and <code>goto</code> instructions</h5>
+
+<p><code>Make-test</code> handles <code>test</code> instructions in a similar way.  It
+extracts the expression that specifies the condition to be tested and generates
+an execution procedure for it.  At simulation time, the procedure for the
+condition is called, the result is assigned to the <code>flag</code> register, and
+the <code>pc</code> is advanced:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">make-test 
+   inst machine labels operations flag pc</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">condition </span><span class="opn">(</span><span class="pln">test-condition inst</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">operation-exp? condition</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">condition-proc
+               </span><span class="opn">(</span><span class="pln">make-operation-exp
+                condition 
+                machine
+                labels
+                operations</span><span class="clo">)))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln"> 
+            </span><span class="opn">(</span><span class="pln">set-contents! 
+             flag </span><span class="opn">(</span><span class="pln">condition-proc</span><span class="clo">))</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">advance-pc pc</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Bad TEST instruction: 
+                ASSEMBLE"</span><span class="pln"> inst</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">test-condition test-instruction</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> test-instruction</span><span class="clo">))</span></pre></div>
+
+<p>The execution procedure for a <code>branch</code> instruction checks the contents of
+the <code>flag</code> register and either sets the contents of the <code>pc</code> to the
+branch destination (if the branch is taken) or else just advances the <code>pc</code>
+(if the branch is not taken).  Notice that the indicated destination in a
+<code>branch</code> instruction must be a label, and the <code>make-branch</code> procedure
+enforces this.  Notice also that the label is looked up at assembly time, not
+each time the <code>branch</code> instruction is simulated.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">make-branch 
+   inst machine labels flag pc</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">dest </span><span class="opn">(</span><span class="pln">branch-dest inst</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">label-exp? dest</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">insts
+               </span><span class="opn">(</span><span class="pln">lookup-label 
+                labels 
+                </span><span class="opn">(</span><span class="pln">label-exp-label dest</span><span class="clo">))))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">get-contents flag</span><span class="clo">)</span><span class="pln">
+                </span><span class="opn">(</span><span class="pln">set-contents! pc insts</span><span class="clo">)</span><span class="pln">
+                </span><span class="opn">(</span><span class="pln">advance-pc pc</span><span class="clo">))))</span><span class="pln">
+        </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Bad BRANCH instruction: 
+                ASSEMBLE"</span><span class="pln">
+               inst</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">branch-dest branch-instruction</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> branch-instruction</span><span class="clo">))</span></pre></div>
+
+<p>A <code>goto</code> instruction is similar to a branch, except that the destination
+may be specified either as a label or as a register, and there is no condition
+to check—the <code>pc</code> is always set to the new destination.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-goto inst machine labels pc</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">dest </span><span class="opn">(</span><span class="pln">goto-dest inst</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">label-exp? dest</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">insts
+                  </span><span class="opn">(</span><span class="pln">lookup-label 
+                   labels
+                   </span><span class="opn">(</span><span class="pln">label-exp-label dest</span><span class="clo">))))</span><span class="pln">
+             </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln"> 
+               </span><span class="opn">(</span><span class="pln">set-contents! pc insts</span><span class="clo">))))</span><span class="pln">
+          </span><span class="opn">((</span><span class="pln">register-exp? dest</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">reg
+                  </span><span class="opn">(</span><span class="pln">get-register 
+                   machine
+                   </span><span class="opn">(</span><span class="pln">register-exp-reg dest</span><span class="clo">))))</span><span class="pln">
+             </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">set-contents! 
+                pc
+                </span><span class="opn">(</span><span class="pln">get-contents reg</span><span class="clo">)))))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Bad GOTO instruction: 
+                        ASSEMBLE"</span><span class="pln">
+                       inst</span><span class="clo">)))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">goto-dest goto-instruction</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> goto-instruction</span><span class="clo">))</span></pre></div>
+
+<a id="Other-instructions"></a>
+<h5 class="subsubheading">Other instructions</h5>
+
+<p>The stack instructions <code>save</code> and <code>restore</code> simply use the stack with
+the designated register and advance the <code>pc</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-save inst machine stack pc</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">reg </span><span class="opn">(</span><span class="pln">get-register 
+              machine
+              </span><span class="opn">(</span><span class="pln">stack-inst-reg-name inst</span><span class="clo">))))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">push stack </span><span class="opn">(</span><span class="pln">get-contents reg</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">advance-pc pc</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-restore inst machine stack pc</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">reg </span><span class="opn">(</span><span class="pln">get-register
+              machine
+              </span><span class="opn">(</span><span class="pln">stack-inst-reg-name inst</span><span class="clo">))))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">set-contents! reg </span><span class="opn">(</span><span class="pln">pop stack</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">advance-pc pc</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">stack-inst-reg-name 
+         stack-instruction</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> stack-instruction</span><span class="clo">))</span></pre></div>
+
+<p>The final instruction type, handled by <code>make-perform</code>, generates an
+execution procedure for the action to be performed.  At simulation time, the
+action procedure is executed and the <code>pc</code> advanced.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-perform 
+         inst machine labels operations pc</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">action </span><span class="opn">(</span><span class="pln">perform-action inst</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">operation-exp? action</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">action-proc
+               </span><span class="opn">(</span><span class="pln">make-operation-exp
+                action
+                machine
+                labels
+                operations</span><span class="clo">)))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">action-proc</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">advance-pc pc</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Bad PERFORM instruction: 
+                ASSEMBLE"</span><span class="pln">
+               inst</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">perform-action inst</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> inst</span><span class="clo">))</span></pre></div>
+
+<a id="Execution-procedures-for-subexpressions"></a>
+<h5 class="subsubheading">Execution procedures for subexpressions</h5>
+
+<p>The value of a <code>reg</code>, <code>label</code>, or <code>const</code> expression may be
+needed for assignment to a register (<code>make-assign</code>) or for input to an
+operation (<code>make-operation-exp</code>, below).  The following procedure
+generates execution procedures to produce values for these expressions during
+the simulation:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-primitive-exp exp machine labels</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">constant-exp? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">c </span><span class="opn">(</span><span class="pln">constant-exp-value exp</span><span class="clo">)))</span><span class="pln">
+           </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln"> c</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">label-exp? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">insts
+                </span><span class="opn">(</span><span class="pln">lookup-label 
+                 labels
+                 </span><span class="opn">(</span><span class="pln">label-exp-label exp</span><span class="clo">))))</span><span class="pln">
+           </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln"> insts</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">register-exp? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">r </span><span class="opn">(</span><span class="pln">get-register
+                   machine
+                   </span><span class="opn">(</span><span class="pln">register-exp-reg exp</span><span class="clo">))))</span><span class="pln">
+           </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">get-contents r</span><span class="clo">))))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown expression type: 
+                      ASSEMBLE"</span><span class="pln">
+                     exp</span><span class="clo">))))</span></pre></div>
+
+<p>The syntax of <code>reg</code>, <code>label</code>, and <code>const</code> expressions is
+determined by
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">register-exp? exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">tagged-list? exp </span><span class="lit">'reg</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">register-exp-reg exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> exp</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">constant-exp? exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">tagged-list? exp </span><span class="lit">'const</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">constant-exp-value exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> exp</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">label-exp? exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">tagged-list? exp </span><span class="lit">'label</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">label-exp-label exp</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> exp</span><span class="clo">))</span></pre></div>
+
+<p><code>Assign</code>, <code>perform</code>, and <code>test</code> instructions may include the
+application of a machine operation (specified by an <code>op</code> expression) to
+some operands (specified by <code>reg</code> and <code>const</code> expressions).  The
+following procedure produces an execution procedure for an “operation
+expression”—a list containing the operation and operand expressions from the
+instruction:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-operation-exp
+         exp machine labels operations</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">op </span><span class="opn">(</span><span class="pln">lookup-prim 
+             </span><span class="opn">(</span><span class="pln">operation-exp-op exp</span><span class="clo">)</span><span class="pln">
+             operations</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">aprocs
+         </span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">e</span><span class="clo">)</span><span class="pln">
+                </span><span class="opn">(</span><span class="pln">make-primitive-exp 
+                 e machine labels</span><span class="clo">))</span><span class="pln">
+              </span><span class="opn">(</span><span class="pln">operation-exp-operands exp</span><span class="clo">))))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply op </span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p</span><span class="clo">))</span><span class="pln">
+                              aprocs</span><span class="clo">)))))</span></pre></div>
+
+<p>The syntax of operation expressions is determined by
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">operation-exp? exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pair? exp</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">tagged-list? </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> exp</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'op</span><span class="clo">)))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">operation-exp-op operation-exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> operation-exp</span><span class="clo">)))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">operation-exp-operands operation-exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> operation-exp</span><span class="clo">))</span></pre></div>
+
+<p>Observe that the treatment of operation expressions is very much like the
+treatment of procedure applications by the <code>analyze-application</code> procedure
+in the evaluator of <a href="4_002e1_002e7.xhtml#g_t4_002e1_002e7">4.1.7</a> in that we generate an execution
+procedure for each operand.  At simulation time, we call the operand procedures
+and apply the Scheme procedure that simulates the operation to the resulting
+values.  The simulation procedure is found by looking up the operation name in
+the operation table for the machine:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">lookup-prim symbol operations</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">val </span><span class="opn">(</span><span class="pln">assoc symbol operations</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> val
+        </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> val</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown operation: ASSEMBLE"</span><span class="pln">
+               symbol</span><span class="clo">))))</span></pre></div>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e9"></a>Exercise 5.9:</strong> The treatment of machine operations
+above permits them to operate on labels as well as on constants and the
+contents of registers.  Modify the expression-processing procedures to enforce
+the condition that operations can be used only with registers and constants.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e10"></a>Exercise 5.10:</strong> Design a new syntax for
+register-machine instructions and modify the simulator to use your new syntax.
+Can you implement your new syntax without changing any part of the simulator
+except the syntax procedures in this section?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e11"></a>Exercise 5.11:</strong> When we introduced <code>save</code>
+and <code>restore</code> in <a href="5_002e1_002e4.xhtml#g_t5_002e1_002e4">5.1.4</a>, we didn’t specify what would happen
+if you tried to restore a register that was not the last one saved, as in the
+sequence
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">save y</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">save x</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">restore y</span><span class="clo">)</span></pre></div>
+
+<p>There are several reasonable possibilities for the meaning of <code>restore</code>:
+</p>
+<ol>
+<li> <code>(restore y)</code> puts into <code>y</code> the last value saved on the stack,
+regardless of what register that value came from.  This is the way our
+simulator behaves.  Show how to take advantage of this behavior to eliminate
+one instruction from the Fibonacci machine of <a href="5_002e1_002e4.xhtml#g_t5_002e1_002e4">5.1.4</a> (<a href="5_002e1_002e4.xhtml#Figure-5_002e12">Figure 5.12</a>).
+
+</li><li> <code>(restore y)</code> puts into <code>y</code> the last value saved on the stack, but
+only if that value was saved from <code>y</code>; otherwise, it signals an error.
+Modify the simulator to behave this way.  You will have to change <code>save</code>
+to put the register name on the stack along with the value.
+
+</li><li> <code>(restore y)</code> puts into <code>y</code> the last value saved from <code>y</code>
+regardless of what other registers were saved after <code>y</code> and not restored.
+Modify the simulator to behave this way.  You will have to associate a separate
+stack with each register.  You should make the <code>initialize-stack</code>
+operation initialize all the register stacks.
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e12"></a>Exercise 5.12:</strong> The simulator can be used to help
+determine the data paths required for implementing a machine with a given
+controller.  Extend the assembler to store the following information in the
+machine model:
+</p>
+<ul>
+<li> a list of all instructions, with duplicates removed, sorted by instruction type
+(<code>assign</code>, <code>goto</code>, and so on);
+
+</li><li> a list (without duplicates) of the registers used to hold entry points (these
+are the registers referenced by <code>goto</code> instructions);
+
+</li><li> a list (without duplicates) of the registers that are <code>save</code>d
+or <code>restore</code>d;
+
+</li><li> for each register, a list (without duplicates) of the sources from which it is
+assigned (for example, the sources for register <code>val</code> in the factorial
+machine of <a href="5_002e1_002e4.xhtml#Figure-5_002e11">Figure 5.11</a> are <code>(const 1)</code> and <code>((op *) (reg n)
+(reg val))</code>).
+
+</li></ul>
+
+<p>Extend the message-passing interface to the machine to provide access to this
+new information.  To test your analyzer, define the Fibonacci machine from
+<a href="5_002e1_002e4.xhtml#Figure-5_002e12">Figure 5.12</a> and examine the lists you constructed.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e13"></a>Exercise 5.13:</strong> Modify the simulator so that it
+uses the controller sequence to determine what registers the machine has rather
+than requiring a list of registers as an argument to <code>make-machine</code>.
+Instead of pre-allocating the registers in <code>make-machine</code>, you can
+allocate them one at a time when they are first seen during assembly of the
+instructions.
+</p></blockquote>
+
+<hr />
+<nav class="header">
+<p>
+Next: <a href="5_002e2_002e4.xhtml#g_t5_002e2_002e4" accesskey="n" rel="next">5.2.4</a>, Previous: <a href="5_002e2_002e2.xhtml#g_t5_002e2_002e2" accesskey="p" rel="prev">5.2.2</a>, Up: <a href="5_002e2.xhtml#g_t5_002e2" accesskey="u" rel="prev">5.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

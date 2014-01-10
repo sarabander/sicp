@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 1.1.4</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 1.1.4" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 1.1.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="1_002e1.xhtml#g_t1_002e1" rel="prev" title="1.1" />
+<link href="1_002e1_002e5.xhtml#g_t1_002e1_002e5" rel="next" title="1.1.5" />
+<link href="1_002e1_002e3.xhtml#g_t1_002e1_002e3" rel="prev" title="1.1.3" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t1_002e1_002e4"></a>
+<nav class="header">
+<p>
+Next: <a href="1_002e1_002e5.xhtml#g_t1_002e1_002e5" accesskey="n" rel="next">1.1.5</a>, Previous: <a href="1_002e1_002e3.xhtml#g_t1_002e1_002e3" accesskey="p" rel="prev">1.1.3</a>, Up: <a href="1_002e1.xhtml#g_t1_002e1" accesskey="u" rel="prev">1.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Compound-Procedures"></a>
+<h4 class="subsection"><span class="secnum">1.1.4</span><span class="sectitle">Compound Procedures</span></h4>
+
+<p>We have identified in Lisp some of the elements that must appear in any
+powerful programming language:
+</p>
+<ul>
+<li> Numbers and arithmetic operations are primitive data and procedures.
+
+</li><li> Nesting of combinations provides a means of combining operations.
+
+</li><li> Definitions that associate names with values provide a limited means of
+abstraction.
+
+</li></ul>
+
+<p>Now we will learn about <a id="index-procedure-definitions"></a>
+<em>procedure definitions</em>, a much more powerful
+abstraction technique by which a compound operation can be given a name and
+then referred to as a unit.
+</p>
+<p>We begin by examining how to express the idea of “squaring.”  We might say,
+“To square something, multiply it by itself.”  This is expressed in our
+language as
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x</span><span class="clo">))</span></pre></div>
+
+<p>We can understand this in the following way:
+</p>
+<div class="example">
+<pre class="example">(define (square x)    (*       x       x))
+  |      |      |      |       |       |
+ To square something, multiply it by itself.
+</pre></div>
+
+<p>We have here a <a id="index-compound-procedure"></a>
+<em>compound procedure</em>, which has been given the name
+<code>square</code>.  The procedure represents the operation of multiplying something
+by itself.  The thing to be multiplied is given a local name, <code>x</code>, which
+plays the same role that a pronoun plays in natural language.  Evaluating the
+definition creates this compound procedure and associates it with the name
+<code>square</code>.<a class="footnote_link" id="DOCF12" href="#FOOT12"><sup>12</sup></a>
+</p>
+<p>The general form of a procedure definition is
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">name</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">formal parameters</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> ⟨</span><var><span class="pln">body</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>The <code>⟨</code><var>name</var><code>⟩</code> is a symbol to be associated with the procedure definition in
+the environment.<a class="footnote_link" id="DOCF13" href="#FOOT13"><sup>13</sup></a> The <code>⟨</code><var>formal<!-- /@w --> parameters<!-- /@w --></var><code>⟩</code> 
+are the names used within the body of the procedure to refer to
+the corresponding arguments of the procedure.  The <code>⟨</code><var>body</var><code>⟩</code> is an
+expression that will yield the value of the procedure application when the
+formal parameters are replaced by the actual arguments to which the procedure
+is applied.<a class="footnote_link" id="DOCF14" href="#FOOT14"><sup>14</sup></a>  The <code>⟨</code><var>name</var><code>⟩</code> and
+the <code>⟨</code><var>formal parameters</var><code>⟩</code> are grouped within parentheses, just as they
+would be in an actual call to the procedure being defined.
+</p>
+<p>Having defined <code>square</code>, we can now use it:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">square </span><span class="lit">21</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">441</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">5</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">49</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">square </span><span class="lit">3</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">81</span></i>
+</pre></div>
+
+<p>We can also use <code>square</code> as a building block in defining other procedures.
+For example, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>x</mi>
+    <mn>2</mn>
+  </msup>
+  <mo>+</mo>
+  <msup>
+    <mi>y</mi>
+    <mn>2</mn>
+  </msup>
+</math> can be expressed as
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">))</span></pre></div>
+
+<p>We can easily define a procedure <code>sum-of-squares</code> that, given any two
+numbers as arguments, produces the sum of their squares:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-of-squares x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">sum-of-squares </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">25</span></i>
+</pre></div>
+
+<p>Now we can use <code>sum-of-squares</code> as a building block in constructing
+further procedures:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f a</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">sum-of-squares </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a </span><span class="lit">2</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">f </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">136</span></i>
+</pre></div>
+
+<p>Compound procedures are used in exactly the same way as primitive procedures.
+Indeed, one could not tell by looking at the definition of
+<code>sum-of-squares</code> given above whether <code>square</code> was built into the
+interpreter, like <code>+</code> and <code>*</code>, or defined as a compound procedure.
+</p>
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT12"><p><a class="footnote_backlink" href="#DOCF12"><sup>12</sup></a>
+Observe that there are two different operations being
+combined here: we are creating the procedure, and we are giving it the name
+<code>square</code>.  It is possible, indeed important, to be able to separate these
+two notions—to create procedures without naming them, and to give names to
+procedures that have already been created.  We will see how to do this in
+<a href="1_002e3_002e2.xhtml#g_t1_002e3_002e2">1.3.2</a>.</p>
+</div>
+<div id="FOOT13"><p><a class="footnote_backlink" href="#DOCF13"><sup>13</sup></a>
+Throughout this book, we will describe the general
+syntax of expressions by using italic symbols delimited by angle
+brackets—e.g., <code>⟨</code><var>name</var><code>⟩</code>—to denote the “slots” in the expression to be
+filled in when such an expression is actually used.</p>
+</div>
+<div id="FOOT14"><p><a class="footnote_backlink" href="#DOCF14"><sup>14</sup></a>
+More generally, the body of the procedure can be a
+sequence of expressions.  In this case, the interpreter evaluates each
+expression in the sequence in turn and returns the value of the final
+expression as the value of the procedure application.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="1_002e1_002e5.xhtml#g_t1_002e1_002e5" accesskey="n" rel="next">1.1.5</a>, Previous: <a href="1_002e1_002e3.xhtml#g_t1_002e1_002e3" accesskey="p" rel="prev">1.1.3</a>, Up: <a href="1_002e1.xhtml#g_t1_002e1" accesskey="u" rel="prev">1.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

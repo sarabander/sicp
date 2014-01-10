@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 3.1</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 3.1" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 3.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-3.xhtml#Chapter-3" rel="prev" title="Chapter 3" />
+<link href="3_002e1_002e1.xhtml#g_t3_002e1_002e1" rel="next" title="3.1.1" />
+<link href="Chapter-3.xhtml#Chapter-3" rel="prev" title="Chapter 3" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t3_002e1"></a>
+<nav class="header">
+<p>
+Next: <a href="3_002e1_002e1.xhtml#g_t3_002e1_002e1" accesskey="n" rel="next">3.1.1</a>, Previous: <a href="Chapter-3.xhtml#Chapter-3" accesskey="p" rel="prev">Chapter 3</a>, Up: <a href="Chapter-3.xhtml#Chapter-3" accesskey="u" rel="prev">Chapter 3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Assignment-and-Local-State"></a>
+<h3 class="section"><span class="secnum">3.1</span><span class="sectitle">Assignment and Local State</span></h3>
+
+<p>We ordinarily view the world as populated by independent objects, each of which
+has a state that changes over time.  An object is said to “have state” if its
+behavior is influenced by its history.  A bank account, for example, has state
+in that the answer to the question “Can I withdraw $100?”  depends upon the
+history of deposit and withdrawal transactions.  We can characterize an
+object’s state by one or more <a id="index-state-variables-1"></a>
+<em>state variables</em>, which among them
+maintain enough information about history to determine the object’s current
+behavior.  In a simple banking system, we could characterize the state of an
+account by a current balance rather than by remembering the entire history of
+account transactions.
+</p>
+<p>In a system composed of many objects, the objects are rarely completely
+independent.  Each may influence the states of others through interactions,
+which serve to couple the state variables of one object to those of other
+objects.  Indeed, the view that a system is composed of separate objects is
+most useful when the state variables of the system can be grouped into closely
+coupled subsystems that are only loosely coupled to other subsystems.
+</p>
+<p>This view of a system can be a powerful framework for organizing computational
+models of the system.  For such a model to be modular, it should be decomposed
+into computational objects that model the actual objects in the system.  Each
+computational object must have its own <a id="index-local-state-variables"></a>
+<em>local state variables</em>
+describing the actual object’s state.  Since the states of objects in the
+system being modeled change over time, the state variables of the corresponding
+computational objects must also change.  If we choose to model the flow of time
+in the system by the elapsed time in the computer, then we must have a way to
+construct computational objects whose behaviors change as our programs run.  In
+particular, if we wish to model state variables by ordinary symbolic names in
+the programming language, then the language must provide an <a id="index-assignment-operator"></a>
+<em>assignment operator</em> 
+to enable us to change the value associated with a name.
+</p>
+<table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="3_002e1_002e1.xhtml#g_t3_002e1_002e1" accesskey="1">3.1.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Local State Variables
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="3_002e1_002e2.xhtml#g_t3_002e1_002e2" accesskey="2">3.1.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">The Benefits of Introducing Assignment
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="3_002e1_002e3.xhtml#g_t3_002e1_002e3" accesskey="3">3.1.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">The Costs of Introducing Assignment
+</td></tr>
+</table>
+
+<hr />
+<nav class="header">
+<p>
+Next: <a href="3_002e1_002e1.xhtml#g_t3_002e1_002e1" accesskey="n" rel="next">3.1.1</a>, Previous: <a href="Chapter-3.xhtml#Chapter-3" accesskey="p" rel="prev">Chapter 3</a>, Up: <a href="Chapter-3.xhtml#Chapter-3" accesskey="u" rel="prev">Chapter 3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

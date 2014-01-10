@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 4.2.2</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.2.2" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.2.2" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="4_002e2.xhtml#g_t4_002e2" rel="prev" title="4.2" />
+<link href="4_002e2_002e3.xhtml#g_t4_002e2_002e3" rel="next" title="4.2.3" />
+<link href="4_002e2_002e1.xhtml#g_t4_002e2_002e1" rel="prev" title="4.2.1" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t4_002e2_002e2"></a>
+<nav class="header">
+<p>
+Next: <a href="4_002e2_002e3.xhtml#g_t4_002e2_002e3" accesskey="n" rel="next">4.2.3</a>, Previous: <a href="4_002e2_002e1.xhtml#g_t4_002e2_002e1" accesskey="p" rel="prev">4.2.1</a>, Up: <a href="4_002e2.xhtml#g_t4_002e2" accesskey="u" rel="prev">4.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="An-Interpreter-with-Lazy-Evaluation"></a>
+<h4 class="subsection"><span class="secnum">4.2.2</span><span class="sectitle">An Interpreter with Lazy Evaluation</span></h4>
+
+<p>In this section we will implement a normal-order language that is the same as
+Scheme except that compound procedures are non-strict in each argument.
+Primitive procedures will still be strict.  It is not difficult to modify the
+evaluator of <a href="4_002e1_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a> so that the language it interprets behaves
+this way.  Almost all the required changes center around procedure application.
+</p>
+<p>The basic idea is that, when applying a procedure, the interpreter must
+determine which arguments are to be evaluated and which are to be delayed.  The
+delayed arguments are not evaluated; instead, they are transformed into objects
+called <a id="index-thunks"></a>
+<em>thunks</em>.<a class="footnote_link" id="DOCF238" href="#FOOT238"><sup>238</sup></a> The thunk must
+contain the information required to produce the value of the argument when it
+is needed, as if it had been evaluated at the time of the application.  Thus,
+the thunk must contain the argument expression and the environment in which the
+procedure application is being evaluated.
+</p>
+<p>The process of evaluating the expression in a thunk is called
+<a id="index-forcing"></a>
+<em>forcing</em>.<a class="footnote_link" id="DOCF239" href="#FOOT239"><sup>239</sup></a>
+In general, a thunk will be forced only when its value is needed: when it is
+passed to a primitive procedure that will use the value of the thunk; when it
+is the value of a predicate of a conditional; and when it is the value of an
+operator that is about to be applied as a procedure.  One design choice we have
+available is whether or not to <a id="index-memoize"></a>
+<em>memoize</em> thunks, as we did with delayed
+objects in <a href="3_002e5_002e1.xhtml#g_t3_002e5_002e1">3.5.1</a>.  With memoization, the first time a thunk is
+forced, it stores the value that is computed.  Subsequent forcings simply
+return the stored value without repeating the computation.  We’ll make our
+interpreter memoize, because this is more efficient for many applications.
+There are tricky considerations here, however.<a class="footnote_link" id="DOCF240" href="#FOOT240"><sup>240</sup></a>
+</p>
+<a id="Modifying-the-evaluator"></a>
+<h5 class="subsubheading">Modifying the evaluator</h5>
+
+<p>The main difference between the lazy evaluator and the one in <a href="4_002e1.xhtml#g_t4_002e1">4.1</a>
+is in the handling of procedure applications in <code>eval</code> and <code>apply</code>.
+</p>
+<p>The <code>application?</code> clause of <code>eval</code> becomes
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">application? exp</span><span class="clo">)</span><span class="pln">
+ </span><span class="opn">(</span><span class="pln">apply </span><span class="opn">(</span><span class="pln">actual-value </span><span class="opn">(</span><span class="pln">operator exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">operands exp</span><span class="clo">)</span><span class="pln">
+        env</span><span class="clo">))</span></pre></div>
+
+<p>This is almost the same as the <code>application?</code> clause of <code>eval</code> in
+<a href="4_002e1_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>.  For lazy evaluation, however, we call <code>apply</code> with
+the operand expressions, rather than the arguments produced by evaluating them.
+Since we will need the environment to construct thunks if the arguments are to
+be delayed, we must pass this as well.  We still evaluate the operator, because
+<code>apply</code> needs the actual procedure to be applied in order to dispatch on
+its type (primitive versus compound) and apply it.
+</p>
+<p>Whenever we need the actual value of an expression, we use
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">actual-value exp env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">force-it </span><span class="opn">(</span><span class="pln">eval exp env</span><span class="clo">)))</span></pre></div>
+
+<p>instead of just <code>eval</code>, so that if the expression’s value is a thunk, it
+will be forced.
+</p>
+<p>Our new version of <code>apply</code> is also almost the same as the version in
+<a href="4_002e1_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>.  The difference is that <code>eval</code> has passed in
+unevaluated operand expressions: For primitive procedures (which are strict),
+we evaluate all the arguments before applying the primitive; for compound
+procedures (which are non-strict) we delay all the arguments before applying
+the procedure.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply procedure arguments env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">primitive-procedure? procedure</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">apply-primitive-procedure
+          procedure
+          </span><span class="opn">(</span><span class="pln">list-of-arg-values 
+           arguments 
+           env</span><span class="clo">)))</span><span class="pln">  </span><span class="roman"><span class="com">; changed</span></span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">compound-procedure? procedure</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">eval-sequence
+          </span><span class="opn">(</span><span class="pln">procedure-body procedure</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">extend-environment
+           </span><span class="opn">(</span><span class="pln">procedure-parameters procedure</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">list-of-delayed-args 
+            arguments 
+            env</span><span class="clo">)</span><span class="pln">   </span><span class="roman"><span class="com">; changed</span></span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">procedure-environment procedure</span><span class="clo">))))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown procedure 
+                      type: APPLY"</span><span class="pln"> 
+                     procedure</span><span class="clo">))))</span></pre></div>
+
+<p>The procedures that process the arguments are just like <code>list-of-values</code>
+from <a href="4_002e1_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>, except that <code>list-of-delayed-args</code> delays the
+arguments instead of evaluating them, and <code>list-of-arg-values</code> uses
+<code>actual-value</code> instead of <code>eval</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list-of-arg-values exps env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">no-operands? exps</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">actual-value 
+             </span><span class="opn">(</span><span class="pln">first-operand exps</span><span class="clo">)</span><span class="pln"> 
+             env</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">list-of-arg-values 
+             </span><span class="opn">(</span><span class="pln">rest-operands exps</span><span class="clo">)</span><span class="pln">
+             env</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list-of-delayed-args exps env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">no-operands? exps</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">delay-it 
+             </span><span class="opn">(</span><span class="pln">first-operand exps</span><span class="clo">)</span><span class="pln"> 
+             env</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">list-of-delayed-args 
+             </span><span class="opn">(</span><span class="pln">rest-operands exps</span><span class="clo">)</span><span class="pln">
+             env</span><span class="clo">))))</span></pre></div>
+
+<p>The other place we must change the evaluator is in the handling of <code>if</code>,
+where we must use <code>actual-value</code> instead of <code>eval</code> to get the value
+of the predicate expression before testing whether it is true or false:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">eval-if exp env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">true? </span><span class="opn">(</span><span class="pln">actual-value </span><span class="opn">(</span><span class="pln">if-predicate exp</span><span class="clo">)</span><span class="pln"> 
+                           env</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">if-consequent exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">if-alternative exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)))</span></pre></div>
+
+<p>Finally, we must change the <code>driver-loop</code> procedure (<a href="4_002e1_002e4.xhtml#g_t4_002e1_002e4">4.1.4</a>)
+to use <code>actual-value</code> instead of <code>eval</code>, so that if a delayed value
+is propagated back to the read-eval-print loop, it will be forced before being
+printed.  We also change the prompts to indicate that this is the lazy
+evaluator:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> input-prompt  </span><span class="str">";;; L-Eval input:"</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> output-prompt </span><span class="str">";;; L-Eval value:"</span><span class="clo">)</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">driver-loop</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">prompt-for-input input-prompt</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">input </span><span class="opn">(</span><span class="pln">read</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">output </span><span class="opn">(</span><span class="pln">actual-value 
+                   input 
+                   the-global-environment</span><span class="clo">)))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">announce-output output-prompt</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">user-print output</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">driver-loop</span><span class="clo">))</span></pre></div>
+
+<p>With these changes made, we can start the evaluator and test it.  The
+successful evaluation of the <code>try</code> expression discussed in 
+<a href="4_002e2_002e1.xhtml#g_t4_002e2_002e1">4.2.1</a> indicates that the interpreter is performing lazy evaluation:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> the-global-environment 
+  </span><span class="opn">(</span><span class="pln">setup-environment</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">driver-loop</span><span class="clo">)</span><span class="pln">
+
+</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">try a b</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> a </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> b</span><span class="clo">))</span><span class="pln">
+
+</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
+</span><i><span class="pln">ok</span></i><span class="pln">
+
+</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">try </span><span class="lit">0</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
+
+</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
+</span><i><span class="lit">1</span></i>
+</pre></div>
+
+<a id="Representing-thunks"></a>
+<h5 class="subsubheading">Representing thunks</h5>
+
+<p>Our evaluator must arrange to create thunks when procedures are applied to
+arguments and to force these thunks later.  A thunk must package an expression
+together with the environment, so that the argument can be produced later.  To
+force the thunk, we simply extract the expression and environment from the
+thunk and evaluate the expression in the environment.  We use
+<code>actual-value</code> rather than <code>eval</code> so that in case the value of the
+expression is itself a thunk, we will force that, and so on, until we reach
+something that is not a thunk:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">force-it obj</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">thunk? obj</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">actual-value </span><span class="opn">(</span><span class="pln">thunk-exp obj</span><span class="clo">)</span><span class="pln"> 
+                    </span><span class="opn">(</span><span class="pln">thunk-env obj</span><span class="clo">))</span><span class="pln">
+      obj</span><span class="clo">))</span></pre></div>
+
+<p>One easy way to package an expression with an environment is to make a list
+containing the expression and the environment.  Thus, we create a thunk as
+follows:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">delay-it exp env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'thunk</span><span class="pln"> exp env</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">thunk? obj</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tagged-list? obj </span><span class="lit">'thunk</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">thunk-exp thunk</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> thunk</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">thunk-env thunk</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">caddr</span><span class="pln"> thunk</span><span class="clo">))</span></pre></div>
+
+<p>Actually, what we want for our interpreter is not quite this, but rather thunks
+that have been memoized.  When a thunk is forced, we will turn it into an
+evaluated thunk by replacing the stored expression with its value and changing
+the <code>thunk</code> tag so that it can be recognized as already
+evaluated.<a class="footnote_link" id="DOCF241" href="#FOOT241"><sup>241</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">evaluated-thunk? obj</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">tagged-list? obj </span><span class="lit">'evaluated-thunk</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">thunk-value evaluated-thunk</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> evaluated-thunk</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">force-it obj</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">thunk? obj</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">result </span><span class="opn">(</span><span class="pln">actual-value 
+                        </span><span class="opn">(</span><span class="pln">thunk-exp obj</span><span class="clo">)</span><span class="pln">
+                        </span><span class="opn">(</span><span class="pln">thunk-env obj</span><span class="clo">))))</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">set-car! obj </span><span class="lit">'evaluated-thunk</span><span class="clo">)</span><span class="pln">
+           </span><span class="com">;; </span><span class="roman"><span class="com">replace </span><code><span class="com">exp</span></code><span class="com"> with its value:</span></span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">set-car! </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> obj</span><span class="clo">)</span><span class="pln"> result</span><span class="clo">)</span><span class="pln"> 
+           </span><span class="com">;; </span><span class="roman"><span class="com">forget unneeded </span><code><span class="com">env</span></code><span class="com">:</span></span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">set-cdr! </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> obj</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="clo">))</span><span class="pln"> 
+           result</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">evaluated-thunk? obj</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">thunk-value obj</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> obj</span><span class="clo">)))</span></pre></div>
+
+<p>Notice that the same <code>delay-it</code> procedure works both with and without
+memoization.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-4_002e27"></a>Exercise 4.27:</strong> Suppose we type in the following
+definitions to the lazy evaluator:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> count </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">id x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> count </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> count </span><span class="lit">1</span><span class="clo">))</span><span class="pln"> x</span><span class="clo">)</span></pre></div>
+
+<p>Give the missing values in the following sequence of interactions, and explain
+your answers.<a class="footnote_link" id="DOCF242" href="#FOOT242"><sup>242</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> w </span><span class="opn">(</span><span class="pln">id </span><span class="opn">(</span><span class="pln">id </span><span class="lit">10</span><span class="clo">)))</span><span class="pln">
+
+</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
+count
+
+</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
+⟨</span><var><span class="pln">response</span></var><span class="pln">⟩
+
+</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
+w
+
+</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
+⟨</span><var><span class="pln">response</span></var><span class="pln">⟩
+
+</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
+count
+
+</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
+⟨</span><var><span class="pln">response</span></var><span class="pln">⟩</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e28"></a>Exercise 4.28:</strong> <code>Eval</code> uses
+<code>actual-value</code> rather than <code>eval</code> to evaluate the operator before
+passing it to <code>apply</code>, in order to force the value of the operator.  Give
+an example that demonstrates the need for this forcing.
+</p>
+<p><strong><a id="Exercise-4_002e29"></a>Exercise 4.29:</strong> Exhibit a program that you would
+expect to run much more slowly without memoization than with memoization.
+Also, consider the following interaction, where the <code>id</code> procedure is
+defined as in <a href="#Exercise-4_002e27">Exercise 4.27</a> and <code>count</code> starts at 0:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x</span><span class="clo">))</span><span class="pln">
+
+</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">id </span><span class="lit">10</span><span class="clo">))</span><span class="pln">
+
+</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
+⟨</span><var><span class="pln">response</span></var><span class="pln">⟩
+
+</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
+count
+
+</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
+⟨</span><var><span class="pln">response</span></var><span class="pln">⟩</span></pre></div>
+
+<p>Give the responses both when the evaluator memoizes and when it does not.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e30"></a>Exercise 4.30:</strong> Cy D. Fect, a reformed C
+programmer, is worried that some side effects may never take place, because the
+lazy evaluator doesn’t force the expressions in a sequence.  Since the value of
+an expression in a sequence other than the last one is not used (the expression
+is there only for its effect, such as assigning to a variable or printing),
+there can be no subsequent use of this value (e.g., as an argument to a
+primitive procedure) that will cause it to be forced.  Cy thus thinks that when
+evaluating sequences, we must force all expressions in the sequence except the
+final one.  He proposes to modify <code>eval-sequence</code> from <a href="4_002e1_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>
+to use <code>actual-value</code> rather than <code>eval</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">eval-sequence exps env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">last-exp? exps</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">first-exp exps</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">actual-value </span><span class="opn">(</span><span class="pln">first-exp exps</span><span class="clo">)</span><span class="pln"> 
+                       env</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">eval-sequence </span><span class="opn">(</span><span class="pln">rest-exps exps</span><span class="clo">)</span><span class="pln"> 
+                        env</span><span class="clo">))))</span></pre></div>
+
+<ol>
+<li> Ben Bitdiddle thinks Cy is wrong.  He shows Cy the <code>for-each</code> procedure
+described in <a href="2_002e2_002e1.xhtml#Exercise-2_002e23">Exercise 2.23</a>, which gives an important example of a
+sequence with side effects:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">for-each proc items</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? items</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">'done</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">begin</span><span class="pln"> </span><span class="opn">(</span><span class="pln">proc </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> items</span><span class="clo">))</span><span class="pln">
+             </span><span class="opn">(</span><span class="pln">for-each proc 
+                       </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> items</span><span class="clo">)))))</span></pre></div>
+
+<p>He claims that the evaluator in the text (with the original
+<code>eval-sequence</code>) handles this correctly:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">for-each
+ </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">display x</span><span class="clo">))</span><span class="pln">
+ </span><span class="opn">(</span><span class="pln">list </span><span class="lit">57</span><span class="pln"> </span><span class="lit">321</span><span class="pln"> </span><span class="lit">88</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">57</span></i><span class="pln">
+</span><i><span class="lit">321</span></i><span class="pln">
+</span><i><span class="lit">88</span></i><span class="pln">
+
+</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
+</span><i><span class="pln">done</span></i>
+</pre></div>
+
+<p>Explain why Ben is right about the behavior of <code>for-each</code>.
+</p>
+</li><li> Cy agrees that Ben is right about the <code>for-each</code> example, but says that
+that’s not the kind of program he was thinking about when he proposed his
+change to <code>eval-sequence</code>.  He defines the following two procedures in the
+lazy evaluator:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p1 x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x </span><span class="lit">'</span><span class="opn">(</span><span class="lit">2</span><span class="clo">)))</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p2 x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p e</span><span class="clo">)</span><span class="pln"> e x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">p </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x </span><span class="lit">'</span><span class="opn">(</span><span class="lit">2</span><span class="clo">)))))</span></pre></div>
+
+<p>What are the values of <code>(p1 1)</code> and <code>(p2 1)</code> with the original
+<code>eval-sequence</code>?  What would the values be with Cy’s proposed change to
+<code>eval-sequence</code>?
+</p>
+</li><li> Cy also points out that changing <code>eval-sequence</code> as he proposes does not
+affect the behavior of the example in part a.  Explain why this is true.
+
+</li><li> How do you think sequences ought to be treated in the lazy evaluator?  Do you
+like Cy’s approach, the approach in the text, or some other approach?
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e31"></a>Exercise 4.31:</strong> The approach taken in this
+section is somewhat unpleasant, because it makes an incompatible change to
+Scheme.  It might be nicer to implement lazy evaluation as an
+<a id="index-upward_002dcompatible-extension"></a>
+<em>upward-compatible extension</em>, that is, so that ordinary Scheme
+programs will work as before.  We can do this by extending the syntax of
+procedure declarations to let the user control whether or not arguments are to
+be delayed.  While we’re at it, we may as well also give the user the choice
+between delaying with and without memoization.  For example, the definition
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f a </span><span class="opn">(</span><span class="pln">b lazy</span><span class="clo">)</span><span class="pln"> c </span><span class="opn">(</span><span class="pln">d lazy-memo</span><span class="clo">))</span><span class="pln">
+  </span><span class="roman"><span class="pun">…</span></span><span class="clo">)</span></pre></div>
+
+<p>would define <code>f</code> to be a procedure of four arguments, where the first and
+third arguments are evaluated when the procedure is called, the second argument
+is delayed, and the fourth argument is both delayed and memoized.  Thus,
+ordinary procedure definitions will produce the same behavior as ordinary
+Scheme, while adding the <code>lazy-memo</code> declaration to each parameter of
+every compound procedure will produce the behavior of the lazy evaluator
+defined in this section. Design and implement the changes required to produce
+such an extension to Scheme.  You will have to implement new syntax procedures
+to handle the new syntax for <code>define</code>.  You must also arrange for
+<code>eval</code> or <code>apply</code> to determine when arguments are to be delayed, and
+to force or delay arguments accordingly, and you must arrange for forcing to
+memoize or not, as appropriate.
+</p></blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT238"><p><a class="footnote_backlink" href="#DOCF238"><sup>238</sup></a>
+The word <a id="index-thunk"></a>
+<em>thunk</em> was invented by an
+informal working group that was discussing the implementation of call-by-name
+in Algol 60.  They observed that most of the analysis of (“thinking about”)
+the expression could be done at compile time; thus, at run time, the expression
+would already have been “thunk” about (<a href="References.xhtml#Ingerman-et-al_002e-1960">Ingerman et al. 1960</a>).</p>
+</div>
+<div id="FOOT239"><p><a class="footnote_backlink" href="#DOCF239"><sup>239</sup></a>
+This is analogous to the use of <code>force</code> on the
+delayed objects that were introduced in <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> to represent streams.
+The critical difference between what we are doing here and what we did in
+<a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> is that we are building delaying and forcing into the
+evaluator, and thus making this uniform and automatic throughout the language.</p>
+</div>
+<div id="FOOT240"><p><a class="footnote_backlink" href="#DOCF240"><sup>240</sup></a>
+Lazy evaluation
+combined with memoization is sometimes referred to as <a id="index-call_002dby_002dneed-1"></a>
+<em>call-by-need</em>
+argument passing, in contrast to <a id="index-call_002dby_002dname-1"></a>
+<em>call-by-name</em> argument passing.
+(Call-by-name, introduced in Algol 60, is similar to non-memoized lazy
+evaluation.)  As language designers, we can build our evaluator to memoize, not
+to memoize, or leave this an option for programmers (<a href="#Exercise-4_002e31">Exercise 4.31</a>).  As
+you might expect from <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>, these choices raise issues that become
+both subtle and confusing in the presence of assignments.  (See <a href="#Exercise-4_002e27">Exercise 4.27</a> 
+and <a href="#Exercise-4_002e29">Exercise 4.29</a>.)  An excellent article by <a href="References.xhtml#Clinger-_00281982_0029">Clinger (1982)</a>
+attempts to clarify the multiple dimensions of confusion that arise here.</p>
+</div>
+<div id="FOOT241"><p><a class="footnote_backlink" href="#DOCF241"><sup>241</sup></a>
+Notice that we also erase the <code>env</code> from the thunk
+once the expression’s value has been computed.  This makes no difference in the
+values returned by the interpreter.  It does help save space, however, because
+removing the reference from the thunk to the <code>env</code> once it is no longer
+needed allows this structure to be <a id="index-garbage_002dcollected"></a>
+<em>garbage-collected</em> and its space
+recycled, as we will discuss in <a href="5_002e3.xhtml#g_t5_002e3">5.3</a>.
+</p>
+<p>Similarly, we could have allowed unneeded environments in the memoized delayed
+objects of <a href="3_002e5_002e1.xhtml#g_t3_002e5_002e1">3.5.1</a> to be garbage-collected, by having
+<code>memo-proc</code> do something like <code>(set! proc '())</code> to discard the
+procedure <code>proc</code> (which includes the environment in which the <code>delay</code>
+was evaluated) after storing its value.</p>
+</div>
+<div id="FOOT242"><p><a class="footnote_backlink" href="#DOCF242"><sup>242</sup></a>
+This exercise demonstrates that the interaction between
+lazy evaluation and side effects can be very confusing.  This is just what you
+might expect from the discussion in <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="4_002e2_002e3.xhtml#g_t4_002e2_002e3" accesskey="n" rel="next">4.2.3</a>, Previous: <a href="4_002e2_002e1.xhtml#g_t4_002e2_002e1" accesskey="p" rel="prev">4.2.1</a>, Up: <a href="4_002e2.xhtml#g_t4_002e2" accesskey="u" rel="prev">4.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

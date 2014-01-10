@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 5.5.7</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 5.5.7" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 5.5.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="5_002e5.xhtml#g_t5_002e5" rel="prev" title="5.5" />
+<link href="References.xhtml#References" rel="next" title="References" />
+<link href="5_002e5_002e6.xhtml#g_t5_002e5_002e6" rel="prev" title="5.5.6" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t5_002e5_002e7"></a>
+<nav class="header">
+<p>
+Next: <a href="References.xhtml#References" accesskey="n" rel="next">References</a>, Previous: <a href="5_002e5_002e6.xhtml#g_t5_002e5_002e6" accesskey="p" rel="prev">5.5.6</a>, Up: <a href="5_002e5.xhtml#g_t5_002e5" accesskey="u" rel="prev">5.5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Interfacing-Compiled-Code-to-the-Evaluator"></a>
+<h4 class="subsection"><span class="secnum">5.5.7</span><span class="sectitle">Interfacing Compiled Code to the Evaluator</span></h4>
+
+<p>We have not yet explained how to load compiled code into the evaluator machine
+or how to run it.  We will assume that the explicit-control-evaluator machine
+has been defined as in <a href="5_002e4_002e4.xhtml#g_t5_002e4_002e4">5.4.4</a>, with the additional operations
+specified in <a href="5_002e5_002e2.xhtml#Footnote-323">Footnote 323</a>.  We will implement a procedure
+<code>compile-and-go</code> that compiles a Scheme expression, loads the resulting
+object code into the evaluator machine, and causes the machine to run the code
+in the evaluator global environment, print the result, and enter the
+evaluator’s driver loop.  We will also modify the evaluator so that interpreted
+expressions can call compiled procedures as well as interpreted ones.  We can
+then put a compiled procedure into the machine and use the evaluator to call
+it:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">compile-and-go
+ </span><span class="lit">'</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+        </span><span class="lit">1</span><span class="pln">
+        </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))</span><span class="pln"> n</span><span class="clo">))))</span><span class="pln">
+
+</span><i><span class="com">;;; EC-Eval value:</span></i><span class="pln">
+</span><i><span class="pln">ok</span></i><span class="pln">
+
+</span><i><span class="com">;;; EC-Eval input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">factorial </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
+
+</span><i><span class="com">;;; EC-Eval value:</span></i><span class="pln">
+</span><i><span class="lit">120</span></i>
+</pre></div>
+
+<p>To allow the evaluator to handle compiled procedures (for example, to evaluate
+the call to <code>factorial</code> above), we need to change the code at
+<code>apply-dispatch</code> (<a href="5_002e4_002e1.xhtml#g_t5_002e4_002e1">5.4.1</a>) so that it recognizes compiled
+procedures (as distinct from compound or primitive procedures) and transfers
+control directly to the entry point of the compiled code:<a class="footnote_link" id="DOCF333" href="#FOOT333"><sup>333</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="pln">apply-dispatch
+  </span><span class="opn">(</span><span class="pln">test </span><span class="opn">(</span><span class="pln">op primitive-procedure?</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reg proc</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">branch </span><span class="opn">(</span><span class="pln">label primitive-apply</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">test </span><span class="opn">(</span><span class="pln">op compound-procedure?</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reg proc</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">branch </span><span class="opn">(</span><span class="pln">label compound-apply</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">test </span><span class="opn">(</span><span class="pln">op compiled-procedure?</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reg proc</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">branch </span><span class="opn">(</span><span class="pln">label compiled-apply</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">label unknown-procedure-type</span><span class="clo">))</span><span class="pln">
+
+compiled-apply
+  </span><span class="opn">(</span><span class="pln">restore continue</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign val
+          </span><span class="opn">(</span><span class="pln">op compiled-procedure-entry</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">reg proc</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">reg val</span><span class="clo">))</span></pre></div>
+
+<p>Note the restore of <code>continue</code> at <code>compiled-apply</code>.  Recall that the
+evaluator was arranged so that at <code>apply-dispatch</code>, the continuation would
+be at the top of the stack.  The compiled code entry point, on the other hand,
+expects the continuation to be in <code>continue</code>, so <code>continue</code> must be
+restored before the compiled code is executed.
+</p>
+<p>To enable us to run some compiled code when we start the evaluator machine, we
+add a <code>branch</code> instruction at the beginning of the evaluator machine,
+which causes the machine to go to a new entry point if the <code>flag</code> register
+is set.<a class="footnote_link" id="DOCF334" href="#FOOT334"><sup>334</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="roman"><span class="com">;; branches if </span><code><span class="com">flag</span></code><span class="com"> is set:</span></span><span class="pln">
+</span><span class="opn">(</span><span class="pln">branch </span><span class="opn">(</span><span class="pln">label external-entry</span><span class="clo">))</span><span class="pln"> 
+read-eval-print-loop
+  </span><span class="opn">(</span><span class="pln">perform </span><span class="opn">(</span><span class="pln">op initialize-stack</span><span class="clo">))</span><span class="pln">
+  </span><span class="roman"><span class="pun">…</span></span>
+</pre></div>
+
+<p><code>External-entry</code> assumes that the machine is started with <code>val</code>
+containing the location of an instruction sequence that puts a result into
+<code>val</code> and ends with <code>(goto (reg continue))</code>.  Starting at this entry
+point jumps to the location designated by <code>val</code>, but first assigns
+<code>continue</code> so that execution will return to <code>print-result</code>, which
+prints the value in <code>val</code> and then goes to the beginning of the
+evaluator’s read-eval-print loop.<a class="footnote_link" id="DOCF335" href="#FOOT335"><sup>335</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="pln">external-entry
+  </span><span class="opn">(</span><span class="pln">perform </span><span class="opn">(</span><span class="pln">op initialize-stack</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign env </span><span class="opn">(</span><span class="pln">op get-global-environment</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign continue </span><span class="opn">(</span><span class="pln">label print-result</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">reg val</span><span class="clo">))</span></pre></div>
+
+<p>Now we can use the following procedure to compile a procedure definition,
+execute the compiled code, and run the read-eval-print loop so we can try the
+procedure.  Because we want the compiled code to return to the location in
+<code>continue</code> with its result in <code>val</code>, we compile the expression with a
+target of <code>val</code> and a linkage of <code>return</code>.  In order to transform the
+object code produced by the compiler into executable instructions for the
+evaluator register machine, we use the procedure <code>assemble</code> from the
+register-machine simulator (<a href="5_002e2_002e2.xhtml#g_t5_002e2_002e2">5.2.2</a>).  We then initialize the
+<code>val</code> register to point to the list of instructions, set the <code>flag</code>
+so that the evaluator will go to <code>external-entry</code>, and start the
+evaluator.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">compile-and-go expression</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">instructions
+         </span><span class="opn">(</span><span class="pln">assemble 
+          </span><span class="opn">(</span><span class="pln">statements
+           </span><span class="opn">(</span><span class="pln">compile 
+            expression </span><span class="lit">'val</span><span class="pln"> </span><span class="lit">'return</span><span class="clo">))</span><span class="pln">
+          eceval</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> the-global-environment
+          </span><span class="opn">(</span><span class="pln">setup-environment</span><span class="clo">))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">set-register-contents! 
+     eceval </span><span class="lit">'val</span><span class="pln"> instructions</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">set-register-contents! 
+     eceval </span><span class="lit">'flag</span><span class="pln"> true</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">start eceval</span><span class="clo">)))</span></pre></div>
+
+<p>If we have set up stack monitoring, as at the end of <a href="5_002e4_002e4.xhtml#g_t5_002e4_002e4">5.4.4</a>, we
+can examine the stack usage of compiled code:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">compile-and-go
+ </span><span class="lit">'</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+        </span><span class="lit">1</span><span class="pln">
+        </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))</span><span class="pln"> n</span><span class="clo">))))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pln">total-pushes </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span><span class="pln"> maximum-depth </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span></i><span class="pln">
+
+</span><i><span class="com">;;; EC-Eval value:</span></i><span class="pln">
+</span><i><span class="pln">ok</span></i><span class="pln">
+
+</span><i><span class="com">;;; EC-Eval input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">factorial </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pln">total-pushes </span><span class="pun">=</span><span class="pln"> </span><span class="lit">31</span><span class="pun">,</span><span class="pln"> maximum-depth </span><span class="pun">=</span><span class="pln"> </span><span class="lit">14</span><span class="clo">)</span></i><span class="pln">
+
+</span><i><span class="com">;;; EC-Eval value:</span></i><span class="pln">
+</span><i><span class="lit">120</span></i>
+</pre></div>
+
+<p>Compare this example with the evaluation of <code>(factorial 5)</code> using the
+interpreted version of the same procedure, shown at the end of 
+<a href="5_002e4_002e4.xhtml#g_t5_002e4_002e4">5.4.4</a>.  The interpreted version required 144 pushes and a maximum stack
+depth of 28.  This illustrates the optimization that results from our
+compilation strategy.
+</p>
+<a id="Interpretation-and-compilation"></a>
+<h5 class="subsubheading">Interpretation and compilation</h5>
+
+<p>With the programs in this section, we can now experiment with the alternative
+execution strategies of interpretation and compilation.<a class="footnote_link" id="DOCF336" href="#FOOT336"><sup>336</sup></a>  An interpreter raises the machine to
+the level of the user program; a compiler lowers the user program to the level
+of the machine language.  We can regard the Scheme language (or any programming
+language) as a coherent family of abstractions erected on the machine language.
+Interpreters are good for interactive program development and debugging because
+the steps of program execution are organized in terms of these abstractions,
+and are therefore more intelligible to the programmer.  Compiled code can
+execute faster, because the steps of program execution are organized in terms
+of the machine language, and the compiler is free to make optimizations that
+cut across the higher-level abstractions.<a class="footnote_link" id="DOCF337" href="#FOOT337"><sup>337</sup></a>
+</p>
+<p>The alternatives of interpretation and compilation also lead to different
+strategies for porting languages to new computers. Suppose that we wish to
+implement Lisp for a new machine.  One strategy is to begin with the
+explicit-control evaluator of <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> and translate its instructions
+to instructions for the new machine.  A different strategy is to begin with the
+compiler and change the code generators so that they generate code for the new
+machine.  The second strategy allows us to run any Lisp program on the new
+machine by first compiling it with the compiler running on our original Lisp
+system, and linking it with a compiled version of the run-time
+library.<a class="footnote_link" id="DOCF338" href="#FOOT338"><sup>338</sup></a> Better yet, we can
+compile the compiler itself, and run this on the new machine to compile other
+Lisp programs.<a class="footnote_link" id="DOCF339" href="#FOOT339"><sup>339</sup></a>  Or we can compile one of the interpreters of 
+<a href="4_002e1.xhtml#g_t4_002e1">4.1</a> to produce an interpreter that runs on the new machine.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-5_002e45"></a>Exercise 5.45:</strong> By comparing the stack operations
+used by compiled code to the stack operations used by the evaluator for the
+same computation, we can determine the extent to which the compiler optimizes
+use of the stack, both in speed (reducing the total number of stack operations)
+and in space (reducing the maximum stack depth).  Comparing this optimized
+stack use to the performance of a special-purpose machine for the same
+computation gives some indication of the quality of the compiler.
+</p>
+<ol>
+<li> <a href="5_002e4_002e4.xhtml#Exercise-5_002e27">Exercise 5.27</a> asked you to determine, as a function of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, the number
+of pushes and the maximum stack depth needed by the evaluator to compute <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>!</mo>
+  </mrow>
+</math>
+using the recursive factorial procedure given above.  <a href="5_002e2_002e4.xhtml#Exercise-5_002e14">Exercise 5.14</a> asked
+you to do the same measurements for the special-purpose factorial machine shown
+in <a href="5_002e1_002e4.xhtml#Figure-5_002e11">Figure 5.11</a>. Now perform the same analysis using the compiled
+<code>factorial</code> procedure.
+
+<p>Take the ratio of the number of pushes in the compiled version to the number of
+pushes in the interpreted version, and do the same for the maximum stack depth.
+Since the number of operations and the stack depth used to compute <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>!</mo>
+  </mrow>
+</math>  are
+linear in <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, these ratios should approach constants as <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> becomes large.
+What are these constants?  Similarly, find the ratios of the stack usage in the
+special-purpose machine to the usage in the interpreted version.
+</p>
+<p>Compare the ratios for special-purpose versus interpreted code to the ratios
+for compiled versus interpreted code.  You should find that the special-purpose
+machine does much better than the compiled code, since the hand-tailored
+controller code should be much better than what is produced by our rudimentary
+general-purpose compiler.
+</p>
+</li><li> Can you suggest improvements to the compiler that would help it generate code
+that would come closer in performance to the hand-tailored version?
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e46"></a>Exercise 5.46:</strong> Carry out an analysis like the
+one in <a href="#Exercise-5_002e45">Exercise 5.45</a> to determine the effectiveness of compiling the
+tree-recursive Fibonacci procedure
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fib n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> n </span><span class="lit">2</span><span class="clo">)</span><span class="pln">
+      n
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fib </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fib </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">2</span><span class="clo">)))))</span></pre></div>
+
+<p>compared to the effectiveness of using the special-purpose Fibonacci machine of
+<a href="5_002e1_002e4.xhtml#Figure-5_002e12">Figure 5.12</a>.  (For measurement of the interpreted performance, see
+<a href="5_002e4_002e4.xhtml#Exercise-5_002e29">Exercise 5.29</a>.)  For Fibonacci, the time resource used is not linear in
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>;</mo>
+  </mrow>
+</math> hence the ratios of stack operations will not approach a limiting value
+that is independent of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e47"></a>Exercise 5.47:</strong> This section described how to
+modify the explicit-control evaluator so that interpreted code can call
+compiled procedures.  Show how to modify the compiler so that compiled
+procedures can call not only primitive procedures and compiled procedures, but
+interpreted procedures as well.  This requires modifying
+<code>compile-procedure-call</code> to handle the case of compound (interpreted)
+procedures.  Be sure to handle all the same <code>target</code> and <code>linkage</code>
+combinations as in <code>compile-proc-appl</code>.  To do the actual procedure
+application, the code needs to jump to the evaluator’s <code>compound-apply</code>
+entry point.  This label cannot be directly referenced in object code (since
+the assembler requires that all labels referenced by the code it is assembling
+be defined there), so we will add a register called <code>compapp</code> to the
+evaluator machine to hold this entry point, and add an instruction to
+initialize it:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="pln">  </span><span class="opn">(</span><span class="pln">assign compapp </span><span class="opn">(</span><span class="pln">label compound-apply</span><span class="clo">))</span><span class="pln">
+  </span><span class="roman"><span class="com">;; branches if </span><code><span class="com">flag</span></code><span class="com"> is set:</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">branch </span><span class="opn">(</span><span class="pln">label external-entry</span><span class="clo">))</span><span class="pln">
+read-eval-print-loop </span><span class="roman"><span class="pun">…</span></span>
+</pre></div>
+
+<p>To test your code, start by defining a procedure <code>f</code> that calls a
+procedure <code>g</code>.  Use <code>compile-and-go</code> to compile the definition of
+<code>f</code> and start the evaluator.  Now, typing at the evaluator, define
+<code>g</code> and try to call <code>f</code>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e48"></a>Exercise 5.48:</strong> The <code>compile-and-go</code>
+interface implemented in this section is awkward, since the compiler can be
+called only once (when the evaluator machine is started).  Augment the
+compiler-interpreter interface by providing a <code>compile-and-run</code> primitive
+that can be called from within the explicit-control evaluator as follows:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><i><span class="com">;;; EC-Eval input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">compile-and-run
+ </span><span class="lit">'</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+        </span><span class="lit">1</span><span class="pln">
+        </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))</span><span class="pln"> n</span><span class="clo">))))</span><span class="pln">
+
+</span><i><span class="com">;;; EC-Eval value:</span></i><span class="pln">
+</span><i><span class="pln">ok</span></i><span class="pln">
+
+</span><i><span class="com">;;; EC-Eval input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">factorial </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
+
+</span><i><span class="com">;;; EC-Eval value:</span></i><span class="pln">
+</span><i><span class="lit">120</span></i>
+</pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e49"></a>Exercise 5.49:</strong> As an alternative to using the
+explicit-control evaluator’s read-eval-print loop, design a register machine
+that performs a read-compile-execute-print loop.  That is, the machine should
+run a loop that reads an expression, compiles it, assembles and executes the
+resulting code, and prints the result.  This is easy to run in our simulated
+setup, since we can arrange to call the procedures <code>compile</code> and
+<code>assemble</code> as “register-machine operations.”
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e50"></a>Exercise 5.50:</strong> Use the compiler to compile the
+metacircular evaluator of <a href="4_002e1.xhtml#g_t4_002e1">4.1</a> and run this program using the
+register-machine simulator.  (To compile more than one definition at a time,
+you can package the definitions in a <code>begin</code>.)  The resulting interpreter
+will run very slowly because of the multiple levels of interpretation, but
+getting all the details to work is an instructive exercise.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e51"></a>Exercise 5.51:</strong> Develop a rudimentary
+implementation of Scheme in C (or some other low-level language of your choice)
+by translating the explicit-control evaluator of <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> into C.  In
+order to run this code you will need to also provide appropriate
+storage-allocation routines and other run-time support.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e52"></a>Exercise 5.52:</strong> As a counterpoint to 
+<a href="#Exercise-5_002e51">Exercise 5.51</a>, modify the compiler so that it compiles Scheme procedures
+into sequences of C instructions.  Compile the metacircular evaluator of
+<a href="4_002e1.xhtml#g_t4_002e1">4.1</a> to produce a Scheme interpreter written in C.
+</p></blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT333"><p><a class="footnote_backlink" href="#DOCF333"><sup>333</sup></a>
+Of course,
+compiled procedures as well as interpreted procedures are compound
+(nonprimitive).  For compatibility with the terminology used in the
+explicit-control evaluator, in this section we will use “compound” to mean
+interpreted (as opposed to compiled).</p>
+</div>
+<div id="FOOT334"><p><a class="footnote_backlink" href="#DOCF334"><sup>334</sup></a>
+Now that the evaluator machine starts with a <code>branch</code>, we
+must always initialize the <code>flag</code> register before starting the evaluator
+machine.  To start the machine at its ordinary read-eval-print loop, we could
+use
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">start-eceval</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> the-global-environment
+        </span><span class="opn">(</span><span class="pln">setup-environment</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">set-register-contents! eceval </span><span class="lit">'flag</span><span class="pln"> false</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">start eceval</span><span class="clo">))</span></pre></div>
+</div>
+<div id="FOOT335"><p><a class="footnote_backlink" href="#DOCF335"><sup>335</sup></a>
+Since a compiled procedure is an
+object that the system may try to print, we also modify the system print
+operation <code>user-print</code> (from <a href="4_002e1_002e4.xhtml#g_t4_002e1_002e4">4.1.4</a>) so that it will not
+attempt to print the components of a compiled procedure:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">user-print object</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">compound-procedure? object</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">display 
+          </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'compound-procedure</span><span class="pln">
+                </span><span class="opn">(</span><span class="pln">procedure-parameters object</span><span class="clo">)</span><span class="pln">
+                </span><span class="opn">(</span><span class="pln">procedure-body object</span><span class="clo">)</span><span class="pln">
+                </span><span class="lit">'</span><span class="pun">&lt;</span><span class="pln">procedure-env</span><span class="pun">&gt;</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">compiled-procedure? object</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">display </span><span class="lit">'</span><span class="pun">&lt;</span><span class="pln">compiled-procedure</span><span class="pun">&gt;</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">display object</span><span class="clo">))))</span></pre></div>
+</div>
+<div id="FOOT336"><p><a class="footnote_backlink" href="#DOCF336"><sup>336</sup></a>
+We can do even
+better by extending the compiler to allow compiled code to call interpreted
+procedures.  See <a href="#Exercise-5_002e47">Exercise 5.47</a>.</p>
+</div>
+<div id="FOOT337"><p><a class="footnote_backlink" href="#DOCF337"><sup>337</sup></a>
+Independent of the strategy
+of execution, we incur significant overhead if we insist that errors
+encountered in execution of a user program be detected and signaled, rather
+than being allowed to kill the system or produce wrong answers.  For example,
+an out-of-bounds array reference can be detected by checking the validity of
+the reference before performing it.  The overhead of checking, however, can be
+many times the cost of the array reference itself, and a programmer should
+weigh speed against safety in determining whether such a check is desirable.  A
+good compiler should be able to produce code with such checks, should avoid
+redundant checks, and should allow programmers to control the extent and type
+of error checking in the compiled code.
+</p>
+<p>Compilers for popular languages, such as C and C++, put hardly any
+error-checking operations into running code, so as to make things run as fast
+as possible.  As a result, it falls to programmers to explicitly provide error
+checking.  Unfortunately, people often neglect to do this, even in critical
+applications where speed is not a constraint.  Their programs lead fast and
+dangerous lives.  For example, the notorious “Worm” that paralyzed the
+Internet in 1988 exploited the <abbr>UNIX</abbr>(tm) operating system’s failure to
+check whether the input buffer has overflowed in the finger daemon. (See
+<a href="References.xhtml#Spafford-1989">Spafford 1989</a>.)</p>
+</div>
+<div id="FOOT338"><p><a class="footnote_backlink" href="#DOCF338"><sup>338</sup></a>
+Of course, with either the interpretation or the compilation
+strategy we must also implement for the new machine storage allocation, input
+and output, and all the various operations that we took as “primitive” in our
+discussion of the evaluator and compiler.  One strategy for minimizing work
+here is to write as many of these operations as possible in Lisp and then
+compile them for the new machine.  Ultimately, everything reduces to a small
+kernel (such as garbage collection and the mechanism for applying actual
+machine primitives) that is hand-coded for the new machine.</p>
+</div>
+<div id="FOOT339"><p><a class="footnote_backlink" href="#DOCF339"><sup>339</sup></a>
+This strategy leads to amusing tests of correctness of
+the compiler, such as checking whether the compilation of a program on the new
+machine, using the compiled compiler, is identical with the compilation of the
+program on the original Lisp system.  Tracking down the source of differences
+is fun but often frustrating, because the results are extremely sensitive to
+minuscule details.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="References.xhtml#References" accesskey="n" rel="next">References</a>, Previous: <a href="5_002e5_002e6.xhtml#g_t5_002e5_002e6" accesskey="p" rel="prev">5.5.6</a>, Up: <a href="5_002e5.xhtml#g_t5_002e5" accesskey="u" rel="prev">5.5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

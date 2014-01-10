@@ -1,0 +1,1774 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 2.2.3</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 2.2.3" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 2.2.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="2_002e2.xhtml#g_t2_002e2" rel="prev" title="2.2" />
+<link href="2_002e2_002e4.xhtml#g_t2_002e2_002e4" rel="next" title="2.2.4" />
+<link href="2_002e2_002e2.xhtml#g_t2_002e2_002e2" rel="prev" title="2.2.2" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t2_002e2_002e3"></a>
+<nav class="header">
+<p>
+Next: <a href="2_002e2_002e4.xhtml#g_t2_002e2_002e4" accesskey="n" rel="next">2.2.4</a>, Previous: <a href="2_002e2_002e2.xhtml#g_t2_002e2_002e2" accesskey="p" rel="prev">2.2.2</a>, Up: <a href="2_002e2.xhtml#g_t2_002e2" accesskey="u" rel="prev">2.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Sequences-as-Conventional-Interfaces"></a>
+<h4 class="subsection"><span class="secnum">2.2.3</span><span class="sectitle">Sequences as Conventional Interfaces</span></h4>
+
+<p>In working with compound data, we’ve stressed how data abstraction permits us
+to design programs without becoming enmeshed in the details of data
+representations, and how abstraction preserves for us the flexibility to
+experiment with alternative representations.  In this section, we introduce
+another powerful design principle for working with data structures—the use of
+<a id="index-conventional-interfaces-1"></a>
+<em>conventional interfaces</em>.
+</p>
+<p>In <a href="1_002e3.xhtml#g_t1_002e3">1.3</a> we saw how program abstractions, implemented as
+higher-order procedures, can capture common patterns in programs that deal with
+numerical data.  Our ability to formulate analogous operations for working with
+compound data depends crucially on the style in which we manipulate our data
+structures.  Consider, for example, the following procedure, analogous to the
+<code>count-leaves</code> procedure of <a href="2_002e2_002e2.xhtml#g_t2_002e2_002e2">2.2.2</a>, which takes a tree as
+argument and computes the sum of the squares of the leaves that are odd:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-odd-squares tree</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">null? tree</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">not </span><span class="opn">(</span><span class="pln">pair? tree</span><span class="clo">))</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">odd? tree</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square tree</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-odd-squares 
+                  </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> tree</span><span class="clo">))</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pln">sum-odd-squares 
+                  </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> tree</span><span class="clo">))))))</span></pre></div>
+
+<p>On the surface, this procedure is very different from the following one, which
+constructs a list of all the even Fibonacci numbers <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, where
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> is less than or equal to a given integer <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">even-fibs n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">next k</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> k n</span><span class="clo">)</span><span class="pln">
+        nil
+        </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">f </span><span class="opn">(</span><span class="pln">fib k</span><span class="clo">)))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">even? f</span><span class="clo">)</span><span class="pln">
+              </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> f </span><span class="opn">(</span><span class="pln">next </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> k </span><span class="lit">1</span><span class="clo">)))</span><span class="pln">
+              </span><span class="opn">(</span><span class="pln">next </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> k </span><span class="lit">1</span><span class="clo">))))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">next </span><span class="lit">0</span><span class="clo">))</span></pre></div>
+
+<p>Despite the fact that these two procedures are structurally very different, a
+more abstract description of the two computations reveals a great deal of
+similarity.  The first program
+</p>
+<ul>
+<li> enumerates the leaves of a tree;
+
+</li><li> filters them, selecting the odd ones;
+
+</li><li> squares each of the selected ones; and
+
+</li><li> accumulates the results using <code>+</code>, starting with 0.
+
+</li></ul>
+
+<p>The second program
+</p>
+<ul>
+<li> enumerates the integers from 0 to <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>;
+
+</li><li> computes the Fibonacci number for each integer;
+
+</li><li> filters them, selecting the even ones; and
+
+</li><li> accumulates the results using <code>cons</code>,  starting with the
+empty list.
+
+</li></ul>
+
+<p>A signal-processing engineer would find it natural to conceptualize these
+processes in terms of signals flowing through a cascade of stages, each of
+which implements part of the program plan, as shown in <a href="#Figure-2_002e7">Figure 2.7</a>.  In
+<code>sum-odd-squares</code>, we begin with an <a id="index-enumerator"></a>
+<em>enumerator</em>, which generates
+a “signal” consisting of the leaves of a given tree.  This signal is passed
+through a <a id="index-filter-1"></a>
+<em>filter</em>, which eliminates all but the odd elements.  The
+resulting signal is in turn passed through a <a id="index-map"></a>
+<em>map</em>, which is a
+“transducer” that applies the <code>square</code> procedure to each element.  The
+output of the map is then fed to an <a id="index-accumulator"></a>
+<em>accumulator</em>, which combines the
+elements using <code>+</code>, starting from an initial 0.  The plan for
+<code>even-fibs</code> is analogous.
+</p>
+<figure class="float">
+<a id="Figure-2_002e7"></a>
+<object style="width: 57.93ex; height: 16.23ex;" data="fig/chap2/Fig2.7e.std.svg" type="image/svg+xml">SVG</object> 
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.7:</strong> The signal-flow plans for the procedures <code>sum-odd-squares</code> (top) and <code>even-fibs</code> (bottom) reveal the commonality between the two programs.</p>
+</figcaption>
+</figure>
+
+<p>Unfortunately, the two procedure definitions above fail to exhibit this
+signal-flow structure.  For instance, if we examine the <code>sum-odd-squares</code>
+procedure, we find that the enumeration is implemented partly by the
+<code>null?</code> and <code>pair?</code> tests and partly by the tree-recursive structure
+of the procedure.  Similarly, the accumulation is found partly in the tests and
+partly in the addition used in the recursion.  In general, there are no
+distinct parts of either procedure that correspond to the elements in the
+signal-flow description.  Our two procedures decompose the computations in a
+different way, spreading the enumeration over the program and mingling it with
+the map, the filter, and the accumulation.  If we could organize our programs
+to make the signal-flow structure manifest in the procedures we write, this
+would increase the conceptual clarity of the resulting code.
+</p>
+<a id="Sequence-Operations"></a>
+<h5 class="subsubheading">Sequence Operations</h5>
+
+<p>The key to organizing programs so as to more clearly reflect the signal-flow
+structure is to concentrate on the “signals” that flow from one stage in the
+process to the next.  If we represent these signals as lists, then we can use
+list operations to implement the processing at each of the stages.  For
+instance, we can implement the mapping stages of the signal-flow diagrams using
+the <code>map</code> procedure from <a href="2_002e2_002e1.xhtml#g_t2_002e2_002e1">2.2.1</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">map square </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="clo">))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">16</span><span class="pln"> </span><span class="lit">25</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>Filtering a sequence to select only those elements that satisfy a given
+predicate is accomplished by
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">filter predicate sequence</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">null? sequence</span><span class="clo">)</span><span class="pln"> nil</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">predicate </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> sequence</span><span class="clo">))</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> sequence</span><span class="clo">)</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">filter predicate 
+                       </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> sequence</span><span class="clo">))))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln">  </span><span class="opn">(</span><span class="pln">filter predicate 
+                       </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> sequence</span><span class="clo">)))))</span></pre></div>
+
+<p>For example,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">filter odd? </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="clo">))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>Accumulations can be implemented by
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">accumulate op initial sequence</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? sequence</span><span class="clo">)</span><span class="pln">
+      initial
+      </span><span class="opn">(</span><span class="pln">op </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> sequence</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">accumulate op 
+                      initial 
+                      </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> sequence</span><span class="clo">)))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">accumulate </span><span class="pun">+</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">15</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">accumulate </span><span class="pun">*</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">120</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">accumulate </span><span class="kwd">cons</span><span class="pln"> nil </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="clo">))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>All that remains to implement signal-flow diagrams is to enumerate the sequence
+of elements to be processed.  For <code>even-fibs</code>, we need to generate the
+sequence of integers in a given range, which we can do as follows:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">enumerate-interval low high</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> low high</span><span class="clo">)</span><span class="pln">
+      nil
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> low 
+            </span><span class="opn">(</span><span class="pln">enumerate-interval 
+             </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> low </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> 
+             high</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">enumerate-interval </span><span class="lit">2</span><span class="pln"> </span><span class="lit">7</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>To enumerate the leaves of a tree, we can use<a class="footnote_link" id="DOCF80" href="#FOOT80"><sup>80</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">enumerate-tree tree</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">null? tree</span><span class="clo">)</span><span class="pln"> nil</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">not </span><span class="opn">(</span><span class="pln">pair? tree</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list tree</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">append 
+               </span><span class="opn">(</span><span class="pln">enumerate-tree </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> tree</span><span class="clo">))</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">enumerate-tree </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> tree</span><span class="clo">))))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">enumerate-tree </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">2</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">))</span><span class="pln"> </span><span class="lit">5</span><span class="clo">))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>Now we can reformulate <code>sum-odd-squares</code> and <code>even-fibs</code> as in the
+signal-flow diagrams.  For <code>sum-odd-squares</code>, we enumerate the sequence of
+leaves of the tree, filter this to keep only the odd numbers in the sequence,
+square each element, and sum the results:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum-odd-squares tree</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate 
+   </span><span class="pun">+</span><span class="pln">
+   </span><span class="lit">0</span><span class="pln">
+   </span><span class="opn">(</span><span class="pln">map square
+        </span><span class="opn">(</span><span class="pln">filter odd?
+                </span><span class="opn">(</span><span class="pln">enumerate-tree tree</span><span class="clo">)))))</span></pre></div>
+
+<p>For <code>even-fibs</code>, we enumerate the integers from 0 to <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, generate the
+Fibonacci number for each of these integers, filter the resulting sequence to
+keep only the even elements, and accumulate the results into a list:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">even-fibs n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate 
+   </span><span class="kwd">cons</span><span class="pln">
+   nil
+   </span><span class="opn">(</span><span class="pln">filter even?
+           </span><span class="opn">(</span><span class="pln">map fib
+                </span><span class="opn">(</span><span class="pln">enumerate-interval </span><span class="lit">0</span><span class="pln"> n</span><span class="clo">)))))</span></pre></div>
+
+<p>The value of expressing programs as sequence operations is that this helps us
+make program designs that are modular, that is, designs that are constructed by
+combining relatively independent pieces.  We can encourage modular design by
+providing a library of standard components together with a conventional
+interface for connecting the components in flexible ways.
+</p>
+<p>Modular construction is a powerful strategy for controlling complexity in
+engineering design.  In real signal-processing applications, for example,
+designers regularly build systems by cascading elements selected from
+standardized families of filters and transducers.  Similarly, sequence
+operations provide a library of standard program elements that we can mix and
+match.  For instance, we can reuse pieces from the <code>sum-odd-squares</code> and
+<code>even-fibs</code> procedures in a program that constructs a list of the squares
+of the first <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+  </mrow>
+</math> Fibonacci numbers:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list-fib-squares n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate 
+   </span><span class="kwd">cons</span><span class="pln">
+   nil
+   </span><span class="opn">(</span><span class="pln">map square
+        </span><span class="opn">(</span><span class="pln">map fib
+             </span><span class="opn">(</span><span class="pln">enumerate-interval </span><span class="lit">0</span><span class="pln"> n</span><span class="clo">)))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">list-fib-squares </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">25</span><span class="pln"> </span><span class="lit">64</span><span class="pln"> </span><span class="lit">169</span><span class="pln"> </span><span class="lit">441</span><span class="pln"> </span><span class="lit">1156</span><span class="pln"> </span><span class="lit">3025</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>We can rearrange the pieces and use them in computing the product of the squares of the odd
+integers in a sequence:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">product-of-squares-of-odd-elements
+   sequence</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate 
+   </span><span class="pun">*</span><span class="pln">
+   </span><span class="lit">1</span><span class="pln">
+   </span><span class="opn">(</span><span class="pln">map square </span><span class="opn">(</span><span class="pln">filter odd? sequence</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">product-of-squares-of-odd-elements 
+ </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">225</span></i>
+</pre></div>
+
+<p>We can also formulate conventional data-processing applications in terms of
+sequence operations.  Suppose we have a sequence of personnel records and we
+want to find the salary of the highest-paid programmer.  Assume that we have a
+selector <code>salary</code> that returns the salary of a record, and a predicate
+<code>programmer?</code> that tests if a record is for a programmer.  Then we can
+write
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">salary-of-highest-paid-programmer
+   records</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate 
+   max
+   </span><span class="lit">0</span><span class="pln">
+   </span><span class="opn">(</span><span class="pln">map salary
+        </span><span class="opn">(</span><span class="pln">filter programmer? records</span><span class="clo">))))</span></pre></div>
+
+<p>These examples give just a hint of the vast range of operations that can be
+expressed as sequence operations.<a class="footnote_link" id="DOCF81" href="#FOOT81"><sup>81</sup></a>
+</p>
+<p>Sequences, implemented here as lists, serve as a conventional interface that
+permits us to combine processing modules.  Additionally, when we uniformly
+represent structures as sequences, we have localized the data-structure
+dependencies in our programs to a small number of sequence operations.  By
+changing these, we can experiment with alternative representations of
+sequences, while leaving the overall design of our programs intact.  We will
+exploit this capability in <a href="3_002e5.xhtml#g_t3_002e5">3.5</a>, when we generalize the
+sequence-processing paradigm to admit infinite sequences.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e33"></a>Exercise 2.33:</strong> Fill in the missing expressions
+to complete the following definitions of some basic list-manipulation
+operations as accumulations:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">map p sequence</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> 
+              nil sequence</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">append seq1 seq2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate </span><span class="kwd">cons</span><span class="pln"> ⟨</span><span class="pun">??</span><span class="pln">⟩ ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">length sequence</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate ⟨</span><span class="pun">??</span><span class="pln">⟩ </span><span class="lit">0</span><span class="pln"> sequence</span><span class="clo">))</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e34"></a>Exercise 2.34:</strong> Evaluating a polynomial in <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>
+at a given value of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> can be formulated as an accumulation.  We evaluate
+the polynomial
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>a</mi>
+      <mi>n</mi>
+    </msub>
+    <msup>
+      <mi>x</mi>
+      <mi>n</mi>
+    </msup>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <msup>
+      <mi>x</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msup>
+  </mrow>
+  <mo>+</mo>
+  <mo>⋯<!-- ⋯ --></mo>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>a</mi>
+      <mn>1</mn>
+    </msub>
+    <mi>x</mi>
+  </mrow>
+  <mo>+</mo>
+  <msub>
+    <mi>a</mi>
+    <mn>0</mn>
+  </msub>
+</math>
+using a well-known algorithm called <a id="index-Horner_0027s-rule"></a>
+<em>Horner’s rule</em>, which structures
+the computation as
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mo>…<!-- … --></mo>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mi>n</mi>
+    </msub>
+    <mi>x</mi>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo stretchy="false">)</mo>
+    <mi>x</mi>
+  </mrow>
+  <mo>+</mo>
+  <mo>⋯<!-- ⋯ --></mo>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>a</mi>
+      <mn>1</mn>
+    </msub>
+    <mo stretchy="false">)</mo>
+    <mi>x</mi>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>a</mi>
+      <mn>0</mn>
+    </msub>
+    <mo>.</mo>
+  </mrow>
+</math>
+In other words, we start with <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>a</mi>
+    <mi>n</mi>
+  </msub>
+</math>, multiply by <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>, add
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>a</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>n</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+</math>, multiply by <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>, and so on, until we reach
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>a</mi>
+    <mn>0</mn>
+  </msub>
+</math>.<a class="footnote_link" id="DOCF82" href="#FOOT82"><sup>82</sup></a>
+</p>
+<p>Fill in the following template to produce a procedure that evaluates a
+polynomial using Horner’s rule.  Assume that the coefficients of the polynomial
+are arranged in a sequence, from <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>a</mi>
+    <mn>0</mn>
+  </msub>
+</math> through <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>a</mi>
+    <mi>n</mi>
+  </msub>
+</math>.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">horner-eval x coefficient-sequence</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate 
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">this-coeff higher-terms</span><span class="clo">)</span><span class="pln">
+     ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+   </span><span class="lit">0</span><span class="pln">
+   coefficient-sequence</span><span class="clo">))</span></pre></div>
+
+<p>For example, to compute <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>+</mo>
+    <mn>3</mn>
+    <mi>x</mi>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>5</mn>
+    <msup>
+      <mi>x</mi>
+      <mn>3</mn>
+    </msup>
+    <mo>+</mo>
+    <msup>
+      <mi>x</mi>
+      <mn>5</mn>
+    </msup>
+  </mrow>
+</math> at <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo>=</mo>
+    <mn>2</mn>
+  </mrow>
+</math> you
+would evaluate
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">horner-eval </span><span class="lit">2</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e35"></a>Exercise 2.35:</strong> Redefine <code>count-leaves</code> from
+<a href="2_002e2_002e2.xhtml#g_t2_002e2_002e2">2.2.2</a> as an accumulation:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">count-leaves t</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate ⟨</span><span class="pun">??</span><span class="pln">⟩ ⟨</span><span class="pun">??</span><span class="pln">⟩ </span><span class="opn">(</span><span class="pln">map ⟨</span><span class="pun">??</span><span class="pln">⟩ ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">)))</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e36"></a>Exercise 2.36:</strong> The procedure <code>accumulate-n</code>
+is similar to <code>accumulate</code> except that it takes as its third argument a
+sequence of sequences, which are all assumed to have the same number of
+elements.  It applies the designated accumulation procedure to combine all the
+first elements of the sequences, all the second elements of the sequences, and
+so on, and returns a sequence of the results.  For instance, if <code>s</code> is a
+sequence containing four sequences, <code>((1 2 3) (4 5 6) (7 8 9) (10 11
+12)),</code> then the value of <code>(accumulate-n + 0 s)</code> should be the sequence
+<code>(22 26 30)</code>.  Fill in the missing expressions in the following definition
+of <code>accumulate-n</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">accumulate-n op init seqs</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> seqs</span><span class="clo">))</span><span class="pln">
+      nil
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">accumulate op init ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">accumulate-n op init ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">))))</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e37"></a>Exercise 2.37:</strong>
+Suppose we represent vectors <b>v</b> = <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo stretchy="false">(</mo>
+  <msub>
+    <mi>v</mi>
+    <mi>i</mi>
+  </msub>
+  <mo stretchy="false">)</mo>
+</math><!-- /@w --> as sequences of numbers, and
+matrices <b>m</b> = <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo stretchy="false">(</mo>
+  <msub>
+    <mi>m</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>i</mi>
+      <mi>j</mi>
+    </mrow>
+  </msub>
+  <mo stretchy="false">)</mo>
+</math><!-- /@w --> as sequences of vectors (the rows of the
+matrix).  For example, the matrix
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow>
+    <mo>(</mo>
+    <mtable rowspacing="4pt" columnspacing="1em">
+      <mtr>
+        <mtd>
+          <mn>1</mn>
+        </mtd>
+        <mtd>
+          <mn>2</mn>
+        </mtd>
+        <mtd>
+          <mn>3</mn>
+        </mtd>
+        <mtd>
+          <mn>4</mn>
+        </mtd>
+      </mtr>
+      <mtr>
+        <mtd>
+          <mn>4</mn>
+        </mtd>
+        <mtd>
+          <mn>5</mn>
+        </mtd>
+        <mtd>
+          <mn>6</mn>
+        </mtd>
+        <mtd>
+          <mn>6</mn>
+        </mtd>
+      </mtr>
+      <mtr>
+        <mtd>
+          <mn>6</mn>
+        </mtd>
+        <mtd>
+          <mn>7</mn>
+        </mtd>
+        <mtd>
+          <mn>8</mn>
+        </mtd>
+        <mtd>
+          <mn>9</mn>
+        </mtd>
+      </mtr>
+    </mtable>
+    <mo>)</mo>
+  </mrow>
+</math>
+is represented as the sequence <code>((1 2 3 4) (4 5 6 6) (6 7 8 9))</code>.  With
+this representation, we can use sequence operations to concisely express the
+basic matrix and vector operations.  These operations (which are described in
+any book on matrix algebra) are the following:
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right left" rowspacing=".5em" columnspacing="thickmathspace">
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo mathvariant="monospace" stretchy="false">(</mo>
+          <mi mathvariant="monospace">d</mi>
+          <mi mathvariant="monospace">o</mi>
+          <mi mathvariant="monospace">t</mi>
+          <mo mathvariant="monospace">−<!-- − --></mo>
+          <mi mathvariant="monospace">p</mi>
+          <mi mathvariant="monospace">r</mi>
+          <mi mathvariant="monospace">o</mi>
+          <mi mathvariant="monospace">d</mi>
+          <mi mathvariant="monospace">u</mi>
+          <mi mathvariant="monospace">c</mi>
+          <mi mathvariant="monospace">t</mi>
+          <mspace width="1ex"/>
+          <mi mathvariant="monospace">v</mi>
+          <mspace width="1ex"/>
+          <mi mathvariant="monospace">w</mi>
+          <mo mathvariant="monospace" stretchy="false">)</mo>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mspace width="thickmathspace"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">e</mi>
+          <mi mathvariant="normal">t</mi>
+          <mi mathvariant="normal">u</mi>
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">n</mi>
+          <mi mathvariant="normal">s</mi>
+          <mspace width="thickmathspace"/>
+          <mi mathvariant="normal">t</mi>
+          <mi mathvariant="normal">h</mi>
+          <mi mathvariant="normal">e</mi>
+          <mspace width="thickmathspace"/>
+          <mi mathvariant="normal">s</mi>
+          <mi mathvariant="normal">u</mi>
+          <mi mathvariant="normal">m</mi>
+          <mspace width="thickmathspace"/>
+        </mrow>
+        <msub>
+          <mi mathvariant="normal">Σ<!-- Σ --></mi>
+          <mi>i</mi>
+        </msub>
+        <msub>
+          <mi>v</mi>
+          <mi>i</mi>
+        </msub>
+        <msub>
+          <mi>w</mi>
+          <mi>i</mi>
+        </msub>
+        <mo>;</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo mathvariant="monospace" stretchy="false">(</mo>
+          <mi mathvariant="monospace">m</mi>
+          <mi mathvariant="monospace">a</mi>
+          <mi mathvariant="monospace">t</mi>
+          <mi mathvariant="monospace">r</mi>
+          <mi mathvariant="monospace">i</mi>
+          <mi mathvariant="monospace">x</mi>
+          <mo mathvariant="monospace">−<!-- − --></mo>
+          <mo mathvariant="monospace">∗<!-- ∗ --></mo>
+          <mo mathvariant="monospace">−<!-- − --></mo>
+          <mi mathvariant="monospace">v</mi>
+          <mi mathvariant="monospace">e</mi>
+          <mi mathvariant="monospace">c</mi>
+          <mi mathvariant="monospace">t</mi>
+          <mi mathvariant="monospace">o</mi>
+          <mi mathvariant="monospace">r</mi>
+          <mspace width="1ex"/>
+          <mi mathvariant="monospace">m</mi>
+          <mspace width="1ex"/>
+          <mi mathvariant="monospace">v</mi>
+          <mo mathvariant="monospace" stretchy="false">)</mo>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mspace width="thickmathspace"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">e</mi>
+          <mi mathvariant="normal">t</mi>
+          <mi mathvariant="normal">u</mi>
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">n</mi>
+          <mi mathvariant="normal">s</mi>
+          <mspace width="thickmathspace"/>
+          <mi mathvariant="normal">t</mi>
+          <mi mathvariant="normal">h</mi>
+          <mi mathvariant="normal">e</mi>
+          <mspace width="thickmathspace"/>
+          <mi mathvariant="normal">v</mi>
+          <mi mathvariant="normal">e</mi>
+          <mi mathvariant="normal">c</mi>
+          <mi mathvariant="normal">t</mi>
+          <mi mathvariant="normal">o</mi>
+          <mi mathvariant="normal">r</mi>
+          <mspace width="thickmathspace"/>
+        </mrow>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi mathvariant="bold">t</mi>
+        </mrow>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd/>
+      <mtd>
+        <mspace width="thickmathspace"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi mathvariant="normal">w</mi>
+          <mi mathvariant="normal">h</mi>
+          <mi mathvariant="normal">e</mi>
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">e</mi>
+          <mspace width="thickmathspace"/>
+        </mrow>
+        <msub>
+          <mi>t</mi>
+          <mi>i</mi>
+        </msub>
+        <mo>=</mo>
+        <msub>
+          <mi mathvariant="normal">Σ<!-- Σ --></mi>
+          <mi>j</mi>
+        </msub>
+        <msub>
+          <mi>m</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>i</mi>
+            <mi>j</mi>
+          </mrow>
+        </msub>
+        <msub>
+          <mi>v</mi>
+          <mi>j</mi>
+        </msub>
+        <mo>;</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo mathvariant="monospace" stretchy="false">(</mo>
+          <mi mathvariant="monospace">m</mi>
+          <mi mathvariant="monospace">a</mi>
+          <mi mathvariant="monospace">t</mi>
+          <mi mathvariant="monospace">r</mi>
+          <mi mathvariant="monospace">i</mi>
+          <mi mathvariant="monospace">x</mi>
+          <mo mathvariant="monospace">−<!-- − --></mo>
+          <mo mathvariant="monospace">∗<!-- ∗ --></mo>
+          <mo mathvariant="monospace">−<!-- − --></mo>
+          <mi mathvariant="monospace">m</mi>
+          <mi mathvariant="monospace">a</mi>
+          <mi mathvariant="monospace">t</mi>
+          <mi mathvariant="monospace">r</mi>
+          <mi mathvariant="monospace">i</mi>
+          <mi mathvariant="monospace">x</mi>
+          <mspace width="1ex"/>
+          <mi mathvariant="monospace">m</mi>
+          <mspace width="1ex"/>
+          <mi mathvariant="monospace">n</mi>
+          <mo mathvariant="monospace" stretchy="false">)</mo>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mspace width="thickmathspace"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">e</mi>
+          <mi mathvariant="normal">t</mi>
+          <mi mathvariant="normal">u</mi>
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">n</mi>
+          <mi mathvariant="normal">s</mi>
+          <mspace width="thickmathspace"/>
+          <mi mathvariant="normal">t</mi>
+          <mi mathvariant="normal">h</mi>
+          <mi mathvariant="normal">e</mi>
+          <mspace width="thickmathspace"/>
+          <mi mathvariant="normal">m</mi>
+          <mi mathvariant="normal">a</mi>
+          <mi mathvariant="normal">t</mi>
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">i</mi>
+          <mi mathvariant="normal">x</mi>
+          <mspace width="thickmathspace"/>
+        </mrow>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi mathvariant="bold">p</mi>
+        </mrow>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd/>
+      <mtd>
+        <mspace width="thickmathspace"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi mathvariant="normal">w</mi>
+          <mi mathvariant="normal">h</mi>
+          <mi mathvariant="normal">e</mi>
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">e</mi>
+          <mspace width="thickmathspace"/>
+        </mrow>
+        <msub>
+          <mi>p</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>i</mi>
+            <mi>j</mi>
+          </mrow>
+        </msub>
+        <mo>=</mo>
+        <msub>
+          <mi mathvariant="normal">Σ<!-- Σ --></mi>
+          <mi>k</mi>
+        </msub>
+        <msub>
+          <mi>m</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>i</mi>
+            <mi>k</mi>
+          </mrow>
+        </msub>
+        <msub>
+          <mi>n</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>k</mi>
+            <mi>j</mi>
+          </mrow>
+        </msub>
+        <mo>;</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo mathvariant="monospace" stretchy="false">(</mo>
+          <mi mathvariant="monospace">t</mi>
+          <mi mathvariant="monospace">r</mi>
+          <mi mathvariant="monospace">a</mi>
+          <mi mathvariant="monospace">n</mi>
+          <mi mathvariant="monospace">s</mi>
+          <mi mathvariant="monospace">p</mi>
+          <mi mathvariant="monospace">o</mi>
+          <mi mathvariant="monospace">s</mi>
+          <mi mathvariant="monospace">e</mi>
+          <mspace width="1ex"/>
+          <mi mathvariant="monospace">m</mi>
+          <mo mathvariant="monospace" stretchy="false">)</mo>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mspace width="thickmathspace"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">e</mi>
+          <mi mathvariant="normal">t</mi>
+          <mi mathvariant="normal">u</mi>
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">n</mi>
+          <mi mathvariant="normal">s</mi>
+          <mspace width="thickmathspace"/>
+          <mi mathvariant="normal">t</mi>
+          <mi mathvariant="normal">h</mi>
+          <mi mathvariant="normal">e</mi>
+          <mspace width="thickmathspace"/>
+          <mi mathvariant="normal">m</mi>
+          <mi mathvariant="normal">a</mi>
+          <mi mathvariant="normal">t</mi>
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">i</mi>
+          <mi mathvariant="normal">x</mi>
+          <mspace width="thickmathspace"/>
+        </mrow>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi mathvariant="bold">n</mi>
+        </mrow>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd/>
+      <mtd>
+        <mspace width="thickmathspace"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi mathvariant="normal">w</mi>
+          <mi mathvariant="normal">h</mi>
+          <mi mathvariant="normal">e</mi>
+          <mi mathvariant="normal">r</mi>
+          <mi mathvariant="normal">e</mi>
+          <mspace width="thickmathspace"/>
+        </mrow>
+        <msub>
+          <mi>n</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>i</mi>
+            <mi>j</mi>
+          </mrow>
+        </msub>
+        <mo>=</mo>
+        <msub>
+          <mi>m</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>j</mi>
+            <mi>i</mi>
+          </mrow>
+        </msub>
+        <mo>.</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+We can define the dot product as<a class="footnote_link" id="DOCF83" href="#FOOT83"><sup>83</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">dot-product v w</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate </span><span class="pun">+</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="opn">(</span><span class="pln">map </span><span class="pun">*</span><span class="pln"> v w</span><span class="clo">)))</span></pre></div>
+
+<p>Fill in the missing expressions in the following procedures for computing the
+other matrix operations.  (The procedure <code>accumulate-n</code> is defined in
+<a href="#Exercise-2_002e36">Exercise 2.36</a>.)
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">matrix-</span><span class="pun">*-</span><span class="pln">vector m v</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">map ⟨</span><span class="pun">??</span><span class="pln">⟩ m</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">transpose mat</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate-n ⟨</span><span class="pun">??</span><span class="pln">⟩ ⟨</span><span class="pun">??</span><span class="pln">⟩ mat</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">matrix-</span><span class="pun">*-</span><span class="pln">matrix m n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">cols </span><span class="opn">(</span><span class="pln">transpose n</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">map ⟨</span><span class="pun">??</span><span class="pln">⟩ m</span><span class="clo">)))</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e38"></a>Exercise 2.38:</strong> The <code>accumulate</code> procedure
+is also known as <code>fold-right</code>, because it combines the first element of
+the sequence with the result of combining all the elements to the right.  There
+is also a <code>fold-left</code>, which is similar to <code>fold-right</code>, except that
+it combines elements working in the opposite direction:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fold-left op initial sequence</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">iter result rest</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? rest</span><span class="clo">)</span><span class="pln">
+        result
+        </span><span class="opn">(</span><span class="pln">iter </span><span class="opn">(</span><span class="pln">op result </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> rest</span><span class="clo">))</span><span class="pln">
+              </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> rest</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">iter initial sequence</span><span class="clo">))</span></pre></div>
+
+<p>What are the values of
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">fold-right </span><span class="pun">/</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">fold-left  </span><span class="pun">/</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">fold-right list nil </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">fold-left  list nil </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="clo">))</span></pre></div>
+
+<p>Give a property that <code>op</code> should satisfy to guarantee that
+<code>fold-right</code> and <code>fold-left</code> will produce the same values for any
+sequence.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e39"></a>Exercise 2.39:</strong> Complete the following
+definitions of <code>reverse</code> (<a href="2_002e2_002e1.xhtml#Exercise-2_002e18">Exercise 2.18</a>) in terms of
+<code>fold-right</code> and <code>fold-left</code> from <a href="#Exercise-2_002e38">Exercise 2.38</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reverse sequence</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">fold-right 
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> nil sequence</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reverse sequence</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">fold-left 
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> nil sequence</span><span class="clo">))</span></pre></div>
+</blockquote>
+
+<a id="Nested-Mappings"></a>
+<h5 class="subsubheading">Nested Mappings</h5>
+
+<p>We can extend the sequence paradigm to include many computations that are
+commonly expressed using nested loops.<a class="footnote_link" id="DOCF84" href="#FOOT84"><sup>84</sup></a> Consider this problem: Given a positive integer <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, find all
+ordered pairs of distinct positive integers <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>i</mi>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>j</mi>
+</math>, where 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>≤<!-- ≤ --></mo>
+    <mi>j</mi>
+  </mrow>
+  <mo>&lt;</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>i</mi>
+    <mo>≤<!-- ≤ --></mo>
+    <mi>n</mi>
+  </mrow>
+</math>, such that <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>i</mi>
+    <mo>+</mo>
+    <mi>j</mi>
+  </mrow>
+</math> is prime.  For example, if <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> is 6,
+then the pairs are the following:
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="center center center center center center center center" rowspacing="4pt" columnspacing="1em" rowlines="none solid" columnlines="solid none none none none none none">
+    <mtr>
+      <mtd>
+        <mi>i</mi>
+      </mtd>
+      <mtd>
+        <mn>2</mn>
+      </mtd>
+      <mtd>
+        <mn>3</mn>
+      </mtd>
+      <mtd>
+        <mn>4</mn>
+      </mtd>
+      <mtd>
+        <mn>4</mn>
+      </mtd>
+      <mtd>
+        <mn>5</mn>
+      </mtd>
+      <mtd>
+        <mn>6</mn>
+      </mtd>
+      <mtd>
+        <mn>6</mn>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi>j</mi>
+      </mtd>
+      <mtd>
+        <mn>1</mn>
+      </mtd>
+      <mtd>
+        <mn>2</mn>
+      </mtd>
+      <mtd>
+        <mn>1</mn>
+      </mtd>
+      <mtd>
+        <mn>3</mn>
+      </mtd>
+      <mtd>
+        <mn>2</mn>
+      </mtd>
+      <mtd>
+        <mn>1</mn>
+      </mtd>
+      <mtd>
+        <mn>5</mn>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mi>i</mi>
+        <mo>+</mo>
+        <mi>j</mi>
+      </mtd>
+      <mtd>
+        <mn>3</mn>
+      </mtd>
+      <mtd>
+        <mn>5</mn>
+      </mtd>
+      <mtd>
+        <mn>5</mn>
+      </mtd>
+      <mtd>
+        <mn>7</mn>
+      </mtd>
+      <mtd>
+        <mn>7</mn>
+      </mtd>
+      <mtd>
+        <mn>7</mn>
+      </mtd>
+      <mtd>
+        <mn>11</mn>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+A natural way to organize this computation is to generate the sequence of all
+ordered pairs of positive integers less than or equal to <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, filter to
+select those pairs whose sum is prime, and then, for each pair <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>i</mi>
+    <mo>,</mo>
+    <mi>j</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+that passes through the filter, produce the triple <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>i</mi>
+    <mo>,</mo>
+    <mi>j</mi>
+    <mo>,</mo>
+    <mi>i</mi>
+    <mo>+</mo>
+    <mi>j</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.
+</p>
+<p>Here is a way to generate the sequence of pairs: For each integer <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>i</mi>
+    <mo>≤<!-- ≤ --></mo>
+    <mi>n</mi>
+  </mrow>
+</math>, 
+enumerate the integers <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>j</mi>
+    <mo>&lt;</mo>
+    <mi>i</mi>
+  </mrow>
+</math>, and for each such <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>i</mi>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>j</mi>
+</math>
+generate the pair <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>i</mi>
+    <mo>,</mo>
+    <mi>j</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  In terms of sequence operations, we map along
+the sequence <code>(enumerate-interval 1 n)</code>.  For each <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>i</mi>
+</math> in this sequence,
+we map along the sequence <code>(enumerate-interval 1 (- i 1))</code>.  For each
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>j</mi>
+</math> in this latter sequence, we generate the pair <code>(list i j)</code>.  This
+gives us a sequence of pairs for each <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>i</mi>
+</math>.  Combining all the sequences for
+all the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>i</mi>
+</math> (by accumulating with <code>append</code>) produces the required
+sequence of pairs:<a class="footnote_link" id="DOCF85" href="#FOOT85"><sup>85</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">accumulate 
+ append
+ nil
+ </span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">i</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">j</span><span class="clo">)</span><span class="pln"> 
+               </span><span class="opn">(</span><span class="pln">list i j</span><span class="clo">))</span><span class="pln">
+             </span><span class="opn">(</span><span class="pln">enumerate-interval </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> i </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">enumerate-interval </span><span class="lit">1</span><span class="pln"> n</span><span class="clo">)))</span></pre></div>
+
+<p>The combination of mapping and accumulating with <code>append</code> is so common in
+this sort of program that we will isolate it as a separate procedure:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">flatmap proc seq</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">accumulate append nil </span><span class="opn">(</span><span class="pln">map proc seq</span><span class="clo">)))</span></pre></div>
+
+<p>Now filter this sequence of pairs to find those whose sum is prime. The filter
+predicate is called for each element of the sequence; its argument is a pair
+and it must extract the integers from the pair.  Thus, the predicate to apply
+to each element in the sequence is
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">prime-sum? pair</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">prime? </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> pair</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> pair</span><span class="clo">))))</span></pre></div>
+
+<p>Finally, generate the sequence of results by mapping over the filtered pairs
+using the following procedure, which constructs a triple consisting of the two
+elements of the pair along with their sum:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-pair-sum pair</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">list </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> pair</span><span class="clo">)</span><span class="pln"> 
+        </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> pair</span><span class="clo">)</span><span class="pln"> 
+        </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> pair</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> pair</span><span class="clo">))))</span></pre></div>
+
+<p>Combining all these steps yields the complete procedure:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">prime-sum-pairs n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">map make-pair-sum
+       </span><span class="opn">(</span><span class="pln">filter 
+        prime-sum?
+        </span><span class="opn">(</span><span class="pln">flatmap
+         </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">i</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">j</span><span class="clo">)</span><span class="pln"> 
+                  </span><span class="opn">(</span><span class="pln">list i j</span><span class="clo">))</span><span class="pln">
+                </span><span class="opn">(</span><span class="pln">enumerate-interval 
+                 </span><span class="lit">1</span><span class="pln"> 
+                 </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> i </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">enumerate-interval </span><span class="lit">1</span><span class="pln"> n</span><span class="clo">)))))</span></pre></div>
+
+<p>Nested mappings are also useful for sequences other than those that enumerate
+intervals.  Suppose we wish to generate all the permutations of a set <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>S</mi>
+    <mo>;</mo>
+  </mrow>
+</math>
+that is, all the ways of ordering the items in the set.  For instance, the
+permutations of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo fence="false" stretchy="false">{</mo>
+    <mn>1</mn>
+    <mo>,</mo>
+    <mn>2</mn>
+    <mo>,</mo>
+    <mn>3</mn>
+    <mo fence="false" stretchy="false">}</mo>
+  </mrow>
+</math> are <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo fence="false" stretchy="false">{</mo>
+    <mn>1</mn>
+    <mo>,</mo>
+    <mn>2</mn>
+    <mo>,</mo>
+    <mn>3</mn>
+    <mo fence="false" stretchy="false">}</mo>
+  </mrow>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo fence="false" stretchy="false">{</mo>
+    <mn>1</mn>
+    <mo>,</mo>
+    <mn>3</mn>
+    <mo>,</mo>
+    <mn>2</mn>
+    <mo fence="false" stretchy="false">}</mo>
+  </mrow>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo fence="false" stretchy="false">{</mo>
+    <mn>2</mn>
+    <mo>,</mo>
+    <mn>1</mn>
+    <mo>,</mo>
+    <mn>3</mn>
+    <mo fence="false" stretchy="false">}</mo>
+  </mrow>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo fence="false" stretchy="false">{</mo>
+    <mn>2</mn>
+    <mo>,</mo>
+    <mn>3</mn>
+    <mo>,</mo>
+    <mn>1</mn>
+    <mo fence="false" stretchy="false">}</mo>
+  </mrow>
+</math>,
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo fence="false" stretchy="false">{</mo>
+    <mn>3</mn>
+    <mo>,</mo>
+    <mn>1</mn>
+    <mo>,</mo>
+    <mn>2</mn>
+    <mo fence="false" stretchy="false">}</mo>
+  </mrow>
+</math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo fence="false" stretchy="false">{</mo>
+    <mn>3</mn>
+    <mo>,</mo>
+    <mn>2</mn>
+    <mo>,</mo>
+    <mn>1</mn>
+    <mo fence="false" stretchy="false">}</mo>
+  </mrow>
+</math>.  Here is a plan for generating the permutations of
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>S</mi>
+</math>: For each item <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> in <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>S</mi>
+</math>, recursively generate the sequence of
+permutations of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>S</mi>
+    <mo>−<!-- − --></mo>
+    <mi>x</mi>
+  </mrow>
+</math>,<a class="footnote_link" id="DOCF86" href="#FOOT86"><sup>86</sup></a> and adjoin <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> to the front of each one.
+This yields, for each <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> in <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>S</mi>
+</math>, the sequence of permutations of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>S</mi>
+</math>
+that begin with <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>.  Combining these sequences for all <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> gives all the
+permutations of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>S</mi>
+</math>:<a class="footnote_link" id="DOCF87" href="#FOOT87"><sup>87</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">permutations s</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? s</span><span class="clo">)</span><span class="pln">   </span><span class="roman"><span class="com">; empty set?</span></span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">list nil</span><span class="clo">)</span><span class="pln">  </span><span class="roman"><span class="com">; sequence containing empty set</span></span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">flatmap </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p</span><span class="clo">)</span><span class="pln"> 
+                        </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x p</span><span class="clo">))</span><span class="pln">
+                      </span><span class="opn">(</span><span class="pln">permutations 
+                       </span><span class="opn">(</span><span class="pln">remove x s</span><span class="clo">))))</span><span class="pln">
+               s</span><span class="clo">)))</span></pre></div>
+
+<p>Notice how this strategy reduces the problem of generating permutations of
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>S</mi>
+</math> to the problem of generating the permutations of sets with fewer elements
+than <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>S</mi>
+</math>.  In the terminal case, we work our way down to the empty list,
+which represents a set of no elements.  For this, we generate <code>(list
+nil)</code>, which is a sequence with one item, namely the set with no elements.  The
+<code>remove</code> procedure used in <code>permutations</code> returns all the items in a
+given sequence except for a given item.  This can be expressed as a simple
+filter:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">remove item sequence</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">filter </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">not </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> x item</span><span class="clo">)))</span><span class="pln">
+          sequence</span><span class="clo">))</span></pre></div>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e40"></a>Exercise 2.40:</strong> Define a procedure
+<code>unique-pairs</code> that, given an integer <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, generates the sequence of
+pairs <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>i</mi>
+    <mo>,</mo>
+    <mi>j</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> with <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>≤<!-- ≤ --></mo>
+    <mi>j</mi>
+  </mrow>
+  <mo>&lt;</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>i</mi>
+    <mo>≤<!-- ≤ --></mo>
+    <mi>n</mi>
+  </mrow>
+</math>.  Use <code>unique-pairs</code>
+to simplify the definition of <code>prime-sum-pairs</code> given above.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e41"></a>Exercise 2.41:</strong> Write a procedure to find all
+ordered triples of distinct positive integers <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>i</mi>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>j</mi>
+</math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> less than
+or equal to a given integer <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> that sum to a given integer <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>s</mi>
+</math>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e42"></a>Exercise 2.42:</strong> The “eight-queens puzzle” asks
+how to place eight queens on a chessboard so that no queen is in check from any
+other (i.e., no two queens are in the same row, column, or diagonal).  One
+possible solution is shown in <a href="#Figure-2_002e8">Figure 2.8</a>.  One way to solve the puzzle is
+to work across the board, placing a queen in each column.  Once we have placed
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>k</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+  </mrow>
+</math> queens, we must place the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>k</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> queen in a position where it does
+not check any of the queens already on the board.  We can formulate this
+approach recursively: Assume that we have already generated the sequence of all
+possible ways to place <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>k</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+  </mrow>
+</math> queens in the first <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>k</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+  </mrow>
+</math> columns of the
+board.  For each of these ways, generate an extended set of positions by
+placing a queen in each row of the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>k</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> column.  Now filter these, keeping
+only the positions for which the queen in the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>k</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> column is safe with
+respect to the other queens.  This produces the sequence of all ways to place
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> queens in the first <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> columns.  By continuing this process, we will
+produce not only one solution, but all solutions to the puzzle.
+</p>
+<figure class="float">
+<a id="Figure-2_002e8"></a>
+<object style="width: 33.41ex; height: 33.41ex;" data="fig/chap2/Fig2.8c.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.8:</strong> A solution to the eight-queens puzzle.</p>
+</figcaption>
+</figure>
+</blockquote>
+
+<p>We implement this solution as a procedure <code>queens</code>, which returns a
+sequence of all solutions to the problem of placing <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> queens on an
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>×<!-- × --></mo>
+    <mi>n</mi>
+  </mrow>
+</math> chessboard.  <code>Queens</code> has an internal procedure
+<code>queen-cols</code> that returns the sequence of all ways to place queens in the
+first <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> columns of the board.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">queens board-size</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">queen-cols k</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> k </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">list empty-board</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">filter
+         </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">positions</span><span class="clo">)</span><span class="pln"> 
+           </span><span class="opn">(</span><span class="pln">safe? k positions</span><span class="clo">))</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">flatmap
+          </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">rest-of-queens</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">new-row</span><span class="clo">)</span><span class="pln">
+                   </span><span class="opn">(</span><span class="pln">adjoin-position 
+                    new-row 
+                    k 
+                    rest-of-queens</span><span class="clo">))</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pln">enumerate-interval 
+                  </span><span class="lit">1</span><span class="pln"> 
+                  board-size</span><span class="clo">)))</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">queen-cols </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> k </span><span class="lit">1</span><span class="clo">))))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">queen-cols board-size</span><span class="clo">))</span></pre></div>
+
+<p>In this procedure <code>rest-of-queens</code> is a way to place <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>k</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+  </mrow>
+</math> queens in
+the first <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>k</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+  </mrow>
+</math> columns, and <code>new-row</code> is a proposed row in which to
+place the queen for the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>k</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> column.  Complete the program by implementing
+the representation for sets of board positions, including the procedure
+<code>adjoin-position</code>, which adjoins a new row-column position to a set of
+positions, and <code>empty-board</code>, which represents an empty set of positions.
+You must also write the procedure <code>safe?</code>, which determines for a set of
+positions, whether the queen in the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>k</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> column is safe with respect to the
+others.  (Note that we need only check whether the new queen is safe—the
+other queens are already guaranteed safe with respect to each other.)
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e43"></a>Exercise 2.43:</strong> Louis Reasoner is having a
+terrible time doing <a href="#Exercise-2_002e42">Exercise 2.42</a>.  His <code>queens</code> procedure seems to
+work, but it runs extremely slowly.  (Louis never does manage to wait long
+enough for it to solve even the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>6</mn>
+    <mo>×<!-- × --></mo>
+    <mn>6</mn>
+  </mrow>
+</math> case.)  When Louis asks Eva Lu Ator for
+help, she points out that he has interchanged the order of the nested mappings
+in the <code>flatmap</code>, writing it as
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">flatmap
+ </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">new-row</span><span class="clo">)</span><span class="pln">
+   </span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">rest-of-queens</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">adjoin-position 
+           new-row k rest-of-queens</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">queen-cols </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> k </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+ </span><span class="opn">(</span><span class="pln">enumerate-interval </span><span class="lit">1</span><span class="pln"> board-size</span><span class="clo">))</span></pre></div>
+
+<p>Explain why this interchange makes the program run slowly.  Estimate how long
+it will take Louis’s program to solve the eight-queens puzzle, assuming that
+the program in <a href="#Exercise-2_002e42">Exercise 2.42</a> solves the puzzle in time <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>T</mi>
+</math>.
+</p></blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT80"><p><a class="footnote_backlink" href="#DOCF80"><sup>80</sup></a>
+This is, in fact,
+precisely the <code>fringe</code> procedure from <a href="2_002e2_002e2.xhtml#Exercise-2_002e28">Exercise 2.28</a>.  Here we’ve
+renamed it to emphasize that it is part of a family of general
+sequence-manipulation procedures.</p>
+</div>
+<div id="FOOT81"><p><a class="footnote_backlink" href="#DOCF81"><sup>81</sup></a>
+Richard <a href="References.xhtml#Waters-_00281979_0029">Waters (1979)</a> developed a
+program that automatically analyzes traditional Fortran programs, viewing them
+in terms of maps, filters, and accumulations.  He found that fully 90 percent
+of the code in the Fortran Scientific Subroutine Package fits neatly into this
+paradigm.  One of the reasons for the success of Lisp as a programming language
+is that lists provide a standard medium for expressing ordered collections so
+that they can be manipulated using higher-order operations.  The programming
+language APL owes much of its power and appeal to a similar choice. In APL all
+data are represented as arrays, and there is a universal and convenient set of
+generic operators for all sorts of array operations.</p>
+</div>
+<div id="FOOT82"><p><a class="footnote_backlink" href="#DOCF82"><sup>82</sup></a>
+According to <a href="References.xhtml#Knuth-1981">Knuth 1981</a>, this rule was formulated by
+W. G. Horner early in the nineteenth century, but the method was actually used
+by Newton over a hundred years earlier.  Horner’s rule evaluates the polynomial
+using fewer additions and multiplications than does the straightforward method
+of first computing <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>a</mi>
+      <mi>n</mi>
+    </msub>
+    <msup>
+      <mi>x</mi>
+      <mi>n</mi>
+    </msup>
+  </mrow>
+</math>, then adding
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <msup>
+      <mi>x</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msup>
+  </mrow>
+</math>, and so on.  In fact, it is possible to prove
+that any algorithm for evaluating arbitrary polynomials must use at least as
+many additions and multiplications as does Horner’s rule, and thus Horner’s
+rule is an optimal algorithm for polynomial evaluation.  This was proved (for
+the number of additions) by A. M. Ostrowski in a 1954 paper that essentially
+founded the modern study of optimal algorithms.  The analogous statement for
+multiplications was proved by V. Y. Pan in 1966.  The book by <a href="References.xhtml#Borodin-and-Munro-_00281975_0029">Borodin and Munro (1975)</a> 
+provides an overview of these and other results about optimal
+algorithms.</p>
+</div>
+<div id="FOOT83"><p><a class="footnote_backlink" href="#DOCF83"><sup>83</sup></a>
+This definition uses the extended
+version of <code>map</code> described in <a href="2_002e2_002e1.xhtml#Footnote-78">Footnote 78</a>.</p>
+</div>
+<div id="FOOT84"><p><a class="footnote_backlink" href="#DOCF84"><sup>84</sup></a>
+This approach to nested
+mappings was shown to us by David Turner, whose languages KRC and Miranda
+provide elegant formalisms for dealing with these constructs.  The examples in
+this section (see also <a href="#Exercise-2_002e42">Exercise 2.42</a>) are adapted from <a href="References.xhtml#Turner-1981">Turner 1981</a>.  In
+<a href="3_002e5_002e3.xhtml#g_t3_002e5_002e3">3.5.3</a>, we’ll see how this approach generalizes to infinite
+sequences.</p>
+</div>
+<div id="FOOT85"><p><a class="footnote_backlink" href="#DOCF85"><sup>85</sup></a>
+We’re representing a pair here as a list of two
+elements rather than as a Lisp pair.  Thus, the “pair” <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>i</mi>
+    <mo>,</mo>
+    <mi>j</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> is
+represented as <code>(list i j)</code>, not <code>(cons i j)</code>.</p>
+</div>
+<div id="FOOT86"><p><a class="footnote_backlink" href="#DOCF86"><sup>86</sup></a>
+The set <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>S</mi>
+    <mo>−<!-- − --></mo>
+    <mi>x</mi>
+  </mrow>
+</math> is the set of all
+elements of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>S</mi>
+</math>, excluding <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>.</p>
+</div>
+<div id="FOOT87"><p><a class="footnote_backlink" href="#DOCF87"><sup>87</sup></a>
+Semicolons in Scheme code are used to introduce
+<a id="index-comments"></a>
+<em>comments</em>.  Everything from the semicolon to the end of the line is
+ignored by the interpreter.  In this book we don’t use many comments; we try to
+make our programs self-documenting by using descriptive names.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="2_002e2_002e4.xhtml#g_t2_002e2_002e4" accesskey="n" rel="next">2.2.4</a>, Previous: <a href="2_002e2_002e2.xhtml#g_t2_002e2_002e2" accesskey="p" rel="prev">2.2.2</a>, Up: <a href="2_002e2.xhtml#g_t2_002e2" accesskey="u" rel="prev">2.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

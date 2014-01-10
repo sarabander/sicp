@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 5.3.2</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 5.3.2" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 5.3.2" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="5_002e3.xhtml#g_t5_002e3" rel="prev" title="5.3" />
+<link href="5_002e4.xhtml#g_t5_002e4" rel="next" title="5.4" />
+<link href="5_002e3_002e1.xhtml#g_t5_002e3_002e1" rel="prev" title="5.3.1" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t5_002e3_002e2"></a>
+<nav class="header">
+<p>
+Next: <a href="5_002e4.xhtml#g_t5_002e4" accesskey="n" rel="next">5.4</a>, Previous: <a href="5_002e3_002e1.xhtml#g_t5_002e3_002e1" accesskey="p" rel="prev">5.3.1</a>, Up: <a href="5_002e3.xhtml#g_t5_002e3" accesskey="u" rel="prev">5.3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Maintaining-the-Illusion-of-Infinite-Memory"></a>
+<h4 class="subsection"><span class="secnum">5.3.2</span><span class="sectitle">Maintaining the Illusion of Infinite Memory</span></h4>
+
+<p>The representation method outlined in <a href="5_002e3_002e1.xhtml#g_t5_002e3_002e1">5.3.1</a> solves the problem of
+implementing list structure, provided that we have an infinite amount of
+memory.  With a real computer we will eventually run out of free space in which
+to construct new pairs.<a class="footnote_link" id="DOCF298" href="#FOOT298"><sup>298</sup></a>  However,
+most of the pairs generated in a typical computation are used only to hold
+intermediate results.  After these results are accessed, the pairs are no
+longer needed—they are <a id="index-garbage"></a>
+<em>garbage</em>.  For instance, the computation
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">accumulate 
+ </span><span class="pun">+</span><span class="pln"> 
+ </span><span class="lit">0</span><span class="pln">
+ </span><span class="opn">(</span><span class="pln">filter odd? </span><span class="opn">(</span><span class="pln">enumerate-interval </span><span class="lit">0</span><span class="pln"> n</span><span class="clo">)))</span></pre></div>
+
+<p>constructs two lists: the enumeration and the result of filtering the
+enumeration.  When the accumulation is complete, these lists are no longer
+needed, and the allocated memory can be reclaimed.  If we can arrange to
+collect all the garbage periodically, and if this turns out to recycle memory
+at about the same rate at which we construct new pairs, we will have preserved
+the illusion that there is an infinite amount of memory.
+</p>
+<p>In order to recycle pairs, we must have a way to determine which allocated
+pairs are not needed (in the sense that their contents can no longer influence
+the future of the computation).  The method we shall examine for accomplishing
+this is known as <a id="index-garbage-collection-1"></a>
+<em>garbage collection</em>.  Garbage collection is based on
+the observation that, at any moment in a Lisp interpretation, the only objects
+that can affect the future of the computation are those that can be reached by
+some succession of <code>car</code> and <code>cdr</code> operations starting from the
+pointers that are currently in the machine registers.<a class="footnote_link" id="DOCF299" href="#FOOT299"><sup>299</sup></a>
+Any memory cell that is not so accessible may be recycled.
+</p>
+<p>There are many ways to perform garbage collection.  The method we shall examine
+here is called <a id="index-stop_002dand_002dcopy"></a>
+<em>stop-and-copy</em>.  The basic idea is to divide memory
+into two halves: “working memory” and “free memory.”  When <code>cons</code>
+constructs pairs, it allocates these in working memory.  When working memory is
+full, we perform garbage collection by locating all the useful pairs in working
+memory and copying these into consecutive locations in free memory.  (The
+useful pairs are located by tracing all the <code>car</code> and <code>cdr</code> pointers,
+starting with the machine registers.)  Since we do not copy the garbage, there
+will presumably be additional free memory that we can use to allocate new
+pairs.  In addition, nothing in the working memory is needed, since all the
+useful pairs in it have been copied.  Thus, if we interchange the roles of
+working memory and free memory, we can continue processing; new pairs will be
+allocated in the new working memory (which was the old free memory).  When this
+is full, we can copy the useful pairs into the new free memory (which was the
+old working memory).<a class="footnote_link" id="DOCF300" href="#FOOT300"><sup>300</sup></a>
+</p>
+<a id="Implementation-of-a-stop_002dand_002dcopy-garbage-collector"></a>
+<h5 class="subsubheading">Implementation of a stop-and-copy garbage collector</h5>
+
+<p>We now use our register-machine language to describe the stop-and-copy
+algorithm in more detail.  We will assume that there is a register called
+<code>root</code> that contains a pointer to a structure that eventually points at
+all accessible data.  This can be arranged by storing the contents of all the
+machine registers in a pre-allocated list pointed at by <code>root</code> just before
+starting garbage collection.<a class="footnote_link" id="DOCF301" href="#FOOT301"><sup>301</sup></a> We also assume that, in addition to the current
+working memory, there is free memory available into which we can copy the
+useful data.  The current working memory consists of vectors whose base
+addresses are in registers called <code>the-cars</code> and <code>the-cdrs</code>, and the
+free memory is in registers called <code>new-cars</code> and <code>new-cdrs</code>.
+</p>
+<p>Garbage collection is triggered when we exhaust the free cells in the current
+working memory, that is, when a <code>cons</code> operation attempts to increment the
+<code>free</code> pointer beyond the end of the memory vector.  When the
+garbage-collection process is complete, the <code>root</code> pointer will point into
+the new memory, all objects accessible from the <code>root</code> will have been
+moved to the new memory, and the <code>free</code> pointer will indicate the next
+place in the new memory where a new pair can be allocated.  In addition, the
+roles of working memory and new memory will have been interchanged—new pairs
+will be constructed in the new memory, beginning at the place indicated by
+<code>free</code>, and the (previous) working memory will be available as the new
+memory for the next garbage collection.  <a href="#Figure-5_002e15">Figure 5.15</a> shows the
+arrangement of memory just before and just after garbage collection.
+</p>
+<figure class="float">
+<a id="Figure-5_002e15"></a>
+<object style="width: 57.59ex; height: 44.47ex;" data="fig/chap5/Fig5.15c.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 5.15:</strong> Reconfiguration of memory by the garbage-collection process.</p>
+</figcaption>
+</figure>
+
+<p>The state of the garbage-collection process is controlled by maintaining two
+pointers: <code>free</code> and <code>scan</code>.  These are initialized to point to the
+beginning of the new memory.  The algorithm begins by relocating the pair
+pointed at by <code>root</code> to the beginning of the new memory.  The pair is
+copied, the <code>root</code> pointer is adjusted to point to the new location, and
+the <code>free</code> pointer is incremented.  In addition, the old location of the
+pair is marked to show that its contents have been moved.  This marking is done
+as follows: In the <code>car</code> position, we place a special tag that signals
+that this is an already-moved object.  (Such an object is traditionally called
+a <a id="index-broken-heart"></a>
+<em>broken heart</em>.)<a class="footnote_link" id="DOCF302" href="#FOOT302"><sup>302</sup></a>  In the <code>cdr</code> position
+we place a <a id="index-forwarding-address"></a>
+<em>forwarding address</em> that points at the location to which
+the object has been moved.
+</p>
+<p>After relocating the root, the garbage collector enters its basic cycle.  At
+each step in the algorithm, the <code>scan</code> pointer (initially pointing at the
+relocated root) points at a pair that has been moved to the new memory but
+whose <code>car</code> and <code>cdr</code> pointers still refer to objects in the old
+memory.  These objects are each relocated, and the <code>scan</code> pointer is
+incremented.  To relocate an object (for example, the object indicated by the
+<code>car</code> pointer of the pair we are scanning) we check to see if the object
+has already been moved (as indicated by the presence of a broken-heart tag in
+the <code>car</code> position of the object).  If the object has not already been
+moved, we copy it to the place indicated by <code>free</code>, update <code>free</code>,
+set up a broken heart at the object’s old location, and update the pointer to
+the object (in this example, the <code>car</code> pointer of the pair we are
+scanning) to point to the new location.  If the object has already been moved,
+its forwarding address (found in the <code>cdr</code> position of the broken heart)
+is substituted for the pointer in the pair being scanned.  Eventually, all
+accessible objects will have been moved and scanned, at which point the
+<code>scan</code> pointer will overtake the <code>free</code> pointer and the process will
+terminate.
+</p>
+<p>We can specify the stop-and-copy algorithm as a sequence of instructions for a
+register machine.  The basic step of relocating an object is accomplished by a
+subroutine called <code>relocate-old-result-in-new</code>.  This subroutine gets its
+argument, a pointer to the object to be relocated, from a register named
+<code>old</code>.  It relocates the designated object (incrementing <code>free</code> in
+the process), puts a pointer to the relocated object into a register called
+<code>new</code>, and returns by branching to the entry point stored in the register
+<code>relocate-continue</code>.  To begin garbage collection, we invoke this
+subroutine to relocate the <code>root</code> pointer, after initializing <code>free</code>
+and <code>scan</code>.  When the relocation of <code>root</code> has been accomplished, we
+install the new pointer as the new <code>root</code> and enter the main loop of the
+garbage collector.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="pln">begin-garbage-collection
+  </span><span class="opn">(</span><span class="pln">assign free </span><span class="opn">(</span><span class="pln">const </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign scan </span><span class="opn">(</span><span class="pln">const </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign old </span><span class="opn">(</span><span class="pln">reg root</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign relocate-continue 
+          </span><span class="opn">(</span><span class="pln">label reassign-root</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">label relocate-old-result-in-new</span><span class="clo">))</span><span class="pln">
+reassign-root
+  </span><span class="opn">(</span><span class="pln">assign root </span><span class="opn">(</span><span class="pln">reg new</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">label gc-loop</span><span class="clo">))</span></pre></div>
+
+<p>In the main loop of the garbage collector we must determine whether there are
+any more objects to be scanned.  We do this by testing whether the <code>scan</code>
+pointer is coincident with the <code>free</code> pointer.  If the pointers are equal,
+then all accessible objects have been relocated, and we branch to
+<code>gc-flip</code>, which cleans things up so that we can continue the interrupted
+computation.  If there are still pairs to be scanned, we call the relocate
+subroutine to relocate the <code>car</code> of the next pair (by placing the
+<code>car</code> pointer in <code>old</code>).  The <code>relocate-continue</code> register is
+set up so that the subroutine will return to update the <code>car</code> pointer.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="pln">gc-loop
+  </span><span class="opn">(</span><span class="pln">test </span><span class="opn">(</span><span class="pln">op </span><span class="pun">=</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reg scan</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reg free</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">branch </span><span class="opn">(</span><span class="pln">label gc-flip</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign old 
+          </span><span class="opn">(</span><span class="pln">op vector-ref</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">reg new-cars</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">reg scan</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign relocate-continue 
+          </span><span class="opn">(</span><span class="pln">label update-car</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">label relocate-old-result-in-new</span><span class="clo">))</span></pre></div>
+
+<p>At <code>update-car</code>, we modify the <code>car</code> pointer of the pair being
+scanned, then proceed to relocate the <code>cdr</code> of the pair.  We return to
+<code>update-cdr</code> when that relocation has been accomplished.  After relocating
+and updating the <code>cdr</code>, we are finished scanning that pair, so we continue
+with the main loop.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="pln">update-car
+  </span><span class="opn">(</span><span class="pln">perform </span><span class="opn">(</span><span class="pln">op vector-set!</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg new-cars</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg scan</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg new</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign  old 
+           </span><span class="opn">(</span><span class="pln">op vector-ref</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg new-cdrs</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg scan</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign  relocate-continue
+           </span><span class="opn">(</span><span class="pln">label update-cdr</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">label relocate-old-result-in-new</span><span class="clo">))</span><span class="pln">
+update-cdr
+  </span><span class="opn">(</span><span class="pln">perform </span><span class="opn">(</span><span class="pln">op vector-set!</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg new-cdrs</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg scan</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg new</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign  scan </span><span class="opn">(</span><span class="pln">op </span><span class="pun">+</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reg scan</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">const </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">label gc-loop</span><span class="clo">))</span></pre></div>
+
+<p>The subroutine <code>relocate-old-result-in-new</code> relocates objects as follows:
+If the object to be relocated (pointed at by <code>old</code>) is not a pair, then we
+return the same pointer to the object unchanged (in <code>new</code>).  (For example,
+we may be scanning a pair whose <code>car</code> is the number 4.  If we represent
+the <code>car</code> by <code>n4</code>, as described in <a href="5_002e3_002e1.xhtml#g_t5_002e3_002e1">5.3.1</a>, then we want
+the “relocated” <code>car</code> pointer to still be <code>n4</code>.)  Otherwise, we
+must perform the relocation.  If the <code>car</code> position of the pair to be
+relocated contains a broken-heart tag, then the pair has in fact already been
+moved, so we retrieve the forwarding address (from the <code>cdr</code> position of
+the broken heart) and return this in <code>new</code>.  If the pointer in <code>old</code>
+points at a yet-unmoved pair, then we move the pair to the first free cell in
+new memory (pointed at by <code>free</code>) and set up the broken heart by storing a
+broken-heart tag and forwarding address at the old location.
+<code>Relocate-old-result-in-new</code> uses a register <code>oldcr</code> to hold the
+<code>car</code> or the <code>cdr</code> of the object pointed at by
+<code>old</code>.<a class="footnote_link" id="DOCF303" href="#FOOT303"><sup>303</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="pln">relocate-old-result-in-new
+  </span><span class="opn">(</span><span class="pln">test </span><span class="opn">(</span><span class="pln">op pointer-to-pair?</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reg old</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">branch </span><span class="opn">(</span><span class="pln">label pair</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign new </span><span class="opn">(</span><span class="pln">reg old</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">reg relocate-continue</span><span class="clo">))</span><span class="pln">
+pair
+  </span><span class="opn">(</span><span class="pln">assign  oldcr 
+           </span><span class="opn">(</span><span class="pln">op vector-ref</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg the-cars</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg old</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">test </span><span class="opn">(</span><span class="pln">op broken-heart?</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reg oldcr</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">branch  </span><span class="opn">(</span><span class="pln">label already-moved</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign  new </span><span class="opn">(</span><span class="pln">reg free</span><span class="clo">))</span><span class="pln"> </span><span class="roman"><span class="com">; new location for pair</span></span><span class="pln">
+  </span><span class="roman"><span class="com">;; Update </span><code><span class="com">free</span></code><span class="com"> pointer.</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign free </span><span class="opn">(</span><span class="pln">op </span><span class="pun">+</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">reg free</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">const </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+  </span><span class="roman"><span class="com">;; Copy the </span><code><span class="com">car</span></code><span class="com"> and </span><code><span class="com">cdr</span></code><span class="com"> to new memory.</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">perform </span><span class="opn">(</span><span class="pln">op vector-set!</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg new-cars</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg new</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg oldcr</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign  oldcr 
+           </span><span class="opn">(</span><span class="pln">op vector-ref</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg the-cdrs</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg old</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">perform </span><span class="opn">(</span><span class="pln">op vector-set!</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg new-cdrs</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg new</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg oldcr</span><span class="clo">))</span><span class="pln">
+  </span><span class="roman"><span class="com">;; Construct the broken heart.</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">perform </span><span class="opn">(</span><span class="pln">op vector-set!</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg the-cars</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg old</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">const broken-heart</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">perform </span><span class="opn">(</span><span class="pln">op vector-set!</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg the-cdrs</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg old</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg new</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">reg relocate-continue</span><span class="clo">))</span><span class="pln">
+already-moved
+  </span><span class="opn">(</span><span class="pln">assign  new
+           </span><span class="opn">(</span><span class="pln">op vector-ref</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg the-cdrs</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">reg old</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">reg relocate-continue</span><span class="clo">))</span></pre></div>
+
+<p>At the very end of the garbage-collection process, we interchange the role of
+old and new memories by interchanging pointers: interchanging <code>the-cars</code>
+with <code>new-cars</code>, and <code>the-cdrs</code> with <code>new-cdrs</code>.  We will then
+be ready to perform another garbage collection the next time memory runs out.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="pln">gc-flip
+  </span><span class="opn">(</span><span class="pln">assign temp </span><span class="opn">(</span><span class="pln">reg the-cdrs</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign the-cdrs </span><span class="opn">(</span><span class="pln">reg new-cdrs</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign new-cdrs </span><span class="opn">(</span><span class="pln">reg temp</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign temp </span><span class="opn">(</span><span class="pln">reg the-cars</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign the-cars </span><span class="opn">(</span><span class="pln">reg new-cars</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">assign new-cars </span><span class="opn">(</span><span class="pln">reg temp</span><span class="clo">))</span></pre></div>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT298"><p><a class="footnote_backlink" href="#DOCF298"><sup>298</sup></a>
+This may not be true eventually, because
+memories may get large enough so that it would be impossible to run out of free
+memory in the lifetime of the computer.  For example, there are about
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>3</mn>
+    <mo>⋅<!-- ⋅ --></mo>
+    <msup>
+      <mn>10</mn>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mn>13</mn>
+      </mrow>
+    </msup>
+  </mrow>
+</math> microseconds in a year, so if we were to <code>cons</code> once per
+microsecond we would need about <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mn>10</mn>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mn>15</mn>
+    </mrow>
+  </msup>
+</math> cells of memory to build a machine that
+could operate for 30 years without running out of memory.  That much memory
+seems absurdly large by today’s standards, but it is not physically impossible.
+On the other hand, processors are getting faster and a future computer may have
+large numbers of processors operating in parallel on a single memory, so it may
+be possible to use up memory much faster than we have postulated.</p>
+</div>
+<div id="FOOT299"><p><a class="footnote_backlink" href="#DOCF299"><sup>299</sup></a>
+We assume here
+that the stack is represented as a list as described in <a href="5_002e3_002e1.xhtml#g_t5_002e3_002e1">5.3.1</a>, so
+that items on the stack are accessible via the pointer in the stack register.</p>
+</div>
+<div id="FOOT300"><p><a class="footnote_backlink" href="#DOCF300"><sup>300</sup></a>
+This idea was invented and first implemented by
+Minsky, as part of the implementation of Lisp for the PDP-1 at the
+<abbr>MIT</abbr> Research Laboratory of Electronics.  It was further developed by
+<a href="References.xhtml#Fenichel-and-Yochelson-_00281969_0029">Fenichel and Yochelson (1969)</a> for use in the Lisp implementation for the
+Multics time-sharing system.  Later, <a href="References.xhtml#Baker-_00281978_0029">Baker (1978)</a> developed a “real-time”
+version of the method, which does not require the computation to stop during
+garbage collection.  Baker’s idea was extended by Hewitt, Lieberman, and Moon
+(see <a href="References.xhtml#Lieberman-and-Hewitt-1983">Lieberman and Hewitt 1983</a>) to take advantage of the fact that some
+structure is more volatile and other structure is more permanent.
+</p>
+<p>An alternative commonly used garbage-collection technique is the
+<a id="index-mark_002dsweep"></a>
+<em>mark-sweep</em> method.  This consists of tracing all the structure
+accessible from the machine registers and marking each pair we reach.  We then
+scan all of memory, and any location that is unmarked is “swept up” as
+garbage and made available for reuse.  A full discussion of the mark-sweep
+method can be found in <a href="References.xhtml#Allen-1978">Allen 1978</a>.
+</p>
+<p>The Minsky-Fenichel-Yochelson algorithm is the dominant algorithm in use for
+large-memory systems because it examines only the useful part of memory.  This
+is in contrast to mark-sweep, in which the sweep phase must check all of
+memory.  A second advantage of stop-and-copy is that it is a
+<a id="index-compacting"></a>
+<em>compacting</em> garbage collector.  That is, at the end of the
+garbage-collection phase the useful data will have been moved to consecutive
+memory locations, with all garbage pairs compressed out.  This can be an
+extremely important performance consideration in machines with virtual memory,
+in which accesses to widely separated memory addresses may require extra paging
+operations.</p>
+</div>
+<div id="FOOT301"><p><a class="footnote_backlink" href="#DOCF301"><sup>301</sup></a>
+This list of registers does not include
+the registers used by the storage-allocation system—<code>root</code>,
+<code>the-cars</code>, <code>the-cdrs</code>, and the other registers that will be
+introduced in this section.</p>
+</div>
+<div id="FOOT302"><p><a class="footnote_backlink" href="#DOCF302"><sup>302</sup></a>
+The term <em>broken heart</em> was coined by
+David Cressey, who wrote a garbage collector for MDL, a dialect of Lisp
+developed at <abbr>MIT</abbr> during the early 1970s.</p>
+</div>
+<div id="FOOT303"><p><a class="footnote_backlink" href="#DOCF303"><sup>303</sup></a>
+The garbage collector uses the low-level predicate
+<code>pointer-to-pair?</code> instead of the list-structure <code>pair?</code>  operation
+because in a real system there might be various things that are treated as
+pairs for garbage-collection purposes.  For example, in a Scheme system that
+conforms to the <abbr>IEEE</abbr> standard a procedure object may be implemented
+as a special kind of “pair” that doesn’t satisfy the <code>pair?</code> predicate.
+For simulation purposes, <code>pointer-to-pair?</code> can be implemented as
+<code>pair?</code>.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="5_002e4.xhtml#g_t5_002e4" accesskey="n" rel="next">5.4</a>, Previous: <a href="5_002e3_002e1.xhtml#g_t5_002e3_002e1" accesskey="p" rel="prev">5.3.1</a>, Up: <a href="5_002e3.xhtml#g_t5_002e3" accesskey="u" rel="prev">5.3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

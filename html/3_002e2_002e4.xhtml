@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 3.2.4</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 3.2.4" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 3.2.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="3_002e2.xhtml#g_t3_002e2" rel="prev" title="3.2" />
+<link href="3_002e3.xhtml#g_t3_002e3" rel="next" title="3.3" />
+<link href="3_002e2_002e3.xhtml#g_t3_002e2_002e3" rel="prev" title="3.2.3" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t3_002e2_002e4"></a>
+<nav class="header">
+<p>
+Next: <a href="3_002e3.xhtml#g_t3_002e3" accesskey="n" rel="next">3.3</a>, Previous: <a href="3_002e2_002e3.xhtml#g_t3_002e2_002e3" accesskey="p" rel="prev">3.2.3</a>, Up: <a href="3_002e2.xhtml#g_t3_002e2" accesskey="u" rel="prev">3.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Internal-Definitions"></a>
+<h4 class="subsection"><span class="secnum">3.2.4</span><span class="sectitle">Internal Definitions</span></h4>
+
+<p>Section <a href="1_002e1_002e8.xhtml#g_t1_002e1_002e8">1.1.8</a> introduced the idea that procedures can have internal
+definitions, thus leading to a block structure as in the following procedure to
+compute square roots:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">good-enough? guess</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square guess</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">))</span><span class="pln"> </span><span class="lit">0.001</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">improve guess</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">average guess </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> x guess</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt-iter guess</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">good-enough? guess</span><span class="clo">)</span><span class="pln">
+        guess
+        </span><span class="opn">(</span><span class="pln">sqrt-iter </span><span class="opn">(</span><span class="pln">improve guess</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">sqrt-iter </span><span class="lit">1.0</span><span class="clo">))</span></pre></div>
+
+<p>Now we can use the environment model to see why these internal definitions
+behave as desired.  <a href="#Figure-3_002e11">Figure 3.11</a> shows the point in the evaluation of the
+expression <code>(sqrt 2)</code> where the internal procedure <code>good-enough?</code> has
+been called for the first time with <code>guess</code> equal to 1.
+</p>
+<figure class="float">
+<a id="Figure-3_002e11"></a>
+<object style="width: 60.01ex; height: 56.90ex;" data="fig/chap3/Fig3.11b.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 3.11:</strong> <code>Sqrt</code> procedure with internal definitions.</p>
+</figcaption>
+</figure>
+
+<p>Observe the structure of the environment.  <code>Sqrt</code> is a symbol in the
+global environment that is bound to a procedure object whose associated
+environment is the global environment.  When <code>sqrt</code> was called, a new
+environment E1 was formed, subordinate to the global environment, in which the
+parameter <code>x</code> is bound to 2.  The body of <code>sqrt</code> was then evaluated
+in E1.  Since the first expression in the body of <code>sqrt</code> is
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">good-enough? guess</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square guess</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">))</span><span class="pln"> </span><span class="lit">0.001</span><span class="clo">))</span></pre></div>
+
+<p>evaluating this expression defined the procedure <code>good-enough?</code>  in the
+environment E1.  To be more precise, the symbol <code>good-enough?</code> was added
+to the first frame of E1, bound to a procedure object whose associated
+environment is E1.  Similarly, <code>improve</code> and <code>sqrt-iter</code> were defined
+as procedures in E1.  For conciseness, <a href="#Figure-3_002e11">Figure 3.11</a> shows only the
+procedure object for <code>good-enough?</code>.
+</p>
+<p>After the local procedures were defined, the expression <code>(sqrt-iter 1.0)</code>
+was evaluated, still in environment E1.  So the procedure object bound to
+<code>sqrt-iter</code> in E1 was called with 1 as an argument.  This created an
+environment E2 in which <code>guess</code>, the parameter of <code>sqrt-iter</code>, is
+bound to 1.  <code>Sqrt-iter</code> in turn called <code>good-enough?</code> with the value
+of <code>guess</code> (from E2) as the argument for <code>good-enough?</code>.  This set up
+another environment, E3, in which <code>guess</code> (the parameter of
+<code>good-enough?</code>) is bound to 1.  Although <code>sqrt-iter</code> and
+<code>good-enough?</code> both have a parameter named <code>guess</code>, these are two
+distinct local variables located in different frames.  Also, E2 and E3 both
+have E1 as their enclosing environment, because the <code>sqrt-iter</code> and
+<code>good-enough?</code> procedures both have E1 as their environment part.  One
+consequence of this is that the symbol <code>x</code> that appears in the body of
+<code>good-enough?</code> will reference the binding of <code>x</code> that appears in E1,
+namely the value of <code>x</code> with which the original <code>sqrt</code> procedure was
+called.
+</p>
+<p>The environment model thus explains the two key properties that make local
+procedure definitions a useful technique for modularizing programs:
+</p>
+<ul>
+<li> The names of the local procedures do not interfere with names external to the
+enclosing procedure, because the local procedure names will be bound in the
+frame that the procedure creates when it is run, rather than being bound in the
+global environment.
+
+</li><li> The local procedures can access the arguments of the enclosing procedure,
+simply by using parameter names as free variables.  This is because the body of
+the local procedure is evaluated in an environment that is subordinate to the
+evaluation environment for the enclosing procedure.
+
+</li></ul>
+
+<blockquote>
+<p><strong><a id="Exercise-3_002e11"></a>Exercise 3.11:</strong> In <a href="3_002e2_002e3.xhtml#g_t3_002e2_002e3">3.2.3</a> we saw how
+the environment model described the behavior of procedures with local state.
+Now we have seen how internal definitions work.  A typical message-passing
+procedure contains both of these aspects.  Consider the bank account procedure
+of <a href="3_002e1_002e1.xhtml#g_t3_002e1_002e1">3.1.1</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-account balance</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">withdraw amount</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;=</span><span class="pln"> balance amount</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">begin</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> balance 
+                     </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> balance 
+                        amount</span><span class="clo">))</span><span class="pln">
+               balance</span><span class="clo">)</span><span class="pln">
+        </span><span class="str">"Insufficient funds"</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">deposit amount</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> balance </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> balance amount</span><span class="clo">))</span><span class="pln">
+    balance</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">dispatch m</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> m </span><span class="lit">'withdraw</span><span class="clo">)</span><span class="pln"> withdraw</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> m </span><span class="lit">'deposit</span><span class="clo">)</span><span class="pln"> deposit</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown request: 
+                        MAKE-ACCOUNT"</span><span class="pln"> 
+                       m</span><span class="clo">))))</span><span class="pln">
+  dispatch</span><span class="clo">)</span></pre></div>
+
+<p>Show the environment structure generated by the sequence of interactions
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> acc </span><span class="opn">(</span><span class="pln">make-account </span><span class="lit">50</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">((</span><span class="pln">acc </span><span class="lit">'deposit</span><span class="clo">)</span><span class="pln"> </span><span class="lit">40</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">90</span></i><span class="pln">
+
+</span><span class="opn">((</span><span class="pln">acc </span><span class="lit">'withdraw</span><span class="clo">)</span><span class="pln"> </span><span class="lit">60</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">30</span></i>
+</pre></div>
+
+<p>Where is the local state for <code>acc</code> kept?  Suppose we define another
+account
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> acc2 </span><span class="opn">(</span><span class="pln">make-account </span><span class="lit">100</span><span class="clo">))</span></pre></div>
+
+<p>How are the local states for the two accounts kept distinct?  Which parts of
+the environment structure are shared between <code>acc</code> and <code>acc2</code>?
+</p></blockquote>
+
+<hr />
+<nav class="header">
+<p>
+Next: <a href="3_002e3.xhtml#g_t3_002e3" accesskey="n" rel="next">3.3</a>, Previous: <a href="3_002e2_002e3.xhtml#g_t3_002e2_002e3" accesskey="p" rel="prev">3.2.3</a>, Up: <a href="3_002e2.xhtml#g_t3_002e2" accesskey="u" rel="prev">3.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

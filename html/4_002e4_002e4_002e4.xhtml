@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 4.4.4.4</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.4.4.4" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.4.4.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="4_002e4_002e4.xhtml#g_t4_002e4_002e4" rel="prev" title="4.4.4" />
+<link href="4_002e4_002e4_002e5.xhtml#g_t4_002e4_002e4_002e5" rel="next" title="4.4.4.5" />
+<link href="4_002e4_002e4_002e3.xhtml#g_t4_002e4_002e4_002e3" rel="prev" title="4.4.4.3" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t4_002e4_002e4_002e4"></a>
+<nav class="header">
+<p>
+Next: <a href="4_002e4_002e4_002e5.xhtml#g_t4_002e4_002e4_002e5" accesskey="n" rel="next">4.4.4.5</a>, Previous: <a href="4_002e4_002e4_002e3.xhtml#g_t4_002e4_002e4_002e3" accesskey="p" rel="prev">4.4.4.3</a>, Up: <a href="4_002e4_002e4.xhtml#g_t4_002e4_002e4" accesskey="u" rel="prev">4.4.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Rules-and-Unification"></a>
+<h5 class="subsubsection"><span class="secnum">4.4.4.4</span><span class="sectitle">Rules and Unification</span></h5>
+
+<p><code>Apply-rules</code> is the rule analog of <code>find-assertions</code> 
+(<a href="4_002e4_002e4_002e3.xhtml#g_t4_002e4_002e4_002e3">4.4.4.3</a>).  It takes as input a pattern and a frame, and it forms a stream
+of extension frames by applying rules from the data base.
+<code>Stream-flatmap</code> maps <code>apply-a-rule</code> down the stream of possibly
+applicable rules (selected by <code>fetch-rules</code>, <a href="4_002e4_002e4_002e5.xhtml#g_t4_002e4_002e4_002e5">4.4.4.5</a>) and
+combines the resulting streams of frames.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply-rules pattern frame</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">stream-flatmap 
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">rule</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">apply-a-rule rule pattern frame</span><span class="clo">))</span><span class="pln">
+   </span><span class="opn">(</span><span class="pln">fetch-rules pattern frame</span><span class="clo">)))</span></pre></div>
+
+<p><code>Apply-a-rule</code> applies rules using the method outlined in 
+<a href="4_002e4_002e2.xhtml#g_t4_002e4_002e2">4.4.2</a>.  It first augments its argument frame by unifying the rule
+conclusion with the pattern in the given frame.  If this succeeds, it evaluates
+the rule body in this new frame.
+</p>
+<p>Before any of this happens, however, the program renames all the variables in
+the rule with unique new names.  The reason for this is to prevent the
+variables for different rule applications from becoming confused with each
+other.  For instance, if two rules both use a variable named <code>?x</code>, then
+each one may add a binding for <code>?x</code> to the frame when it is applied.
+These two <code>?x</code>’s have nothing to do with each other, and we should not be
+fooled into thinking that the two bindings must be consistent.  Rather than
+rename variables, we could devise a more clever environment structure; however,
+the renaming approach we have chosen here is the most straightforward, even if
+not the most efficient.  (See <a href="4_002e4_002e4_002e8.xhtml#Exercise-4_002e79">Exercise 4.79</a>.)  Here is the
+<code>apply-a-rule</code> procedure:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply-a-rule rule
+                      query-pattern
+                      query-frame</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">clean-rule 
+         </span><span class="opn">(</span><span class="pln">rename-variables-in rule</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">unify-result
+           </span><span class="opn">(</span><span class="pln">unify-match query-pattern
+                        </span><span class="opn">(</span><span class="pln">conclusion clean-rule</span><span class="clo">)</span><span class="pln">
+                        query-frame</span><span class="clo">)))</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> unify-result </span><span class="lit">'failed</span><span class="clo">)</span><span class="pln">
+          the-empty-stream
+          </span><span class="opn">(</span><span class="pln">qeval </span><span class="opn">(</span><span class="pln">rule-body clean-rule</span><span class="clo">)</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pln">singleton-stream 
+                  unify-result</span><span class="clo">))))))</span></pre></div>
+
+<p>The selectors <code>rule-body</code> and <code>conclusion</code> that extract parts of a
+rule are defined in <a href="4_002e4_002e4_002e7.xhtml#g_t4_002e4_002e4_002e7">4.4.4.7</a>.
+</p>
+<p>We generate unique variable names by associating a unique identifier (such as a
+number) with each rule application and combining this identifier with the
+original variable names.  For example, if the rule-application identifier is 7,
+we might change each <code>?x</code> in the rule to <code>?x-7</code> and each <code>?y</code> in
+the rule to <code>?y-7</code>.  (<code>Make-new-variable</code> and
+<code>new-rule-application-id</code> are included with the syntax procedures in
+<a href="4_002e4_002e4_002e7.xhtml#g_t4_002e4_002e4_002e7">4.4.4.7</a>.)
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">rename-variables-in rule</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">rule-application-id 
+         </span><span class="opn">(</span><span class="pln">new-rule-application-id</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tree-walk exp</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">var? exp</span><span class="clo">)</span><span class="pln">
+             </span><span class="opn">(</span><span class="pln">make-new-variable 
+              exp 
+              rule-application-id</span><span class="clo">))</span><span class="pln">
+            </span><span class="opn">((</span><span class="pln">pair? exp</span><span class="clo">)</span><span class="pln">
+             </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tree-walk </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> exp</span><span class="clo">))</span><span class="pln">
+                   </span><span class="opn">(</span><span class="pln">tree-walk </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> exp</span><span class="clo">))))</span><span class="pln">
+            </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> exp</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">tree-walk rule</span><span class="clo">)))</span></pre></div>
+
+<p>The unification algorithm is implemented as a procedure that takes as inputs
+two patterns and a frame and returns either the extended frame or the symbol
+<code>failed</code>.  The unifier is like the pattern matcher except that it is
+symmetrical—variables are allowed on both sides of the match.
+<code>Unify-match</code> is basically the same as <code>pattern-match</code>, except that
+there is extra code (marked “<code>***</code>” below) to handle the case where the
+object on the right side of the match is a variable.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">unify-match p1 p2 frame</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> frame </span><span class="lit">'failed</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'failed</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">equal</span><span class="pun">?</span><span class="pln"> p1 p2</span><span class="clo">)</span><span class="pln"> frame</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">var? p1</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">extend-if-possible p1 p2 frame</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">var? p2</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">extend-if-possible 
+          p2 
+          p1 
+          frame</span><span class="clo">))</span><span class="pln">        </span><span class="com">; </span><span class="roman"><span class="com">***</span></span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pair? p1</span><span class="clo">)</span><span class="pln"> 
+              </span><span class="opn">(</span><span class="pln">pair? p2</span><span class="clo">))</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">unify-match 
+          </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> p1</span><span class="clo">)</span><span class="pln"> 
+          </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> p2</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">unify-match 
+           </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> p1</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> p2</span><span class="clo">)</span><span class="pln">
+           frame</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="lit">'failed</span><span class="clo">)))</span></pre></div>
+
+<p>In unification, as in one-sided pattern matching, we want to accept a proposed
+extension of the frame only if it is consistent with existing bindings.  The
+procedure <code>extend-if-possible</code> used in unification is the same as the
+<code>extend-if-consistent</code> used in pattern matching except for two special
+checks, marked “<code>***</code>” in the program below.  In the first case, if the
+variable we are trying to match is not bound, but the value we are trying to
+match it with is itself a (different) variable, it is necessary to check to see
+if the value is bound, and if so, to match its value.  If both parties to the
+match are unbound, we may bind either to the other.
+</p>
+<p>The second check deals with attempts to bind a variable to a pattern that
+includes that variable.  Such a situation can occur whenever a variable is
+repeated in both patterns.  Consider, for example, unifying the two patterns
+<code>(?x ?x)</code> and <code>(?y ⟨<var>expression involving <code>?y</code></var>⟩)</code> in a
+frame where both <code>?x</code> and <code>?y</code> are unbound.  First <code>?x</code> is
+matched against <code>?y</code>, making a binding of <code>?x</code> to <code>?y</code>.  Next,
+the same <code>?x</code> is matched against the given expression involving <code>?y</code>.
+Since <code>?x</code> is already bound to <code>?y</code>, this results in matching
+<code>?y</code> against the expression.  If we think of the unifier as finding a set
+of values for the pattern variables that make the patterns the same, then these
+patterns imply instructions to find a <code>?y</code> such that <code>?y</code> is equal to
+the expression involving <code>?y</code>.  There is no general method for solving
+such equations, so we reject such bindings; these cases are recognized by the
+predicate <code>depends-on?</code>.<a class="footnote_link" id="DOCF284" href="#FOOT284"><sup>284</sup></a>  On the
+other hand, we do not want to reject attempts to bind a variable to itself.
+For example, consider unifying <code>(?x ?x)</code> and <code>(?y ?y)</code>.  The second
+attempt to bind <code>?x</code> to <code>?y</code> matches <code>?y</code> (the stored value of
+<code>?x</code>) against <code>?y</code> (the new value of <code>?x</code>).  This is taken care
+of by the <code>equal?</code>  clause of <code>unify-match</code>.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">extend-if-possible var val frame</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">binding </span><span class="opn">(</span><span class="pln">binding-in-frame var frame</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">(</span><span class="pln">binding
+           </span><span class="opn">(</span><span class="pln">unify-match
+            </span><span class="opn">(</span><span class="pln">binding-value binding</span><span class="clo">)</span><span class="pln"> val frame</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">((</span><span class="pln">var? val</span><span class="clo">)</span><span class="pln">                   </span><span class="roman"><span class="com">; ***</span></span><span class="pln">
+           </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">binding 
+                  </span><span class="opn">(</span><span class="pln">binding-in-frame 
+                   val
+                   frame</span><span class="clo">)))</span><span class="pln">
+             </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> binding
+                 </span><span class="opn">(</span><span class="pln">unify-match
+                  var 
+                  </span><span class="opn">(</span><span class="pln">binding-value binding</span><span class="clo">)</span><span class="pln"> 
+                  frame</span><span class="clo">)</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pln">extend var val frame</span><span class="clo">))))</span><span class="pln">
+          </span><span class="opn">((</span><span class="pln">depends-on? val var frame</span><span class="clo">)</span><span class="pln">  </span><span class="roman"><span class="com">; ***</span></span><span class="pln">
+           </span><span class="lit">'failed</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">extend var val frame</span><span class="clo">)))))</span></pre></div>
+
+<p><code>Depends-on?</code> is a predicate that tests whether an expression proposed to
+be the value of a pattern variable depends on the variable.  This must be done
+relative to the current frame because the expression may contain occurrences of
+a variable that already has a value that depends on our test variable.  The
+structure of <code>depends-on?</code> is a simple recursive tree walk in which we
+substitute for the values of variables whenever necessary.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">depends-on? exp var frame</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tree-walk e</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">var? e</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">equal</span><span class="pun">?</span><span class="pln"> var e</span><span class="clo">)</span><span class="pln">
+               true
+               </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">b </span><span class="opn">(</span><span class="pln">binding-in-frame 
+                         e 
+                         frame</span><span class="clo">)))</span><span class="pln">
+                 </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> b
+                     </span><span class="opn">(</span><span class="pln">tree-walk 
+                      </span><span class="opn">(</span><span class="pln">binding-value b</span><span class="clo">))</span><span class="pln">
+                     false</span><span class="clo">))))</span><span class="pln">
+          </span><span class="opn">((</span><span class="pln">pair? e</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tree-walk </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> e</span><span class="clo">))</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">tree-walk </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> e</span><span class="clo">))))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> false</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">tree-walk exp</span><span class="clo">))</span></pre></div>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT284"><p><a class="footnote_backlink" href="#DOCF284"><sup>284</sup></a>
+In general, unifying <code>?y</code> with an
+expression involving <code>?y</code> would require our being able to find a fixed
+point of the equation <code>?y</code> = <code>⟨</code><var>expression involving <code>?y</code></var><code>⟩</code>.  It
+is sometimes possible to syntactically form an expression that appears to be
+the solution.  For example, <code>?y</code> = <code>(f ?y)</code> seems to have the fixed
+point <code>(f (f (f <span class="roman">…</span> )))</code>, which we can produce by beginning with the
+expression <code>(f ?y)</code> and repeatedly substituting <code>(f ?y)</code> for
+<code>?y</code>.  Unfortunately, not every such equation has a meaningful fixed
+point.  The issues that arise here are similar to the issues of manipulating
+infinite series in mathematics.  For example, we know that 2 is the solution to
+the equation <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo>=</mo>
+    <mn>1</mn>
+    <mo>+</mo>
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mn>2</mn>
+  </mrow>
+</math>.  Beginning with the expression <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>+</mo>
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mn>2</mn>
+  </mrow>
+</math>
+and repeatedly substituting <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>+</mo>
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mn>2</mn>
+  </mrow>
+</math> for <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> gives
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mn>2</mn>
+  <mo>=</mo>
+  <mi>y</mi>
+  <mo>=</mo>
+  <mn>1</mn>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mi>y</mi>
+      <mn>2</mn>
+    </mfrac>
+  </mrow>
+  <mo>=</mo>
+  <mn>1</mn>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>2</mn>
+      </mfrac>
+    </mrow>
+    <mrow>
+      <mo>(</mo>
+      <mn>1</mn>
+      <mo>+</mo>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mfrac>
+          <mi>y</mi>
+          <mn>2</mn>
+        </mfrac>
+      </mrow>
+      <mo>)</mo>
+    </mrow>
+  </mrow>
+  <mo>=</mo>
+  <mn>1</mn>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mn>1</mn>
+      <mn>2</mn>
+    </mfrac>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mi>y</mi>
+      <mn>4</mn>
+    </mfrac>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo>…<!-- … --></mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+which leads to
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mn>2</mn>
+  <mo>=</mo>
+  <mn>1</mn>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mn>1</mn>
+      <mn>2</mn>
+    </mfrac>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mn>1</mn>
+      <mn>4</mn>
+    </mfrac>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mn>1</mn>
+      <mn>8</mn>
+    </mfrac>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo>…<!-- … --></mo>
+    <mo>.</mo>
+  </mrow>
+</math>
+However, if we try the same manipulation beginning with the observation that <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo>−</mo>
+    <mn>1</mn>
+  </mrow>
+</math> 
+is the solution to the equation <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo>=</mo>
+    <mn>1</mn>
+    <mo>+</mo>
+    <mn>2</mn>
+    <mi>y</mi>
+  </mrow>
+</math>, we obtain
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+  </mrow>
+  <mo>=</mo>
+  <mi>y</mi>
+  <mo>=</mo>
+  <mn>1</mn>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <mi>y</mi>
+  </mrow>
+  <mo>=</mo>
+  <mn>1</mn>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo>+</mo>
+    <mn>2</mn>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>=</mo>
+  <mn>1</mn>
+  <mo>+</mo>
+  <mn>2</mn>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>4</mn>
+    <mi>y</mi>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo>…<!-- … --></mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+which leads to
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mo>−<!-- − --></mo>
+  <mn>1</mn>
+  <mo>=</mo>
+  <mn>1</mn>
+  <mo>+</mo>
+  <mn>2</mn>
+  <mo>+</mo>
+  <mn>4</mn>
+  <mo>+</mo>
+  <mn>8</mn>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo>…<!-- … --></mo>
+    <mo>.</mo>
+  </mrow>
+</math>
+Although the formal manipulations used in deriving these two equations are
+identical, the first result is a valid assertion about infinite series but the
+second is not.  Similarly, for our unification results, reasoning with an
+arbitrary syntactically constructed expression may lead to errors.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="4_002e4_002e4_002e5.xhtml#g_t4_002e4_002e4_002e5" accesskey="n" rel="next">4.4.4.5</a>, Previous: <a href="4_002e4_002e4_002e3.xhtml#g_t4_002e4_002e4_002e3" accesskey="p" rel="prev">4.4.4.3</a>, Up: <a href="4_002e4_002e4.xhtml#g_t4_002e4_002e4" accesskey="u" rel="prev">4.4.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

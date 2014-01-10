@@ -1,0 +1,890 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 4.4.1</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.4.1" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.4.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="4_002e4.xhtml#g_t4_002e4" rel="prev" title="4.4" />
+<link href="4_002e4_002e2.xhtml#g_t4_002e4_002e2" rel="next" title="4.4.2" />
+<link href="4_002e4.xhtml#g_t4_002e4" rel="prev" title="4.4" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t4_002e4_002e1"></a>
+<nav class="header">
+<p>
+Next: <a href="4_002e4_002e2.xhtml#g_t4_002e4_002e2" accesskey="n" rel="next">4.4.2</a>, Previous: <a href="4_002e4.xhtml#g_t4_002e4" accesskey="p" rel="prev">4.4</a>, Up: <a href="4_002e4.xhtml#g_t4_002e4" accesskey="u" rel="prev">4.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Deductive-Information-Retrieval"></a>
+<h4 class="subsection"><span class="secnum">4.4.1</span><span class="sectitle">Deductive Information Retrieval</span></h4>
+
+<p>Logic programming excels in providing interfaces to data bases for information
+retrieval.  The query language we shall implement in this chapter is designed
+to be used in this way.
+</p>
+<p>In order to illustrate what the query system does, we will show how it can be
+used to manage the data base of personnel records for Microshaft, a thriving
+high-technology company in the Boston area.  The language provides
+pattern-directed access to personnel information and can also take advantage of
+general rules in order to make logical deductions.
+</p>
+<a id="A-sample-data-base"></a>
+<h5 class="subsubheading">A sample data base</h5>
+
+<p>The personnel data base for Microshaft contains <a id="index-assertions"></a>
+<em>assertions</em> about
+company personnel.  Here is the information about Ben Bitdiddle, the resident
+computer wizard:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">address </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">Slumerville </span><span class="opn">(</span><span class="pln">Ridge Road</span><span class="clo">)</span><span class="pln"> </span><span class="lit">10</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">computer wizard</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">salary </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">)</span><span class="pln"> </span><span class="lit">60000</span><span class="clo">)</span></pre></div>
+
+<p>Each assertion is a list (in this case a triple) whose elements can themselves
+be lists.
+</p>
+<p>As resident wizard, Ben is in charge of the company’s computer division, and he
+supervises two programmers and one technician.  Here is the information about
+them:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">address </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">Cambridge </span><span class="opn">(</span><span class="pln">Mass Ave</span><span class="clo">)</span><span class="pln"> </span><span class="lit">78</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">salary </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)</span><span class="pln"> </span><span class="lit">40000</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">address </span><span class="opn">(</span><span class="pln">Fect Cy D</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">Cambridge </span><span class="opn">(</span><span class="pln">Ames Street</span><span class="clo">)</span><span class="pln"> </span><span class="lit">3</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Fect Cy D</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">salary </span><span class="opn">(</span><span class="pln">Fect Cy D</span><span class="clo">)</span><span class="pln"> </span><span class="lit">35000</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Fect Cy D</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">address </span><span class="opn">(</span><span class="pln">Tweakit Lem E</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">Boston </span><span class="opn">(</span><span class="pln">Bay State Road</span><span class="clo">)</span><span class="pln"> </span><span class="lit">22</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Tweakit Lem E</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">computer technician</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">salary </span><span class="opn">(</span><span class="pln">Tweakit Lem E</span><span class="clo">)</span><span class="pln"> </span><span class="lit">25000</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Tweakit Lem E</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">))</span></pre></div>
+
+<p>There is also a programmer trainee, who is supervised by Alyssa:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">address </span><span class="opn">(</span><span class="pln">Reasoner Louis</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">Slumerville </span><span class="opn">(</span><span class="pln">Pine Tree Road</span><span class="clo">)</span><span class="pln"> </span><span class="lit">80</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Reasoner Louis</span><span class="clo">)</span><span class="pln"> 
+     </span><span class="opn">(</span><span class="pln">computer programmer trainee</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">salary </span><span class="opn">(</span><span class="pln">Reasoner Louis</span><span class="clo">)</span><span class="pln"> </span><span class="lit">30000</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Reasoner Louis</span><span class="clo">)</span><span class="pln"> 
+            </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">))</span></pre></div>
+
+<p>All of these people are in the computer division, as indicated by the word
+<code>computer</code> as the first item in their job descriptions.
+</p>
+<p>Ben is a high-level employee.  His supervisor is the company’s big wheel
+himself:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">Warbucks Oliver</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">address </span><span class="opn">(</span><span class="pln">Warbucks Oliver</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">Swellesley </span><span class="opn">(</span><span class="pln">Top Heap Road</span><span class="clo">)))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Warbucks Oliver</span><span class="clo">)</span><span class="pln"> 
+     </span><span class="opn">(</span><span class="pln">administration big wheel</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">salary </span><span class="opn">(</span><span class="pln">Warbucks Oliver</span><span class="clo">)</span><span class="pln"> </span><span class="lit">150000</span><span class="clo">)</span></pre></div>
+
+<p>Besides the computer division supervised by Ben, the company has an accounting
+division, consisting of a chief accountant and his assistant:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">address </span><span class="opn">(</span><span class="pln">Scrooge Eben</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">Weston </span><span class="opn">(</span><span class="pln">Shady Lane</span><span class="clo">)</span><span class="pln"> </span><span class="lit">10</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Scrooge Eben</span><span class="clo">)</span><span class="pln"> 
+     </span><span class="opn">(</span><span class="pln">accounting chief accountant</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">salary </span><span class="opn">(</span><span class="pln">Scrooge Eben</span><span class="clo">)</span><span class="pln"> </span><span class="lit">75000</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Scrooge Eben</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">Warbucks Oliver</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">address </span><span class="opn">(</span><span class="pln">Cratchet Robert</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">Allston </span><span class="opn">(</span><span class="pln">N Harvard Street</span><span class="clo">)</span><span class="pln"> </span><span class="lit">16</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Cratchet Robert</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">accounting scrivener</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">salary </span><span class="opn">(</span><span class="pln">Cratchet Robert</span><span class="clo">)</span><span class="pln"> </span><span class="lit">18000</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Cratchet Robert</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">Scrooge Eben</span><span class="clo">))</span></pre></div>
+
+<p>There is also a secretary for the big wheel:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">address </span><span class="opn">(</span><span class="pln">Aull DeWitt</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">Slumerville </span><span class="opn">(</span><span class="pln">Onion Square</span><span class="clo">)</span><span class="pln"> </span><span class="lit">5</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Aull DeWitt</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">administration secretary</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">salary </span><span class="opn">(</span><span class="pln">Aull DeWitt</span><span class="clo">)</span><span class="pln"> </span><span class="lit">25000</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Aull DeWitt</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">Warbucks Oliver</span><span class="clo">))</span></pre></div>
+
+<p>The data base also contains assertions about which kinds of jobs can be done by
+people holding other kinds of jobs.  For instance, a computer wizard can do the
+jobs of both a computer programmer and a computer technician:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">can-do-job </span><span class="opn">(</span><span class="pln">computer wizard</span><span class="clo">)</span><span class="pln"> 
+            </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">can-do-job </span><span class="opn">(</span><span class="pln">computer wizard</span><span class="clo">)</span><span class="pln"> 
+            </span><span class="opn">(</span><span class="pln">computer technician</span><span class="clo">))</span></pre></div>
+
+<p>A computer programmer could fill in for a trainee:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">can-do-job </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">computer programmer trainee</span><span class="clo">))</span></pre></div>
+
+<p>Also, as is well known,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">can-do-job </span><span class="opn">(</span><span class="pln">administration secretary</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">administration big wheel</span><span class="clo">))</span></pre></div>
+
+<a id="Simple-queries"></a>
+<h5 class="subsubheading">Simple queries</h5>
+
+<p>The query language allows users to retrieve information from the data base by
+posing queries in response to the system’s prompt.  For example, to find all
+computer programmers one can say
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><i><span class="com">;;; Query input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span></pre></div>
+
+<p>The system will respond with the following items:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><i><span class="com">;;; Query results:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Fect Cy D</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span></pre></div>
+
+<p>The input query specifies that we are looking for entries in the data base that
+match a certain <a id="index-pattern"></a>
+<em>pattern</em>.  In this example, the pattern specifies
+entries consisting of three items, of which the first is the literal symbol
+<code>job</code>, the second can be anything, and the third is the literal list
+<code>(computer programmer)</code>.  The “anything” that can be the second item in
+the matching list is specified by a <a id="index-pattern-variable"></a>
+<em>pattern variable</em>, <code>?x</code>.  The
+general form of a pattern variable is a symbol, taken to be the name of the
+variable, preceded by a question mark.  We will see below why it is useful to
+specify names for pattern variables rather than just putting <code>?</code> into
+patterns to represent “anything.”  The system responds to a simple query by
+showing all entries in the data base that match the specified pattern.
+</p>
+<p>A pattern can have more than one variable.  For example, the query
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">address </span><span class="pun">?</span><span class="pln">x </span><span class="pun">?</span><span class="pln">y</span><span class="clo">)</span></pre></div>
+
+<p>will list all the employees’ addresses.
+</p>
+<p>A pattern can have no variables, in which case the query simply determines
+whether that pattern is an entry in the data base.  If so, there will be one
+match; if not, there will be no matches.
+</p>
+<p>The same pattern variable can appear more than once in a query, specifying that
+the same “anything” must appear in each position.  This is why variables have
+names.  For example,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">supervisor </span><span class="pun">?</span><span class="pln">x </span><span class="pun">?</span><span class="pln">x</span><span class="clo">)</span></pre></div>
+
+<p>finds all people who supervise themselves (though there are no such assertions
+in our sample data base).
+</p>
+<p>The query
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">job </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">computer </span><span class="pun">?</span><span class="pln">type</span><span class="clo">))</span></pre></div>
+
+<p>matches all job entries whose third item is a two-element list whose first item
+is <code>computer</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">computer wizard</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Fect Cy D</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Tweakit Lem E</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">computer technician</span><span class="clo">))</span></pre></div>
+
+<p>This same pattern does <em>not</em> match
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Reasoner Louis</span><span class="clo">)</span><span class="pln"> 
+     </span><span class="opn">(</span><span class="pln">computer programmer trainee</span><span class="clo">))</span></pre></div>
+
+<p>because the third item in the entry is a list of three elements, and the
+pattern’s third item specifies that there should be two elements.  If we wanted
+to change the pattern so that the third item could be any list beginning with
+<code>computer</code>, we could specify<a class="footnote_link" id="DOCF266" href="#FOOT266"><sup>266</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">job </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">computer </span><span class="pun">.</span><span class="pln"> </span><span class="pun">?</span><span class="pln">type</span><span class="clo">))</span></pre></div>
+
+<p>For example,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">computer </span><span class="pun">.</span><span class="pln"> </span><span class="pun">?</span><span class="pln">type</span><span class="clo">)</span></pre></div>
+
+<p>matches the data
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">computer programmer trainee</span><span class="clo">)</span></pre></div>
+
+<p>with <code>?type</code> as the list <code>(programmer trainee)</code>.  It also
+matches the data
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">)</span></pre></div>
+
+<p>with <code>?type</code> as the list <code>(programmer)</code>, and matches the data
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">computer</span><span class="clo">)</span></pre></div>
+
+<p>with <code>?type</code> as the empty list <code>()</code>.
+</p>
+<p>We can describe the query language’s processing of simple queries as follows:
+</p>
+<ul>
+<li> The system finds all assignments to variables in the query pattern that
+<a id="index-satisfy"></a>
+<em>satisfy</em> the pattern—that is, all sets of values for the variables
+such that if the pattern variables are <a id="index-instantiated-with"></a>
+<em>instantiated with</em> (replaced
+by) the values, the result is in the data base.
+
+</li><li> The system responds to the query by listing all instantiations of the query
+pattern with the variable assignments that satisfy it.
+
+</li></ul>
+
+<p>Note that if the pattern has no variables, the query reduces to a determination
+of whether that pattern is in the data base.  If so, the empty assignment,
+which assigns no values to variables, satisfies that pattern for that data
+base.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-4_002e55"></a>Exercise 4.55:</strong> Give simple queries that retrieve
+the following information from the data base:
+</p>
+<ol>
+<li> all people supervised by Ben Bitdiddle;
+
+</li><li> the names and jobs of all people in the accounting division;
+
+</li><li> the names and addresses of all people who live in Slumerville.
+
+</li></ol>
+</blockquote>
+
+<a id="Compound-queries"></a>
+<h5 class="subsubheading">Compound queries</h5>
+
+<p>Simple queries form the primitive operations of the query language.  In order
+to form compound operations, the query language provides means of combination.
+One thing that makes the query language a logic programming language is that
+the means of combination mirror the means of combination used in forming
+logical expressions: <code>and</code>, <code>or</code>, and <code>not</code>.  (Here <code>and</code>,
+<code>or</code>, and <code>not</code> are not the Lisp primitives, but rather operations
+built into the query language.)
+</p>
+<p>We can use <code>and</code> as follows to find the addresses of all the computer
+programmers:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">job </span><span class="pun">?</span><span class="pln">person </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">address </span><span class="pun">?</span><span class="pln">person </span><span class="pun">?</span><span class="pln">where</span><span class="clo">))</span></pre></div>
+
+<p>The resulting output is
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)</span><span class="pln"> 
+          </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">address </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)</span><span class="pln"> 
+              </span><span class="opn">(</span><span class="pln">Cambridge </span><span class="opn">(</span><span class="pln">Mass Ave</span><span class="clo">)</span><span class="pln"> </span><span class="lit">78</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Fect Cy D</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">address </span><span class="opn">(</span><span class="pln">Fect Cy D</span><span class="clo">)</span><span class="pln"> 
+              </span><span class="opn">(</span><span class="pln">Cambridge </span><span class="opn">(</span><span class="pln">Ames Street</span><span class="clo">)</span><span class="pln"> </span><span class="lit">3</span><span class="clo">)))</span></pre></div>
+
+<p>In general,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">and</span><span class="pln"> ⟨</span><var><span class="pln">query</span><span class="pun">₁</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">query</span><span class="pun">₂</span></var><span class="pln">⟩ </span><span class="roman"><span class="pun">…</span></span><span class="pln"> ⟨</span><var><span class="pln">query</span><span class="pun">ₙ</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>is satisfied by all sets of values for the pattern variables that
+simultaneously satisfy <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mspace width="0.1em"/>
+    <mi>q</mi>
+    <mi>u</mi>
+    <mi>e</mi>
+    <mi>r</mi>
+    <msub>
+      <mi>y</mi>
+      <mn>1</mn>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> <span class="roman">…</span> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mspace width="0.1em"/>
+    <mi>q</mi>
+    <mi>u</mi>
+    <mi>e</mi>
+    <mi>r</mi>
+    <msub>
+      <mi>y</mi>
+      <mi>n</mi>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>.
+</p>
+<p>As for simple queries, the system processes a compound query by finding all
+assignments to the pattern variables that satisfy the query, then displaying
+instantiations of the query with those values.
+</p>
+<p>Another means of constructing compound queries is through <code>or</code>.  For
+example,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">supervisor </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)))</span></pre></div>
+
+<p>will find all employees supervised by Ben Bitdiddle or Alyssa P.  Hacker:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Fect Cy D</span><span class="clo">)</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Fect Cy D</span><span class="clo">)</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Tweakit Lem E</span><span class="clo">)</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Tweakit Lem E</span><span class="clo">)</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Reasoner Louis</span><span class="clo">)</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">supervisor </span><span class="opn">(</span><span class="pln">Reasoner Louis</span><span class="clo">)</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)))</span></pre></div>
+
+<p>In general,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">or</span><span class="pln"> ⟨</span><var><span class="pln">query</span><span class="pun">₁</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">query</span><span class="pun">₂</span></var><span class="pln">⟩ </span><span class="roman"><span class="pun">…</span></span><span class="pln"> ⟨</span><var><span class="pln">query</span><span class="pun">ₙ</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>is satisfied by all sets of values for the pattern variables that satisfy at
+least one of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mspace width="0.1em"/>
+    <mi>q</mi>
+    <mi>u</mi>
+    <mi>e</mi>
+    <mi>r</mi>
+    <msub>
+      <mi>y</mi>
+      <mn>1</mn>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> <span class="roman">…</span> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mspace width="0.1em"/>
+    <mi>q</mi>
+    <mi>u</mi>
+    <mi>e</mi>
+    <mi>r</mi>
+    <msub>
+      <mi>y</mi>
+      <mi>n</mi>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>.
+</p>
+<p>Compound queries can also be formed with <code>not</code>. For example,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">not </span><span class="opn">(</span><span class="pln">job </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))))</span></pre></div>
+
+<p>finds all people supervised by Ben Bitdiddle who are not computer programmers.
+In general,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">not ⟨</span><var><span class="pln">query</span><span class="pun">₁</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>is satisfied by all assignments to the pattern variables that do not satisfy
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mspace width="0.1em"/>
+    <mi>q</mi>
+    <mi>u</mi>
+    <mi>e</mi>
+    <mi>r</mi>
+    <msub>
+      <mi>y</mi>
+      <mn>1</mn>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>.<a class="footnote_link" id="DOCF267" href="#FOOT267"><sup>267</sup></a>
+</p>
+<p>The final combining form is called <code>lisp-value</code>.  When <code>lisp-value</code>
+is the first element of a pattern, it specifies that the next element is a Lisp
+predicate to be applied to the rest of the (instantiated) elements as
+arguments.  In general,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">lisp-value ⟨</span><var><span class="pln">predicate</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">arg</span><span class="pun">₁</span></var><span class="pln">⟩ </span><span class="roman"><span class="pun">…</span></span><span class="pln"> ⟨</span><var><span class="pln">arg</span><span class="pun">ₙ</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>will be satisfied by assignments to the pattern variables for which the
+<code>⟨</code><var>predicate</var><code>⟩</code> applied to the instantiated <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mspace width="0.1em"/>
+    <mi>a</mi>
+    <mi>r</mi>
+    <msub>
+      <mi>g</mi>
+      <mn>1</mn>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> <span class="roman">…</span>
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mspace width="0.1em"/>
+    <mi>a</mi>
+    <mi>r</mi>
+    <msub>
+      <mi>g</mi>
+      <mi>n</mi>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> is true.  For example, to find all people whose salary is
+greater than $30,000 we could write<a class="footnote_link" id="DOCF268" href="#FOOT268"><sup>268</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">salary </span><span class="pun">?</span><span class="pln">person </span><span class="pun">?</span><span class="pln">amount</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">lisp-value </span><span class="pun">&gt;</span><span class="pln"> </span><span class="pun">?</span><span class="pln">amount </span><span class="lit">30000</span><span class="clo">))</span></pre></div>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e56"></a>Exercise 4.56:</strong> Formulate compound queries that
+retrieve the following information:
+</p>
+<ol>
+<li> the names of all people who are supervised by Ben Bitdiddle, together with
+their addresses;
+
+</li><li> all people whose salary is less than Ben Bitdiddle’s, together with their
+salary and Ben Bitdiddle’s salary;
+
+</li><li> all people who are supervised by someone who is not in the computer division,
+together with the supervisor’s name and job.
+
+</li></ol>
+</blockquote>
+
+<a id="Rules"></a>
+<h5 class="subsubheading">Rules</h5>
+
+<p>In addition to primitive queries and compound queries, the query language
+provides means for abstracting queries.  These are given by <a id="index-rules-1"></a>
+<em>rules</em>.
+The rule
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">lives-near </span><span class="pun">?</span><span class="pln">person-1 </span><span class="pun">?</span><span class="pln">person-2</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">address </span><span class="pun">?</span><span class="pln">person-1 
+                    </span><span class="opn">(</span><span class="pun">?</span><span class="pln">town </span><span class="pun">.</span><span class="pln"> </span><span class="pun">?</span><span class="pln">rest-1</span><span class="clo">))</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">address </span><span class="pun">?</span><span class="pln">person-2 
+                    </span><span class="opn">(</span><span class="pun">?</span><span class="pln">town </span><span class="pun">.</span><span class="pln"> </span><span class="pun">?</span><span class="pln">rest-2</span><span class="clo">))</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">not </span><span class="opn">(</span><span class="pln">same </span><span class="pun">?</span><span class="pln">person-1 </span><span class="pun">?</span><span class="pln">person-2</span><span class="clo">))))</span></pre></div>
+
+<p>specifies that two people live near each other if they live in the same town.
+The final <code>not</code> clause prevents the rule from saying that all people live
+near themselves.  The <code>same</code> relation is defined by a very simple
+rule:<a class="footnote_link" id="DOCF269" href="#FOOT269"><sup>269</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">same </span><span class="pun">?</span><span class="pln">x </span><span class="pun">?</span><span class="pln">x</span><span class="clo">))</span></pre></div>
+
+<p>The following rule declares that a person is a “wheel” in an organization if
+he supervises someone who is in turn a supervisor:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">wheel </span><span class="pun">?</span><span class="pln">person</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor </span><span class="pun">?</span><span class="pln">middle-manager 
+                       </span><span class="pun">?</span><span class="pln">person</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">supervisor </span><span class="pun">?</span><span class="pln">x </span><span class="pun">?</span><span class="pln">middle-manager</span><span class="clo">)))</span></pre></div>
+
+<p>The general form of a rule is
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">rule ⟨</span><var><span class="pln">conclusion</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">body</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>where <code>⟨</code><var>conclusion</var><code>⟩</code> is a pattern and <code>⟨</code><var>body</var><code>⟩</code> is any
+query.<a class="footnote_link" id="DOCF270" href="#FOOT270"><sup>270</sup></a> We can think of a rule as representing a large
+(even infinite) set of assertions, namely all instantiations of the rule
+conclusion with variable assignments that satisfy the rule body.  When we
+described simple queries (patterns), we said that an assignment to variables
+satisfies a pattern if the instantiated pattern is in the data base.  But the
+pattern needn’t be explicitly in the data base as an assertion.  It can be an
+implicit assertion implied by a rule.  For example, the query
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">lives-near </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">))</span></pre></div>
+
+<p>results in
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">lives-near </span><span class="opn">(</span><span class="pln">Reasoner Louis</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">lives-near </span><span class="opn">(</span><span class="pln">Aull DeWitt</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">))</span></pre></div>
+
+<p>To find all computer programmers who live near Ben Bitdiddle, we can ask
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">job </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">computer programmer</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">lives-near </span><span class="pun">?</span><span class="pln">x </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">)))</span></pre></div>
+
+<p>As in the case of compound procedures, rules can be used as parts of other
+rules (as we saw with the <code>lives-near</code> rule above) or even be defined
+recursively.  For instance, the rule
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">outranked-by </span><span class="pun">?</span><span class="pln">staff-person </span><span class="pun">?</span><span class="pln">boss</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor </span><span class="pun">?</span><span class="pln">staff-person </span><span class="pun">?</span><span class="pln">boss</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor </span><span class="pun">?</span><span class="pln">staff-person 
+                           </span><span class="pun">?</span><span class="pln">middle-manager</span><span class="clo">)</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">outranked-by </span><span class="pun">?</span><span class="pln">middle-manager 
+                             </span><span class="pun">?</span><span class="pln">boss</span><span class="clo">))))</span></pre></div>
+
+<p>says that a staff person is outranked by a boss in the organization if the boss
+is the person’s supervisor or (recursively) if the person’s supervisor is
+outranked by the boss.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-4_002e57"></a>Exercise 4.57:</strong> Define a rule that says that
+person 1 can replace person 2 if either person 1 does the same job as person 2
+or someone who does person 1’s job can also do person 2’s job, and if person 1
+and person 2 are not the same person. Using your rule, give queries that find
+the following:
+</p>
+<ol>
+<li> all people who can replace Cy D. Fect;
+
+</li><li> all people who can replace someone who is being paid more than they are,
+together with the two salaries.
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e58"></a>Exercise 4.58:</strong> Define a rule that says that a
+person is a “big shot” in a division if the person works in the division but
+does not have a supervisor who works in the division.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e59"></a>Exercise 4.59:</strong> Ben Bitdiddle has missed one
+meeting too many.  Fearing that his habit of forgetting meetings could cost him
+his job, Ben decides to do something about it.  He adds all the weekly meetings
+of the firm to the Microshaft data base by asserting the following:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">meeting accounting </span><span class="opn">(</span><span class="pln">Monday </span><span class="lit">9</span><span class="pln">am</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">meeting administration </span><span class="opn">(</span><span class="pln">Monday </span><span class="lit">10</span><span class="pln">am</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">meeting computer </span><span class="opn">(</span><span class="pln">Wednesday </span><span class="lit">3</span><span class="pln">pm</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">meeting administration </span><span class="opn">(</span><span class="pln">Friday </span><span class="lit">1</span><span class="pln">pm</span><span class="clo">))</span></pre></div>
+
+<p>Each of the above assertions is for a meeting of an entire division.  Ben also
+adds an entry for the company-wide meeting that spans all the divisions.  All
+of the company’s employees attend this meeting.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">meeting whole-company </span><span class="opn">(</span><span class="pln">Wednesday </span><span class="lit">4</span><span class="pln">pm</span><span class="clo">))</span></pre></div>
+
+<ol>
+<li> On Friday morning, Ben wants to query the data base for all the meetings that
+occur that day.  What query should he use?
+
+</li><li> Alyssa P. Hacker is unimpressed.  She thinks it would be much more useful to be
+able to ask for her meetings by specifying her name.  So she designs a rule
+that says that a person’s meetings include all <code>whole-company</code> meetings
+plus all meetings of that person’s division.  Fill in the body of Alyssa’s
+rule.
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">meeting-time </span><span class="pun">?</span><span class="pln">person
+                    </span><span class="pun">?</span><span class="pln">day-and-time</span><span class="clo">)</span><span class="pln">
+      ⟨</span><var><span class="pln">rule-body</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+</li><li> Alyssa arrives at work on Wednesday morning and wonders what meetings she has
+to attend that day.  Having defined the above rule, what query should she make
+to find this out?
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e60"></a>Exercise 4.60:</strong> By giving the query
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">lives-near </span><span class="pun">?</span><span class="pln">person </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">))</span></pre></div>
+
+<p>Alyssa P. Hacker is able to find people who live near her, with whom she can
+ride to work.  On the other hand, when she tries to find all pairs of people
+who live near each other by querying
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">lives-near </span><span class="pun">?</span><span class="pln">person-1 </span><span class="pun">?</span><span class="pln">person-2</span><span class="clo">)</span></pre></div>
+
+<p>she notices that each pair of people who live near each other is listed twice;
+for example,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">lives-near </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">Fect Cy D</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">lives-near </span><span class="opn">(</span><span class="pln">Fect Cy D</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">Hacker Alyssa P</span><span class="clo">))</span></pre></div>
+
+<p>Why does this happen?  Is there a way to find a list of people who live near
+each other, in which each pair appears only once?  Explain.
+</p></blockquote>
+
+<a id="Logic-as-programs"></a>
+<h5 class="subsubheading">Logic as programs</h5>
+
+<p>We can regard a rule as a kind of logical implication: <em>If</em> an assignment
+of values to pattern variables satisfies the body, <em>then</em> it satisfies the
+conclusion.  Consequently, we can regard the query language as having the
+ability to perform <a id="index-logical-deductions"></a>
+<em>logical deductions</em> based upon the rules.  As an
+example, consider the <code>append</code> operation described at the beginning of
+<a href="4_002e4.xhtml#g_t4_002e4">4.4</a>.  As we said, <code>append</code> can be characterized by the
+following two rules:
+</p>
+<ul>
+<li> For any list <code>y</code>, the empty list and <code>y</code> <code>append</code> to form
+<code>y</code>.
+
+</li><li> For any <code>u</code>, <code>v</code>, <code>y</code>, and <code>z</code>, <code>(cons u v)</code> and
+<code>y</code> <code>append</code> to form <code>(cons u z)</code> if <code>v</code> and <code>y</code>
+<code>append</code> to form <code>z</code>.
+
+</li></ul>
+
+<p>To express this in our query language, we define two rules for a relation
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">append-to-form x y z</span><span class="clo">)</span></pre></div>
+
+<p>which we can interpret to mean “<code>x</code> and <code>y</code> <code>append</code> to form
+<code>z</code>”:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">append-to-form </span><span class="opn">(</span><span class="clo">)</span><span class="pln"> </span><span class="pun">?</span><span class="pln">y </span><span class="pun">?</span><span class="pln">y</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">append-to-form </span><span class="opn">(</span><span class="pun">?</span><span class="pln">u </span><span class="pun">.</span><span class="pln"> </span><span class="pun">?</span><span class="pln">v</span><span class="clo">)</span><span class="pln"> </span><span class="pun">?</span><span class="pln">y </span><span class="opn">(</span><span class="pun">?</span><span class="pln">u </span><span class="pun">.</span><span class="pln"> </span><span class="pun">?</span><span class="pln">z</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">append-to-form </span><span class="pun">?</span><span class="pln">v </span><span class="pun">?</span><span class="pln">y </span><span class="pun">?</span><span class="pln">z</span><span class="clo">))</span></pre></div>
+
+<p>The first rule has no body, which means that the conclusion holds for any value
+of <code>?y</code>.  Note how the second rule makes use of dotted-tail notation to
+name the <code>car</code> and <code>cdr</code> of a list.
+</p>
+<p>Given these two rules, we can formulate queries that compute the <code>append</code>
+of two lists:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><i><span class="com">;;; Query input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">append-to-form </span><span class="opn">(</span><span class="pln">a b</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">c d</span><span class="clo">)</span><span class="pln"> </span><span class="pun">?</span><span class="pln">z</span><span class="clo">)</span><span class="pln">
+
+</span><i><span class="com">;;; Query results:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">append-to-form </span><span class="opn">(</span><span class="pln">a b</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">c d</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d</span><span class="clo">))</span></pre></div>
+
+<p>What is more striking, we can use the same rules to ask the question “Which
+list, when <code>append</code>ed to <code>(a b)</code>, yields <code>(a b c d)</code>?”  This is
+done as follows:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><i><span class="com">;;; Query input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">append-to-form </span><span class="opn">(</span><span class="pln">a b</span><span class="clo">)</span><span class="pln"> </span><span class="pun">?</span><span class="pln">y </span><span class="opn">(</span><span class="pln">a b c d</span><span class="clo">))</span><span class="pln">
+
+</span><i><span class="com">;;; Query results:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">append-to-form </span><span class="opn">(</span><span class="pln">a b</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">c d</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d</span><span class="clo">))</span></pre></div>
+
+<p>We can also ask for all pairs of lists that <code>append</code> to form <code>(a b c
+d)</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><i><span class="com">;;; Query input:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">append-to-form </span><span class="pun">?</span><span class="pln">x </span><span class="pun">?</span><span class="pln">y </span><span class="opn">(</span><span class="pln">a b c d</span><span class="clo">))</span><span class="pln">
+
+</span><i><span class="com">;;; Query results:</span></i><span class="pln">
+</span><span class="opn">(</span><span class="pln">append-to-form </span><span class="opn">(</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">append-to-form </span><span class="opn">(</span><span class="pln">a</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">b c d</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">append-to-form </span><span class="opn">(</span><span class="pln">a b</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">c d</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">append-to-form </span><span class="opn">(</span><span class="pln">a b c</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">d</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">append-to-form </span><span class="opn">(</span><span class="pln">a b c d</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d</span><span class="clo">))</span></pre></div>
+
+<p>The query system may seem to exhibit quite a bit of intelligence in using the
+rules to deduce the answers to the queries above.  Actually, as we will see in
+the next section, the system is following a well-determined algorithm in
+unraveling the rules.  Unfortunately, although the system works impressively in
+the <code>append</code> case, the general methods may break down in more complex
+cases, as we will see in <a href="4_002e4_002e3.xhtml#g_t4_002e4_002e3">4.4.3</a>.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-4_002e61"></a>Exercise 4.61:</strong> The following rules implement a
+<code>next-to</code> relation that finds adjacent elements of a list:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pun">?</span><span class="pln">x next-to </span><span class="pun">?</span><span class="pln">y in </span><span class="opn">(</span><span class="pun">?</span><span class="pln">x </span><span class="pun">?</span><span class="pln">y </span><span class="pun">.</span><span class="pln"> </span><span class="pun">?</span><span class="pln">u</span><span class="clo">)))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pun">?</span><span class="pln">x next-to </span><span class="pun">?</span><span class="pln">y in </span><span class="opn">(</span><span class="pun">?</span><span class="pln">v </span><span class="pun">.</span><span class="pln"> </span><span class="pun">?</span><span class="pln">z</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pun">?</span><span class="pln">x next-to </span><span class="pun">?</span><span class="pln">y in </span><span class="pun">?</span><span class="pln">z</span><span class="clo">))</span></pre></div>
+
+<p>What will the response be to the following queries?
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">?</span><span class="pln">x next-to </span><span class="pun">?</span><span class="pln">y in </span><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="clo">)</span><span class="pln"> </span><span class="lit">4</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pun">?</span><span class="pln">x next-to </span><span class="lit">1</span><span class="pln"> in </span><span class="opn">(</span><span class="lit">2</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e62"></a>Exercise 4.62:</strong> Define rules to implement the
+<code>last-pair</code> operation of <a href="2_002e2_002e1.xhtml#Exercise-2_002e17">Exercise 2.17</a>, which returns a list
+containing the last element of a nonempty list.  Check your rules on queries
+such as <code>(last-pair (3) ?x)</code>, <code>(last-pair (1 2 3) ?x)</code> and
+<code>(last-pair (2 ?x) (3))</code>.  Do your rules work correctly on queries such as
+<code>(last-pair ?x (3))</code>?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e63"></a>Exercise 4.63:</strong> The following data base (see
+Genesis 4) traces the genealogy of the descendants of Ada back to Adam, by way
+of Cain:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">son Adam Cain</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">son Cain Enoch</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">son Enoch Irad</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">son Irad Mehujael</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">son Mehujael Methushael</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">son Methushael Lamech</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">wife Lamech Ada</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">son Ada Jabal</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">son Ada Jubal</span><span class="clo">)</span></pre></div>
+
+<p>Formulate rules such as “If <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>S</mi>
+</math> is the son of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> is the son of
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>G</mi>
+</math>, then <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>S</mi>
+</math> is the grandson of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>G</mi>
+</math>” and “If <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>W</mi>
+</math> is the wife of
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>M</mi>
+</math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>S</mi>
+</math> is the son of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>W</mi>
+</math>, then <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>S</mi>
+</math> is the son of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>M</mi>
+</math>” (which
+was supposedly more true in biblical times than today) that will enable the
+query system to find the grandson of Cain; the sons of Lamech; the grandsons of
+Methushael.  (See <a href="4_002e4_002e3.xhtml#Exercise-4_002e69">Exercise 4.69</a> for some rules to deduce more complicated
+relationships.)
+</p></blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT266"><p><a class="footnote_backlink" href="#DOCF266"><sup>266</sup></a>
+This uses the dotted-tail notation
+introduced in <a href="2_002e2_002e1.xhtml#Exercise-2_002e20">Exercise 2.20</a>.</p>
+</div>
+<div id="FOOT267"><p><a class="footnote_backlink" href="#DOCF267"><sup>267</sup></a>
+Actually, this description of <code>not</code> is valid
+only for simple cases.  The real behavior of <code>not</code> is more complex.  We
+will examine <code>not</code>’s peculiarities in <a href="4_002e4_002e2.xhtml#g_t4_002e4_002e2">4.4.2</a> and
+<a href="4_002e4_002e3.xhtml#g_t4_002e4_002e3">4.4.3</a>.</p>
+</div>
+<div id="FOOT268"><p><a class="footnote_backlink" href="#DOCF268"><sup>268</sup></a>
+<code>Lisp-value</code> should be used
+only to perform an operation not provided in the query language.  In
+particular, it should not be used to test equality (since that is what the
+matching in the query language is designed to do) or inequality (since that can
+be done with the <code>same</code> rule shown below).</p>
+</div>
+<div id="FOOT269"><p><a class="footnote_backlink" href="#DOCF269"><sup>269</sup></a>
+Notice that we do not need <code>same</code> in order to make two
+things be the same: We just use the same pattern variable for each—in effect,
+we have one thing instead of two things in the first place.  For example, see
+<code>?town</code> in the <code>lives-near</code> rule and <code>?middle-manager</code> in the
+<code>wheel</code> rule below.  <code>Same</code> is useful when we want to force two
+things to be different, such as <code>?person-1</code> and <code>?person-2</code> in the
+<code>lives-near</code> rule.  Although using the same pattern variable in two parts
+of a query forces the same value to appear in both places, using different
+pattern variables does not force different values to appear.  (The values
+assigned to different pattern variables may be the same or different.)</p>
+</div>
+<div id="FOOT270"><p><a class="footnote_backlink" href="#DOCF270"><sup>270</sup></a>
+We will also allow rules without bodies, as in <code>same</code>, and
+we will interpret such a rule to mean that the rule conclusion is satisfied by
+any values of the variables.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="4_002e4_002e2.xhtml#g_t4_002e4_002e2" accesskey="n" rel="next">4.4.2</a>, Previous: <a href="4_002e4.xhtml#g_t4_002e4" accesskey="p" rel="prev">4.4</a>, Up: <a href="4_002e4.xhtml#g_t4_002e4" accesskey="u" rel="prev">4.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

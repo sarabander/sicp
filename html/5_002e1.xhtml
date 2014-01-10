@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 5.1</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 5.1" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 5.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-5.xhtml#Chapter-5" rel="prev" title="Chapter 5" />
+<link href="5_002e1_002e1.xhtml#g_t5_002e1_002e1" rel="next" title="5.1.1" />
+<link href="Chapter-5.xhtml#Chapter-5" rel="prev" title="Chapter 5" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t5_002e1"></a>
+<nav class="header">
+<p>
+Next: <a href="5_002e1_002e1.xhtml#g_t5_002e1_002e1" accesskey="n" rel="next">5.1.1</a>, Previous: <a href="Chapter-5.xhtml#Chapter-5" accesskey="p" rel="prev">Chapter 5</a>, Up: <a href="Chapter-5.xhtml#Chapter-5" accesskey="u" rel="prev">Chapter 5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Designing-Register-Machines"></a>
+<h3 class="section"><span class="secnum">5.1</span><span class="sectitle">Designing Register Machines</span></h3>
+
+<p>To design a register machine, we must design its <a id="index-data-paths"></a>
+<em>data paths</em>
+(registers and operations) and the <a id="index-controller"></a>
+<em>controller</em> that sequences these
+operations.  To illustrate the design of a simple register machine, let us
+examine Euclid’s Algorithm, which is used to compute the greatest common
+divisor (<abbr>GCD</abbr>) of two integers.  As we saw in <a href="1_002e2_002e5.xhtml#g_t1_002e2_002e5">1.2.5</a>,
+Euclid’s Algorithm can be carried out by an iterative process, as specified by
+the following procedure:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">gcd a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> b </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+      a
+      </span><span class="opn">(</span><span class="pln">gcd b </span><span class="opn">(</span><span class="pln">remainder a b</span><span class="clo">))))</span></pre></div>
+
+<p>A machine to carry out this algorithm must keep track of two numbers, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> and
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>, so let us assume that these numbers are stored in two registers with
+those names.  The basic operations required are testing whether the contents of
+register <code>b</code> is zero and computing the remainder of the contents of
+register <code>a</code> divided by the contents of register <code>b</code>.  The remainder
+operation is a complex process, but assume for the moment that we have a
+primitive device that computes remainders.  On each cycle of the <abbr>GCD</abbr>
+algorithm, the contents of register <code>a</code> must be replaced by the contents
+of register <code>b</code>, and the contents of <code>b</code> must be replaced by the
+remainder of the old contents of <code>a</code> divided by the old contents of
+<code>b</code>.  It would be convenient if these replacements could be done
+simultaneously, but in our model of register machines we will assume that only
+one register can be assigned a new value at each step.  To accomplish the
+replacements, our machine will use a third “temporary” register, which we
+call <code>t</code>.  (First the remainder will be placed in <code>t</code>, then the
+contents of <code>b</code> will be placed in <code>a</code>, and finally the remainder
+stored in <code>t</code> will be placed in <code>b</code>.)
+</p>
+<p>We can illustrate the registers and operations required for this machine by
+using the data-path diagram shown in <a href="#Figure-5_002e1">Figure 5.1</a>.  In this diagram, the
+registers (<code>a</code>, <code>b</code>, and <code>t</code>) are represented by rectangles.
+Each way to assign a value to a register is indicated by an arrow with an
+<code>X</code> behind the head, pointing from the source of data to the register.  We
+can think of the <code>X</code> as a button that, when pushed, allows the value at
+the source to “flow” into the designated register.  The label next to each
+button is the name we will use to refer to the button.  The names are
+arbitrary, and can be chosen to have mnemonic value (for example, <code>a&lt;-b</code>
+denotes pushing the button that assigns the contents of register <code>b</code> to
+register <code>a</code>).  The source of data for a register can be another register
+(as in the <code>a&lt;-b</code> assignment), an operation result (as in the <code>t&lt;-r</code>
+assignment), or a constant (a built-in value that cannot be changed,
+represented in a data-path diagram by a triangle containing the constant).
+</p>
+<figure class="float">
+<a id="Figure-5_002e1"></a>
+<object style="width: 37.90ex; height: 26.07ex;" data="fig/chap5/Fig5.1a.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 5.1:</strong> Data paths for a <abbr>GCD</abbr> machine.</p>
+</figcaption>
+</figure>
+
+<p>An operation that computes a value from constants and the contents of registers
+is represented in a data-path diagram by a trapezoid containing a name for the
+operation.  For example, the box marked <code>rem</code> in <a href="#Figure-5_002e1">Figure 5.1</a>
+represents an operation that computes the remainder of the contents of the
+registers <code>a</code> and <code>b</code> to which it is attached.  Arrows (without
+buttons) point from the input registers and constants to the box, and arrows
+connect the operation’s output value to registers.  A test is represented by a
+circle containing a name for the test.  For example, our <abbr>GCD</abbr> machine
+has an operation that tests whether the contents of register <code>b</code> is zero.
+A test also has arrows from its input registers and constants, but it has no
+output arrows; its value is used by the controller rather than by the data
+paths.  Overall, the data-path diagram shows the registers and operations that
+are required for the machine and how they must be connected.  If we view the
+arrows as wires and the <code>X</code> buttons as switches, the data-path diagram is
+very like the wiring diagram for a machine that could be constructed from
+electrical components.
+</p>
+<p>In order for the data paths to actually compute <abbr>GCD</abbr>s, the buttons
+must be pushed in the correct sequence.  We will describe this sequence in
+terms of a controller diagram, as illustrated in <a href="#Figure-5_002e2">Figure 5.2</a>.  The
+elements of the controller diagram indicate how the data-path components should
+be operated.  The rectangular boxes in the controller diagram identify
+data-path buttons to be pushed, and the arrows describe the sequencing from one
+step to the next.  The diamond in the diagram represents a decision.  One of
+the two sequencing arrows will be followed, depending on the value of the
+data-path test identified in the diamond.  We can interpret the controller in
+terms of a physical analogy: Think of the diagram as a maze in which a marble
+is rolling.  When the marble rolls into a box, it pushes the data-path button
+that is named by the box.  When the marble rolls into a decision node (such as
+the test for <code>b</code> = 0), it leaves the node on the path determined by the
+result of the indicated test.  Taken together, the data paths and the
+controller completely describe a machine for computing <abbr>GCD</abbr>s.  We
+start the controller (the rolling marble) at the place marked <code>start</code>,
+after placing numbers in registers <code>a</code> and <code>b</code>.  When the controller
+reaches <code>done</code>, we will find the value of the <abbr>GCD</abbr> in register
+<code>a</code>.
+</p>
+<figure class="float">
+<a id="Figure-5_002e2"></a>
+<object style="width: 27.46ex; height: 30.74ex;" data="fig/chap5/Fig5.2.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 5.2:</strong> Controller for a <abbr>GCD</abbr> machine.</p>
+</figcaption>
+</figure>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e1"></a>Exercise 5.1:</strong> Design a register machine to
+compute factorials using the iterative algorithm specified by the following
+procedure.  Draw data-path and controller diagrams for this machine.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">iter product counter</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> counter n</span><span class="clo">)</span><span class="pln">
+        product
+        </span><span class="opn">(</span><span class="pln">iter </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> counter product</span><span class="clo">)</span><span class="pln">
+              </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> counter </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">iter </span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))</span></pre></div>
+</blockquote>
+
+<table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e1_002e1.xhtml#g_t5_002e1_002e1" accesskey="1">5.1.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">A Language for Describing Register Machines
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e1_002e2.xhtml#g_t5_002e1_002e2" accesskey="2">5.1.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Abstraction in Machine Design
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e1_002e3.xhtml#g_t5_002e1_002e3" accesskey="3">5.1.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Subroutines
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e1_002e4.xhtml#g_t5_002e1_002e4" accesskey="4">5.1.4</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Using a Stack to Implement Recursion
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e1_002e5.xhtml#g_t5_002e1_002e5" accesskey="5">5.1.5</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Instruction Summary
+</td></tr>
+</table>
+
+<hr />
+<nav class="header">
+<p>
+Next: <a href="5_002e1_002e1.xhtml#g_t5_002e1_002e1" accesskey="n" rel="next">5.1.1</a>, Previous: <a href="Chapter-5.xhtml#Chapter-5" accesskey="p" rel="prev">Chapter 5</a>, Up: <a href="Chapter-5.xhtml#Chapter-5" accesskey="u" rel="prev">Chapter 5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

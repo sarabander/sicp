@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 3.4.1</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 3.4.1" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 3.4.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="3_002e4.xhtml#g_t3_002e4" rel="prev" title="3.4" />
+<link href="3_002e4_002e2.xhtml#g_t3_002e4_002e2" rel="next" title="3.4.2" />
+<link href="3_002e4.xhtml#g_t3_002e4" rel="prev" title="3.4" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t3_002e4_002e1"></a>
+<nav class="header">
+<p>
+Next: <a href="3_002e4_002e2.xhtml#g_t3_002e4_002e2" accesskey="n" rel="next">3.4.2</a>, Previous: <a href="3_002e4.xhtml#g_t3_002e4" accesskey="p" rel="prev">3.4</a>, Up: <a href="3_002e4.xhtml#g_t3_002e4" accesskey="u" rel="prev">3.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="The-Nature-of-Time-in-Concurrent-Systems"></a>
+<h4 class="subsection"><span class="secnum">3.4.1</span><span class="sectitle">The Nature of Time in Concurrent Systems</span></h4>
+
+<p>On the surface, time seems straightforward.  It is an ordering imposed on
+events.<a class="footnote_link" id="DOCF163" href="#FOOT163"><sup>163</sup></a>  For any events <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>A</mi>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>B</mi>
+</math>, either <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>A</mi>
+</math> occurs before <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>B</mi>
+</math>,
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>A</mi>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>B</mi>
+</math> are simultaneous, or <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>A</mi>
+</math> occurs after <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>B</mi>
+</math>.  For instance,
+returning to the bank account example, suppose that Peter withdraws $10 and
+Paul withdraws $25 from a joint account that initially contains $100, leaving
+$65 in the account.  Depending on the order of the two withdrawals, the
+sequence of balances in the account is either $100 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo stretchy="false">→<!-- → --></mo>
+</math> $90 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo stretchy="false">→<!-- → --></mo>
+</math> $65 or $100 <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo stretchy="false">→<!-- → --></mo>
+</math> $75
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo stretchy="false">→<!-- → --></mo>
+</math> $65.  In a computer implementation of the banking system, this changing
+sequence of balances could be modeled by successive assignments to a variable
+<code>balance</code>.
+</p>
+<p>In complex situations, however, such a view can be problematic.  Suppose that
+Peter and Paul, and other people besides, are accessing the same bank account
+through a network of banking machines distributed all over the world.  The
+actual sequence of balances in the account will depend critically on the
+detailed timing of the accesses and the details of the communication among the
+machines.
+</p>
+<p>This indeterminacy in the order of events can pose serious problems in the
+design of concurrent systems.  For instance, suppose that the withdrawals made
+by Peter and Paul are implemented as two separate processes sharing a common
+variable <code>balance</code>, each process specified by the procedure given in
+<a href="3_002e1_002e1.xhtml#g_t3_002e1_002e1">3.1.1</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">withdraw amount</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&gt;=</span><span class="pln"> balance amount</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">begin</span><span class="pln"> 
+        </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> balance 
+              </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> balance amount</span><span class="clo">))</span><span class="pln">
+        balance</span><span class="clo">)</span><span class="pln">
+      </span><span class="str">"Insufficient funds"</span><span class="clo">))</span></pre></div>
+
+<p>If the two processes operate independently, then Peter might test the
+balance and attempt to withdraw a legitimate amount.  However, Paul
+might withdraw some funds in between the time that Peter checks the
+balance and the time Peter completes the withdrawal, thus invalidating
+Peter’s test.
+</p>
+<p>Things can be worse still.  Consider the expression
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> balance </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> balance amount</span><span class="clo">))</span></pre></div>
+
+<p>executed as part of each withdrawal process.  This consists of three steps: (1)
+accessing the value of the <code>balance</code> variable; (2) computing the new
+balance; (3) setting <code>balance</code> to this new value.  If Peter and Paul’s
+withdrawals execute this statement concurrently, then the two withdrawals might
+interleave the order in which they access <code>balance</code> and set it to the new
+value.
+</p>
+<p>The timing diagram in <a href="#Figure-3_002e29">Figure 3.29</a> depicts an order of events where
+<code>balance</code> starts at 100, Peter withdraws 10, Paul withdraws 25, and yet
+the final value of <code>balance</code> is 75.  As shown in the diagram, the reason
+for this anomaly is that Paul’s assignment of 75 to <code>balance</code> is made
+under the assumption that the value of <code>balance</code> to be decremented is 100.
+That assumption, however, became invalid when Peter changed <code>balance</code> to
+90.  This is a catastrophic failure for the banking system, because the total
+amount of money in the system is not conserved.  Before the transactions, the
+total amount of money was $100.  Afterwards, Peter has $10, Paul has $25, and
+the bank has $75.<a class="footnote_link" id="DOCF164" href="#FOOT164"><sup>164</sup></a>
+</p>
+<figure class="float">
+<a id="Figure-3_002e29"></a>
+<object style="width: 60.18ex; height: 57.93ex;" data="fig/chap3/Fig3.29b.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 3.29:</strong> Timing diagram showing how interleaving the order of events in two banking withdrawals can lead to an incorrect final balance.</p>
+</figcaption>
+</figure>
+
+<p>The general phenomenon illustrated here is that several processes may share a
+common state variable.  What makes this complicated is that more than one
+process may be trying to manipulate the shared state at the same time.  For the
+bank account example, during each transaction, each customer should be able to
+act as if the other customers did not exist.  When a customer changes the
+balance in a way that depends on the balance, he must be able to assume that,
+just before the moment of change, the balance is still what he thought it was.
+</p>
+<a id="Correct-behavior-of-concurrent-programs"></a>
+<h5 class="subsubheading">Correct behavior of concurrent programs</h5>
+
+<p>The above example typifies the subtle bugs that can creep into concurrent
+programs.  The root of this complexity lies in the assignments to variables
+that are shared among the different processes.  We already know that we must be
+careful in writing programs that use <code>set!</code>, because the results of a
+computation depend on the order in which the assignments occur.<a class="footnote_link" id="DOCF165" href="#FOOT165"><sup>165</sup></a>  With concurrent processes we must be especially careful
+about assignments, because we may not be able to control the order of the
+assignments made by the different processes.  If several such changes might be
+made concurrently (as with two depositors accessing a joint account) we need
+some way to ensure that our system behaves correctly.  For example, in the case
+of withdrawals from a joint bank account, we must ensure that money is
+conserved.  To make concurrent programs behave correctly, we may have to place
+some restrictions on concurrent execution.
+</p>
+<p>One possible restriction on concurrency would stipulate that no two operations
+that change any shared state variables can occur at the same time.  This is an
+extremely stringent requirement.  For distributed banking, it would require the
+system designer to ensure that only one transaction could proceed at a time.
+This would be both inefficient and overly conservative.  <a href="#Figure-3_002e30">Figure 3.30</a>
+shows Peter and Paul sharing a bank account, where Paul has a private account
+as well.  The diagram illustrates two withdrawals from the shared account (one
+by Peter and one by Paul) and a deposit to Paul’s private account.<a class="footnote_link" id="DOCF166" href="#FOOT166"><sup>166</sup></a>  The two withdrawals from the
+shared account must not be concurrent (since both access and update the same
+account), and Paul’s deposit and withdrawal must not be concurrent (since both
+access and update the amount in Paul’s wallet).  But there should be no problem
+permitting Paul’s deposit to his private account to proceed concurrently with
+Peter’s withdrawal from the shared account.
+</p>
+<figure class="float">
+<a id="Figure-3_002e30"></a>
+<object style="width: 67.52ex; height: 52.84ex;" data="fig/chap3/Fig3.30c.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 3.30:</strong> Concurrent deposits and withdrawals from a joint account in Bank1 and a private account in Bank2.</p>
+</figcaption>
+</figure>
+
+<p>A less stringent restriction on concurrency would ensure that a concurrent
+system produces the same result as if the processes had run sequentially in
+some order.  There are two important aspects to this requirement.  First, it
+does not require the processes to actually run sequentially, but only to
+produce results that are the same <em>as if</em> they had run sequentially.  For
+the example in <a href="#Figure-3_002e30">Figure 3.30</a>, the designer of the bank account system can
+safely allow Paul’s deposit and Peter’s withdrawal to happen concurrently,
+because the net result will be the same as if the two operations had happened
+sequentially.  Second, there may be more than one possible “correct” result
+produced by a concurrent program, because we require only that the result be
+the same as for <em>some</em> sequential order.  For example, suppose that Peter
+and Paul’s joint account starts out with $100, and Peter deposits $40 while
+Paul concurrently withdraws half the money in the account.  Then sequential
+execution could result in the account balance being either $70 or $90 (see
+<a href="#Exercise-3_002e38">Exercise 3.38</a>).<a class="footnote_link" id="DOCF167" href="#FOOT167"><sup>167</sup></a>
+</p>
+<p>There are still weaker requirements for correct execution of concurrent
+programs.  A program for simulating diffusion (say, the flow of heat in an
+object) might consist of a large number of processes, each one representing a
+small volume of space, that update their values concurrently.  Each process
+repeatedly changes its value to the average of its own value and its neighbors’
+values.  This algorithm converges to the right answer independent of the order
+in which the operations are done; there is no need for any restrictions on
+concurrent use of the shared values.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-3_002e38"></a>Exercise 3.38:</strong> Suppose that Peter, Paul, and
+Mary share a joint bank account that initially contains $100.  Concurrently,
+Peter deposits $10, Paul withdraws $20, and Mary withdraws half the money in
+the account, by executing the following commands:
+</p>
+<div class="example">
+<pre class="example">Peter: (set! balance (+ balance 10))
+Paul:  (set! balance (- balance 20))
+Mary:  (set! balance (- balance 
+                        (/ balance 2)))
+</pre></div>
+
+<ol>
+<li> List all the different possible values for <code>balance</code> after these three
+transactions have been completed, assuming that the banking system forces the
+three processes to run sequentially in some order.
+
+</li><li> What are some other values that could be produced if the system allows the
+processes to be interleaved?  Draw timing diagrams like the one in <a href="#Figure-3_002e29">Figure 3.29</a> 
+to explain how these values can occur.
+
+</li></ol>
+</blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT163"><p><a class="footnote_backlink" href="#DOCF163"><sup>163</sup></a>
+To quote some graffiti seen on a Cambridge building wall:
+“Time is a device that was invented to keep everything from happening at
+once.”</p>
+</div>
+<div id="FOOT164"><p><a class="footnote_backlink" href="#DOCF164"><sup>164</sup></a>
+An even worse failure for this system could occur if
+the two <code>set!</code> operations attempt to change the balance simultaneously, in
+which case the actual data appearing in memory might end up being a random
+combination of the information being written by the two processes.  Most
+computers have interlocks on the primitive memory-write operations, which
+protect against such simultaneous access.  Even this seemingly simple kind of
+protection, however, raises implementation challenges in the design of
+multiprocessing computers, where elaborate <a id="index-cache_002dcoherence"></a>
+<em>cache-coherence</em> protocols
+are required to ensure that the various processors will maintain a consistent
+view of memory contents, despite the fact that data may be replicated
+(“cached”) among the different processors to increase the speed of memory
+access.</p>
+</div>
+<div id="FOOT165"><p><a class="footnote_backlink" href="#DOCF165"><sup>165</sup></a>
+The
+factorial program in <a href="3_002e1_002e3.xhtml#g_t3_002e1_002e3">3.1.3</a> illustrates this for a single
+sequential process.</p>
+</div>
+<div id="FOOT166"><p><a class="footnote_backlink" href="#DOCF166"><sup>166</sup></a>
+The
+columns show the contents of Peter’s wallet, the joint account (in Bank1),
+Paul’s wallet, and Paul’s private account (in Bank2), before and after each
+withdrawal (W) and deposit (D).  Peter withdraws $10 from Bank1; Paul deposits
+$5 in Bank2, then withdraws $25 from Bank1.</p>
+</div>
+<div id="FOOT167"><p><a class="footnote_backlink" href="#DOCF167"><sup>167</sup></a>
+<a id="Footnote-167"></a>A more formal
+way to express this idea is to say that concurrent programs are inherently
+<a id="index-nondeterministic"></a>
+<em>nondeterministic</em>. That is, they are described not by single-valued
+functions, but by functions whose results are sets of possible values.  In
+<a href="4_002e3.xhtml#g_t4_002e3">4.3</a> we will study a language for expressing nondeterministic
+computations.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="3_002e4_002e2.xhtml#g_t3_002e4_002e2" accesskey="n" rel="next">3.4.2</a>, Previous: <a href="3_002e4.xhtml#g_t3_002e4" accesskey="p" rel="prev">3.4</a>, Up: <a href="3_002e4.xhtml#g_t3_002e4" accesskey="u" rel="prev">3.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

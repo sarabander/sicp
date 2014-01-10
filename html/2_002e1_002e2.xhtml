@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 2.1.2</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 2.1.2" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 2.1.2" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="2_002e1.xhtml#g_t2_002e1" rel="prev" title="2.1" />
+<link href="2_002e1_002e3.xhtml#g_t2_002e1_002e3" rel="next" title="2.1.3" />
+<link href="2_002e1_002e1.xhtml#g_t2_002e1_002e1" rel="prev" title="2.1.1" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t2_002e1_002e2"></a>
+<nav class="header">
+<p>
+Next: <a href="2_002e1_002e3.xhtml#g_t2_002e1_002e3" accesskey="n" rel="next">2.1.3</a>, Previous: <a href="2_002e1_002e1.xhtml#g_t2_002e1_002e1" accesskey="p" rel="prev">2.1.1</a>, Up: <a href="2_002e1.xhtml#g_t2_002e1" accesskey="u" rel="prev">2.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Abstraction-Barriers"></a>
+<h4 class="subsection"><span class="secnum">2.1.2</span><span class="sectitle">Abstraction Barriers</span></h4>
+
+<p>Before continuing with more examples of compound data and data abstraction, let
+us consider some of the issues raised by the rational-number example.  We
+defined the rational-number operations in terms of a constructor
+<code>make-rat</code> and selectors <code>numer</code> and <code>denom</code>.  In general, the
+underlying idea of data abstraction is to identify for each type of data object
+a basic set of operations in terms of which all manipulations of data objects
+of that type will be expressed, and then to use only those operations in
+manipulating the data.
+</p>
+<p>We can envision the structure of the rational-number system as shown in 
+<a href="#Figure-2_002e1">Figure 2.1</a>.  The horizontal lines represent <a id="index-abstraction-barriers-1"></a>
+<em>abstraction barriers</em> 
+that isolate different “levels” of the system.  At each level, the
+barrier separates the programs (above) that use the data abstraction from the
+programs (below) that implement the data abstraction.  Programs that use
+rational numbers manipulate them solely in terms of the procedures supplied
+“for public use” by the rational-number package: <code>add-rat</code>,
+<code>sub-rat</code>, <code>mul-rat</code>, <code>div-rat</code>, and <code>equal-rat?</code>. These,
+in turn, are implemented solely in terms of the constructor and selectors
+<code>make-rat</code>, <code>numer</code>, and <code>denom</code>, which themselves are
+implemented in terms of pairs.  The details of how pairs are implemented are
+irrelevant to the rest of the rational-number package so long as pairs can be
+manipulated by the use of <code>cons</code>, <code>car</code>, and <code>cdr</code>.  In effect,
+procedures at each level are the interfaces that define the abstraction
+barriers and connect the different levels.
+</p>
+<figure class="float">
+<a id="Figure-2_002e1"></a>
+<object style="width: 48.87ex; height: 38.08ex;" data="fig/chap2/Fig2.1d.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.1:</strong> Data-abstraction barriers in the rational-number package.</p>
+</figcaption>
+</figure>
+
+<p>This simple idea has many advantages.  One advantage is that it makes programs
+much easier to maintain and to modify.  Any complex data structure can be
+represented in a variety of ways with the primitive data structures provided by
+a programming language.  Of course, the choice of representation influences the
+programs that operate on it; thus, if the representation were to be changed at
+some later time, all such programs might have to be modified accordingly.  This
+task could be time-consuming and expensive in the case of large programs unless
+the dependence on the representation were to be confined by design to a very
+few program modules.
+</p>
+<p>For example, an alternate way to address the problem of reducing rational
+numbers to lowest terms is to perform the reduction whenever we access the
+parts of a rational number, rather than when we construct it.  This leads to
+different constructor and selector procedures:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-rat n d</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> n d</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">g </span><span class="opn">(</span><span class="pln">gcd </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">))))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> g</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">g </span><span class="opn">(</span><span class="pln">gcd </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">))))</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> g</span><span class="clo">)))</span></pre></div>
+
+<p>The difference between this implementation and the previous one lies in when we
+compute the <code>gcd</code>.  If in our typical use of rational numbers we access
+the numerators and denominators of the same rational numbers many times, it
+would be preferable to compute the <code>gcd</code> when the rational numbers are
+constructed.  If not, we may be better off waiting until access time to compute
+the <code>gcd</code>.  In any case, when we change from one representation to the
+other, the procedures <code>add-rat</code>, <code>sub-rat</code>, and so on do not have to
+be modified at all.
+</p>
+<p>Constraining the dependence on the representation to a few interface procedures
+helps us design programs as well as modify them, because it allows us to
+maintain the flexibility to consider alternate implementations.  To continue
+with our simple example, suppose we are designing a rational-number package and
+we can’t decide initially whether to perform the <code>gcd</code> at construction
+time or at selection time.  The data-abstraction methodology gives us a way to
+defer that decision without losing the ability to make progress on the rest of
+the system.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e2"></a>Exercise 2.2:</strong> Consider the problem of
+representing line segments in a plane.  Each segment is represented as a pair
+of points: a starting point and an ending point.  Define a constructor
+<code>make-segment</code> and selectors <code>start-segment</code> and <code>end-segment</code>
+that define the representation of segments in terms of points.  Furthermore, a
+point can be represented as a pair of numbers: the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> coordinate and the
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> coordinate.  Accordingly, specify a constructor <code>make-point</code> and
+selectors <code>x-point</code> and <code>y-point</code> that define this representation.
+Finally, using your selectors and constructors, define a procedure
+<code>midpoint-segment</code> that takes a line segment as argument and returns its
+midpoint (the point whose coordinates are the average of the coordinates of the
+endpoints).  To try your procedures, you’ll need a way to print points:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">print-point p</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">display </span><span class="str">"("</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">display </span><span class="opn">(</span><span class="pln">x-point p</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">display </span><span class="str">","</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">display </span><span class="opn">(</span><span class="pln">y-point p</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">display </span><span class="str">")"</span><span class="clo">))</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e3"></a>Exercise 2.3:</strong> Implement a representation for
+rectangles in a plane.  (Hint: You may want to make use of <a href="#Exercise-2_002e2">Exercise 2.2</a>.)
+In terms of your constructors and selectors, create procedures that compute the
+perimeter and the area of a given rectangle.  Now implement a different
+representation for rectangles.  Can you design your system with suitable
+abstraction barriers, so that the same perimeter and area procedures will work
+using either representation?
+</p></blockquote>
+
+<hr />
+<nav class="header">
+<p>
+Next: <a href="2_002e1_002e3.xhtml#g_t2_002e1_002e3" accesskey="n" rel="next">2.1.3</a>, Previous: <a href="2_002e1_002e1.xhtml#g_t2_002e1_002e1" accesskey="p" rel="prev">2.1.1</a>, Up: <a href="2_002e1.xhtml#g_t2_002e1" accesskey="u" rel="prev">2.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

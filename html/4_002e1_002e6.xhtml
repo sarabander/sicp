@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 4.1.6</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.1.6" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.1.6" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="4_002e1.xhtml#g_t4_002e1" rel="prev" title="4.1" />
+<link href="4_002e1_002e7.xhtml#g_t4_002e1_002e7" rel="next" title="4.1.7" />
+<link href="4_002e1_002e5.xhtml#g_t4_002e1_002e5" rel="prev" title="4.1.5" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t4_002e1_002e6"></a>
+<nav class="header">
+<p>
+Next: <a href="4_002e1_002e7.xhtml#g_t4_002e1_002e7" accesskey="n" rel="next">4.1.7</a>, Previous: <a href="4_002e1_002e5.xhtml#g_t4_002e1_002e5" accesskey="p" rel="prev">4.1.5</a>, Up: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="u" rel="prev">4.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Internal-Definitions-1"></a>
+<h4 class="subsection"><span class="secnum">4.1.6</span><span class="sectitle">Internal Definitions</span></h4>
+
+<p>Our environment model of evaluation and our metacircular evaluator execute
+definitions in sequence, extending the environment frame one definition at a
+time.  This is particularly convenient for interactive program development, in
+which the programmer needs to freely mix the application of procedures with the
+definition of new procedures.  However, if we think carefully about the
+internal definitions used to implement block structure (introduced in 
+<a href="1_002e1_002e8.xhtml#g_t1_002e1_002e8">1.1.8</a>), we will find that name-by-name extension of the environment may
+not be the best way to define local variables.
+</p>
+<p>Consider a procedure with internal definitions, such as
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">even? n</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        true
+        </span><span class="opn">(</span><span class="pln">odd? </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">odd? n</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        false
+        </span><span class="opn">(</span><span class="pln">even? </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+  ⟨</span><var><span class="pln">rest of body of </span><code><span class="pln">f</span></code></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>Our intention here is that the name <code>odd?</code> in the body of the procedure
+<code>even?</code> should refer to the procedure <code>odd?</code> that is defined after
+<code>even?</code>.  The scope of the name <code>odd?</code> is the entire body of
+<code>f</code>, not just the portion of the body of <code>f</code> starting at the point
+where the <code>define</code> for <code>odd?</code> occurs.  Indeed, when we consider that
+<code>odd?</code> is itself defined in terms of <code>even?</code>—so that <code>even?</code>
+and <code>odd?</code> are mutually recursive procedures—we see that the only
+satisfactory interpretation of the two <code>define</code>s is to regard them as if
+the names <code>even?</code> and <code>odd?</code> were being added to the environment
+simultaneously.  More generally, in block structure, the scope of a local name
+is the entire procedure body in which the <code>define</code> is evaluated.
+</p>
+<p>As it happens, our interpreter will evaluate calls to <code>f</code> correctly, but
+for an “accidental” reason: Since the definitions of the internal procedures
+come first, no calls to these procedures will be evaluated until all of them
+have been defined.  Hence, <code>odd?</code>  will have been defined by the time
+<code>even?</code> is executed.  In fact, our sequential evaluation mechanism will
+give the same result as a mechanism that directly implements simultaneous
+definition for any procedure in which the internal definitions come first in a
+body and evaluation of the value expressions for the defined variables doesn’t
+actually use any of the defined variables.  (For an example of a procedure that
+doesn’t obey these restrictions, so that sequential definition isn’t equivalent
+to simultaneous definition, see <a href="#Exercise-4_002e19">Exercise 4.19</a>.)<a class="footnote_link" id="DOCF228" href="#FOOT228"><sup>228</sup></a>
+</p>
+<p>There is, however, a simple way to treat definitions so that internally defined
+names have truly simultaneous scope—just create all local variables that will
+be in the current environment before evaluating any of the value expressions.
+One way to do this is by a syntax transformation on <code>lambda</code> expressions.
+Before evaluating the body of a <code>lambda</code> expression, we “scan out” and
+eliminate all the internal definitions in the body.  The internally defined
+variables will be created with a <code>let</code> and then set to their values by
+assignment.  For example, the procedure
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> ⟨</span><var><span class="pln">vars</span></var><span class="pln">⟩
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> u ⟨</span><var><span class="pln">e1</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> v ⟨</span><var><span class="pln">e2</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+  ⟨</span><var><span class="pln">e3</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>would be transformed into
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> ⟨</span><var><span class="pln">vars</span></var><span class="pln">⟩
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">u </span><span class="lit">'</span><span class="pun">*</span><span class="pln">unassigned</span><span class="pun">*</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">v </span><span class="lit">'</span><span class="pun">*</span><span class="pln">unassigned</span><span class="pun">*</span><span class="clo">))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> u ⟨</span><var><span class="pln">e1</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> v ⟨</span><var><span class="pln">e2</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+    ⟨</span><var><span class="pln">e3</span></var><span class="pln">⟩</span><span class="clo">))</span></pre></div>
+
+<p>where <code>*unassigned*</code> is a special symbol that causes looking up a variable
+to signal an error if an attempt is made to use the value of the
+not-yet-assigned variable.
+</p>
+<p>An alternative strategy for scanning out internal definitions is shown in
+<a href="#Exercise-4_002e18">Exercise 4.18</a>.  Unlike the transformation shown above, this enforces the
+restriction that the defined variables’ values can be evaluated without using
+any of the variables’ values.<a class="footnote_link" id="DOCF229" href="#FOOT229"><sup>229</sup></a>
+</p>
+<blockquote>
+<p><strong><a id="Exercise-4_002e16"></a>Exercise 4.16:</strong> In this exercise we implement the
+method just described for interpreting internal definitions.  We assume that
+the evaluator supports <code>let</code> (see <a href="4_002e1_002e2.xhtml#Exercise-4_002e6">Exercise 4.6</a>).
+</p>
+<ol>
+<li> Change <code>lookup-variable-value</code> (<a href="4_002e1_002e3.xhtml#g_t4_002e1_002e3">4.1.3</a>) to signal an error if
+the value it finds is the symbol <code>*unassigned*</code>.
+
+</li><li> Write a procedure <code>scan-out-defines</code> that takes a procedure body and
+returns an equivalent one that has no internal definitions, by making the
+transformation described above.
+
+</li><li> Install <code>scan-out-defines</code> in the interpreter, either in
+<code>make-procedure</code> or in <code>procedure-body</code> (see <a href="4_002e1_002e3.xhtml#g_t4_002e1_002e3">4.1.3</a>).
+Which place is better?  Why?
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e17"></a>Exercise 4.17:</strong> Draw diagrams of the environment
+in effect when evaluating the expression <code>⟨</code><var>e3</var><code>⟩</code> in the procedure in the
+text, comparing how this will be structured when definitions are interpreted
+sequentially with how it will be structured if definitions are scanned out as
+described.  Why is there an extra frame in the transformed program?  Explain
+why this difference in environment structure can never make a difference in the
+behavior of a correct program.  Design a way to make the interpreter implement
+the “simultaneous” scope rule for internal definitions without constructing
+the extra frame.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e18"></a>Exercise 4.18:</strong> Consider an alternative strategy
+for scanning out definitions that translates the example in the text to
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> ⟨</span><var><span class="pln">vars</span></var><span class="pln">⟩
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">u </span><span class="lit">'</span><span class="pun">*</span><span class="pln">unassigned</span><span class="pun">*</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">v </span><span class="lit">'</span><span class="pun">*</span><span class="pln">unassigned</span><span class="pun">*</span><span class="clo">))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">a ⟨</span><var><span class="pln">e1</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">b ⟨</span><var><span class="pln">e2</span></var><span class="pln">⟩</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> u a</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> v b</span><span class="clo">))</span><span class="pln">
+    ⟨</span><var><span class="pln">e3</span></var><span class="pln">⟩</span><span class="clo">))</span></pre></div>
+
+<p>Here <code>a</code> and <code>b</code> are meant to represent new variable names, created
+by the interpreter, that do not appear in the user’s program.  Consider the
+<code>solve</code> procedure from <a href="3_002e5_002e4.xhtml#g_t3_002e5_002e4">3.5.4</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">solve f y0 dt</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> y </span><span class="opn">(</span><span class="pln">integral </span><span class="opn">(</span><span class="kwd">delay</span><span class="pln"> dy</span><span class="clo">)</span><span class="pln"> y0 dt</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> dy </span><span class="opn">(</span><span class="pln">stream-map f y</span><span class="clo">))</span><span class="pln">
+  y</span><span class="clo">)</span></pre></div>
+
+<p>Will this procedure work if internal definitions are scanned out as shown in
+this exercise?  What if they are scanned out as shown in the text?  Explain.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e19"></a>Exercise 4.19:</strong> Ben Bitdiddle, Alyssa P. Hacker,
+and Eva Lu Ator are arguing about the desired result of evaluating the
+expression
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">a </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> b </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a x</span><span class="clo">))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> a </span><span class="lit">5</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a b</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">f </span><span class="lit">10</span><span class="clo">))</span></pre></div>
+
+<p>Ben asserts that the result should be obtained using the sequential rule for
+<code>define</code>: <code>b</code> is defined to be 11, then <code>a</code> is defined to be 5,
+so the result is 16.  Alyssa objects that mutual recursion requires the
+simultaneous scope rule for internal procedure definitions, and that it is
+unreasonable to treat procedure names differently from other names.  Thus, she
+argues for the mechanism implemented in <a href="#Exercise-4_002e16">Exercise 4.16</a>.  This would lead
+to <code>a</code> being unassigned at the time that the value for <code>b</code> is to be
+computed.  Hence, in Alyssa’s view the procedure should produce an error.  Eva
+has a third opinion.  She says that if the definitions of <code>a</code> and <code>b</code>
+are truly meant to be simultaneous, then the value 5 for <code>a</code> should be
+used in evaluating <code>b</code>.  Hence, in Eva’s view <code>a</code> should be 5,
+<code>b</code> should be 15, and the result should be 20.  Which (if any) of these
+viewpoints do you support?  Can you devise a way to implement internal
+definitions so that they behave as Eva prefers?<a class="footnote_link" id="DOCF230" href="#FOOT230"><sup>230</sup></a>
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e20"></a>Exercise 4.20:</strong> Because internal definitions look
+sequential but are actually simultaneous, some people prefer to avoid them
+entirely, and use the special form <code>letrec</code> instead.  <code>Letrec</code> looks
+like <code>let</code>, so it is not surprising that the variables it binds are bound
+simultaneously and have the same scope as each other.  The sample procedure
+<code>f</code> above can be written without internal definitions, but with exactly
+the same meaning, as
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">letrec</span><span class="pln"> </span><span class="opn">((</span><span class="pln">even? </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">n</span><span class="clo">)</span><span class="pln">
+                    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+                        true
+                        </span><span class="opn">(</span><span class="pln">odd? </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)))))</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">odd? </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">n</span><span class="clo">)</span><span class="pln">
+                   </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+                       false
+                       </span><span class="opn">(</span><span class="pln">even? </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))))))</span><span class="pln">
+    ⟨</span><var><span class="pln">rest of body of </span><code><span class="pln">f</span></code></var><span class="pln">⟩</span><span class="clo">))</span></pre></div>
+
+<p><code>Letrec</code> expressions, which have the form
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">letrec</span><span class="pln"> </span><span class="opn">((</span><span class="pln">⟨</span><var><span class="pln">var</span><span class="pun">₁</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">exp</span><span class="pun">₁</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> </span><span class="roman"><span class="pun">…</span></span><span class="pln"> </span><span class="opn">(</span><span class="pln">⟨</span><var><span class="pln">var</span><span class="pun">ₙ</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">exp</span><span class="pun">ₙ</span></var><span class="pln">⟩</span><span class="clo">))</span><span class="pln">
+  ⟨</span><var><span class="pln">body</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>are a variation on <code>let</code> in which the expressions
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mspace width="0.1em"/>
+    <mi>e</mi>
+    <mi>x</mi>
+    <msub>
+      <mi>p</mi>
+      <mi>k</mi>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> that provide the initial values for the
+variables <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mspace width="0.06em"/>
+    <mi>v</mi>
+    <mi>a</mi>
+    <msub>
+      <mi>r</mi>
+      <mi>k</mi>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> are evaluated in an environment
+that includes all the <code>letrec</code> bindings.  This permits recursion in the
+bindings, such as the mutual recursion of <code>even?</code> and <code>odd?</code> in the
+example above, or the evaluation of 10 factorial with
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">letrec</span><span class="pln"> </span><span class="opn">((</span><span class="pln">fact
+          </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">n</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+                </span><span class="lit">1</span><span class="pln">
+                </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> n </span><span class="opn">(</span><span class="pln">fact </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)))))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">fact </span><span class="lit">10</span><span class="clo">))</span></pre></div>
+
+<ol>
+<li> Implement <code>letrec</code> as a derived expression, by transforming a
+<code>letrec</code> expression into a <code>let</code> expression as shown in the text
+above or in <a href="#Exercise-4_002e18">Exercise 4.18</a>.  That is, the <code>letrec</code> variables should
+be created with a <code>let</code> and then be assigned their values with
+<code>set!</code>.
+
+</li><li> Louis Reasoner is confused by all this fuss about internal definitions.  The
+way he sees it, if you don’t like to use <code>define</code> inside a procedure, you
+can just use <code>let</code>.  Illustrate what is loose about his reasoning by
+drawing an environment diagram that shows the environment in which the
+<code>⟨</code><var>rest of body of <code>f</code></var><code>⟩</code> is evaluated during evaluation of the
+expression <code>(f 5)</code>, with <code>f</code> defined as in this exercise.  Draw an
+environment diagram for the same evaluation, but with <code>let</code> in place of
+<code>letrec</code> in the definition of <code>f</code>.
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-4_002e21"></a>Exercise 4.21:</strong> Amazingly, Louis’s intuition in
+<a href="#Exercise-4_002e20">Exercise 4.20</a> is correct.  It is indeed possible to specify recursive
+procedures without using <code>letrec</code> (or even <code>define</code>), although the
+method for accomplishing this is much more subtle than Louis imagined.  The
+following expression computes 10 factorial by applying a recursive factorial
+procedure:<a class="footnote_link" id="DOCF231" href="#FOOT231"><sup>231</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">n</span><span class="clo">)</span><span class="pln">
+   </span><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fact</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fact fact n</span><span class="clo">))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">ft k</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> k </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+          </span><span class="lit">1</span><span class="pln">
+          </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> k </span><span class="opn">(</span><span class="pln">ft ft </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> k </span><span class="lit">1</span><span class="clo">)))))))</span><span class="pln">
+ </span><span class="lit">10</span><span class="clo">)</span></pre></div>
+
+<ol>
+<li> Check (by evaluating the expression) that this really does compute factorials.
+Devise an analogous expression for computing Fibonacci numbers.
+
+</li><li> Consider the following procedure, which includes mutually recursive internal
+definitions:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">even? n</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        true
+        </span><span class="opn">(</span><span class="pln">odd? </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">odd? n</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        false
+        </span><span class="opn">(</span><span class="pln">even? </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">even? x</span><span class="clo">))</span></pre></div>
+
+<p>Fill in the missing expressions to complete an alternative definition of
+<code>f</code>, which uses neither internal definitions nor <code>letrec</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">even? odd?</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">even? even? odd? x</span><span class="clo">))</span><span class="pln">
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">ev? od? n</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+         true 
+         </span><span class="opn">(</span><span class="pln">od? ⟨</span><span class="pun">??</span><span class="pln">⟩ ⟨</span><span class="pun">??</span><span class="pln">⟩ ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">)))</span><span class="pln">
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">ev? od? n</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+         false 
+         </span><span class="opn">(</span><span class="pln">ev? ⟨</span><span class="pun">??</span><span class="pln">⟩ ⟨</span><span class="pun">??</span><span class="pln">⟩ ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">)))))</span></pre></div>
+</li></ol>
+</blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT228"><p><a class="footnote_backlink" href="#DOCF228"><sup>228</sup></a>
+Wanting programs
+to not depend on this evaluation mechanism is the reason for the “management
+is not responsible” remark in <a href="1_002e1_002e8.xhtml#Footnote-28">Footnote 28</a> of <a href="Chapter-1.xhtml#Chapter-1">Chapter 1</a>.  By
+insisting that internal definitions come first and do not use each other while
+the definitions are being evaluated, the <abbr>IEEE</abbr> standard for Scheme
+leaves implementors some choice in the mechanism used to evaluate these
+definitions.  The choice of one evaluation rule rather than another here may
+seem like a small issue, affecting only the interpretation of “badly formed”
+programs.  However, we will see in <a href="5_002e5_002e6.xhtml#g_t5_002e5_002e6">5.5.6</a> that moving to a model
+of simultaneous scoping for internal definitions avoids some nasty difficulties
+that would otherwise arise in implementing a compiler.</p>
+</div>
+<div id="FOOT229"><p><a class="footnote_backlink" href="#DOCF229"><sup>229</sup></a>
+The <abbr>IEEE</abbr> standard for Scheme
+allows for different implementation strategies by specifying that it is up to
+the programmer to obey this restriction, not up to the implementation to
+enforce it.  Some Scheme implementations, including <abbr>MIT</abbr> Scheme, use
+the transformation shown above.  Thus, some programs that don’t obey this
+restriction will in fact run in such implementations.</p>
+</div>
+<div id="FOOT230"><p><a class="footnote_backlink" href="#DOCF230"><sup>230</sup></a>
+The <abbr>MIT</abbr>
+implementors of Scheme support Alyssa on the following grounds: Eva is in
+principle correct—the definitions should be regarded as simultaneous.  But
+it seems difficult to implement a general, efficient mechanism that does what
+Eva requires.  In the absence of such a mechanism, it is better to generate an
+error in the difficult cases of simultaneous definitions (Alyssa’s notion) than
+to produce an incorrect answer (as Ben would have it).</p>
+</div>
+<div id="FOOT231"><p><a class="footnote_backlink" href="#DOCF231"><sup>231</sup></a>
+This example illustrates a programming trick for
+formulating recursive procedures without using <code>define</code>.  The most general
+trick of this sort is the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>Y</mi>
+</math> <a id="index-operator-1"></a>
+<em>operator</em>, which can be used to give a
+“pure λ-calculus” implementation of recursion.  (See <a href="References.xhtml#Stoy-1977">Stoy 1977</a> for
+details on the λ-calculus, and <a href="References.xhtml#Gabriel-1988">Gabriel 1988</a> for an exposition of the
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>Y</mi>
+</math> operator in Scheme.)</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="4_002e1_002e7.xhtml#g_t4_002e1_002e7" accesskey="n" rel="next">4.1.7</a>, Previous: <a href="4_002e1_002e5.xhtml#g_t4_002e1_002e5" accesskey="p" rel="prev">4.1.5</a>, Up: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="u" rel="prev">4.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

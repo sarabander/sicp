@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 3.5</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 3.5" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 3.5" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-3.xhtml#Chapter-3" rel="prev" title="Chapter 3" />
+<link href="3_002e5_002e1.xhtml#g_t3_002e5_002e1" rel="next" title="3.5.1" />
+<link href="3_002e4_002e2.xhtml#g_t3_002e4_002e2" rel="prev" title="3.4.2" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t3_002e5"></a>
+<nav class="header">
+<p>
+Next: <a href="3_002e5_002e1.xhtml#g_t3_002e5_002e1" accesskey="n" rel="next">3.5.1</a>, Previous: <a href="3_002e4_002e2.xhtml#g_t3_002e4_002e2" accesskey="p" rel="prev">3.4.2</a>, Up: <a href="Chapter-3.xhtml#Chapter-3" accesskey="u" rel="prev">Chapter 3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Streams"></a>
+<h3 class="section"><span class="secnum">3.5</span><span class="sectitle">Streams</span></h3>
+
+<p>We’ve gained a good understanding of assignment as a tool in modeling, as well
+as an appreciation of the complex problems that assignment raises. It is time
+to ask whether we could have gone about things in a different way, so as to
+avoid some of these problems.  In this section, we explore an alternative
+approach to modeling state, based on data structures called <a id="index-streams-1"></a>
+<em>streams</em>.
+As we shall see, streams can mitigate some of the complexity of modeling state.
+</p>
+<p>Let’s step back and review where this complexity comes from.  In an attempt to
+model real-world phenomena, we made some apparently reasonable decisions: We
+modeled real-world objects with local state by computational objects with local
+variables.  We identified time variation in the real world with time variation
+in the computer.  We implemented the time variation of the states of the model
+objects in the computer with assignments to the local variables of the model
+objects.
+</p>
+<p>Is there another approach?  Can we avoid identifying time in the computer with
+time in the modeled world?  Must we make the model change with time in order to
+model phenomena in a changing world?  Think about the issue in terms of
+mathematical functions.  We can describe the time-varying behavior of a
+quantity <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> as a function of time <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">(</mo>
+    <mi>t</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  If we concentrate on <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>
+instant by instant, we think of it as a changing quantity.  Yet if we
+concentrate on the entire time history of values, we do not emphasize
+change—the function itself does not change.<a class="footnote_link" id="DOCF180" href="#FOOT180"><sup>180</sup></a>
+</p>
+<p>If time is measured in discrete steps, then we can model a time function as a
+(possibly infinite) sequence.  In this section, we will see how to model change
+in terms of sequences that represent the time histories of the systems being
+modeled.  To accomplish this, we introduce new data structures called
+<a id="index-streams-2"></a>
+<em>streams</em>.  From an abstract point of view, a stream is simply a
+sequence.  However, we will find that the straightforward implementation of
+streams as lists (as in <a href="2_002e2_002e1.xhtml#g_t2_002e2_002e1">2.2.1</a>) doesn’t fully reveal the power of
+stream processing.  As an alternative, we introduce the technique of
+<a id="index-delayed-evaluation-1"></a>
+<em>delayed evaluation</em>, which enables us to represent very large (even
+infinite) sequences as streams.
+</p>
+<p>Stream processing lets us model systems that have state without ever using
+assignment or mutable data.  This has important implications, both theoretical
+and practical, because we can build models that avoid the drawbacks inherent in
+introducing assignment.  On the other hand, the stream framework raises
+difficulties of its own, and the question of which modeling technique leads to
+more modular and more easily maintained systems remains open.
+</p>
+<table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="3_002e5_002e1.xhtml#g_t3_002e5_002e1" accesskey="1">3.5.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Streams Are Delayed Lists
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="3_002e5_002e2.xhtml#g_t3_002e5_002e2" accesskey="2">3.5.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Infinite Streams
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="3_002e5_002e3.xhtml#g_t3_002e5_002e3" accesskey="3">3.5.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Exploiting the Stream Paradigm
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="3_002e5_002e4.xhtml#g_t3_002e5_002e4" accesskey="4">3.5.4</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Streams and Delayed Evaluation
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="3_002e5_002e5.xhtml#g_t3_002e5_002e5" accesskey="5">3.5.5</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Modularity of Functional Programs and Modularity of
+                     Objects
+</td></tr>
+</table>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT180"><p><a class="footnote_backlink" href="#DOCF180"><sup>180</sup></a>
+Physicists sometimes
+adopt this view by introducing the “world lines” of particles as a device for
+reasoning about motion.  We’ve also already mentioned (<a href="2_002e2_002e3.xhtml#g_t2_002e2_002e3">2.2.3</a>)
+that this is the natural way to think about signal-processing systems.  We will
+explore applications of streams to signal processing in <a href="3_002e5_002e3.xhtml#g_t3_002e5_002e3">3.5.3</a>.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="3_002e5_002e1.xhtml#g_t3_002e5_002e1" accesskey="n" rel="next">3.5.1</a>, Previous: <a href="3_002e4_002e2.xhtml#g_t3_002e4_002e2" accesskey="p" rel="prev">3.4.2</a>, Up: <a href="Chapter-3.xhtml#Chapter-3" accesskey="u" rel="prev">Chapter 3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

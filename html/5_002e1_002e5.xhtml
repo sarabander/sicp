@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 5.1.5</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 5.1.5" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 5.1.5" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="5_002e1.xhtml#g_t5_002e1" rel="prev" title="5.1" />
+<link href="5_002e2.xhtml#g_t5_002e2" rel="next" title="5.2" />
+<link href="5_002e1_002e4.xhtml#g_t5_002e1_002e4" rel="prev" title="5.1.4" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t5_002e1_002e5"></a>
+<nav class="header">
+<p>
+Next: <a href="5_002e2.xhtml#g_t5_002e2" accesskey="n" rel="next">5.2</a>, Previous: <a href="5_002e1_002e4.xhtml#g_t5_002e1_002e4" accesskey="p" rel="prev">5.1.4</a>, Up: <a href="5_002e1.xhtml#g_t5_002e1" accesskey="u" rel="prev">5.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Instruction-Summary"></a>
+<h4 class="subsection"><span class="secnum">5.1.5</span><span class="sectitle">Instruction Summary</span></h4>
+
+<p>A controller instruction in our register-machine language has one of the
+following forms, where each <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">⟨</mo>
+    <mspace width="0.06em"/>
+    <mi>i</mi>
+    <mi>n</mi>
+    <mi>p</mi>
+    <mi>u</mi>
+    <msub>
+      <mi>t</mi>
+      <mi>i</mi>
+    </msub>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math> is either 
+<code>(reg ⟨<var>register-name</var>⟩)</code> or <code>(const ⟨<var>constant-value</var>⟩)</code>.  
+These instructions were introduced in <a href="5_002e1_002e1.xhtml#g_t5_002e1_002e1">5.1.1</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">assign ⟨</span><var><span class="pln">register-name</span></var><span class="pln">⟩ </span><span class="opn">(</span><span class="pln">reg ⟨</span><var><span class="pln">register-name</span></var><span class="pln">⟩</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">assign ⟨</span><var><span class="pln">register-name</span></var><span class="pln">⟩ 
+        </span><span class="opn">(</span><span class="pln">const ⟨</span><var><span class="pln">constant-value</span></var><span class="pln">⟩</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">assign ⟨</span><var><span class="pln">register-name</span></var><span class="pln">⟩ 
+        </span><span class="opn">(</span><span class="pln">op ⟨</span><var><span class="pln">operation-name</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> 
+        ⟨</span><var><span class="pln">input</span><span class="pun">₁</span></var><span class="pln">⟩ </span><span class="roman"><span class="pun">…</span></span><span class="pln"> ⟨</span><var><span class="pln">input</span><span class="pun">ₙ</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">perform </span><span class="opn">(</span><span class="pln">op ⟨</span><var><span class="pln">operation-name</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> 
+         ⟨</span><var><span class="pln">input</span><span class="pun">₁</span></var><span class="pln">⟩ 
+         </span><span class="roman"><span class="pun">…</span></span><span class="pln"> 
+         ⟨</span><var><span class="pln">input</span><span class="pun">ₙ</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">test </span><span class="opn">(</span><span class="pln">op ⟨</span><var><span class="pln">operation-name</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> 
+      ⟨</span><var><span class="pln">input</span><span class="pun">₁</span></var><span class="pln">⟩ 
+      </span><span class="roman"><span class="pun">…</span></span><span class="pln"> 
+      ⟨</span><var><span class="pln">input</span><span class="pun">ₙ</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">branch </span><span class="opn">(</span><span class="pln">label ⟨</span><var><span class="pln">label-name</span></var><span class="pln">⟩</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">label ⟨</span><var><span class="pln">label-name</span></var><span class="pln">⟩</span><span class="clo">))</span></pre></div>
+
+<p>The use of registers to hold labels was introduced in <a href="5_002e1_002e3.xhtml#g_t5_002e1_002e3">5.1.3</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">assign ⟨</span><var><span class="pln">register-name</span></var><span class="pln">⟩ </span><span class="opn">(</span><span class="pln">label ⟨</span><var><span class="pln">label-name</span></var><span class="pln">⟩</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">goto </span><span class="opn">(</span><span class="pln">reg ⟨</span><var><span class="pln">register-name</span></var><span class="pln">⟩</span><span class="clo">))</span></pre></div>
+
+<p>Instructions to use the stack were introduced in <a href="5_002e1_002e4.xhtml#g_t5_002e1_002e4">5.1.4</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">save ⟨</span><var><span class="pln">register-name</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">restore ⟨</span><var><span class="pln">register-name</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>The only kind of <code>⟨</code><var>constant-value</var><code>⟩</code> we have seen so far is a number,
+but later we will use strings, symbols, and lists.
+For example,<br />
+<code>(const "abc")</code> is the string <code>"abc"</code>,<br />
+<code>(const abc)</code> is the symbol <code>abc</code>,<br />
+<code>(const (a b c))</code> is the list <code>(a b c)</code>,<br />
+and <code>(const ())</code> is the empty list.
+</p>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="5_002e2.xhtml#g_t5_002e2" accesskey="n" rel="next">5.2</a>, Previous: <a href="5_002e1_002e4.xhtml#g_t5_002e1_002e4" accesskey="p" rel="prev">5.1.4</a>, Up: <a href="5_002e1.xhtml#g_t5_002e1" accesskey="u" rel="prev">5.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

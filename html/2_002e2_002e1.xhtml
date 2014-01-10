@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 2.2.1</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 2.2.1" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 2.2.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="2_002e2.xhtml#g_t2_002e2" rel="prev" title="2.2" />
+<link href="2_002e2_002e2.xhtml#g_t2_002e2_002e2" rel="next" title="2.2.2" />
+<link href="2_002e2.xhtml#g_t2_002e2" rel="prev" title="2.2" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t2_002e2_002e1"></a>
+<nav class="header">
+<p>
+Next: <a href="2_002e2_002e2.xhtml#g_t2_002e2_002e2" accesskey="n" rel="next">2.2.2</a>, Previous: <a href="2_002e2.xhtml#g_t2_002e2" accesskey="p" rel="prev">2.2</a>, Up: <a href="2_002e2.xhtml#g_t2_002e2" accesskey="u" rel="prev">2.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Representing-Sequences"></a>
+<h4 class="subsection"><span class="secnum">2.2.1</span><span class="sectitle">Representing Sequences</span></h4>
+
+<p>One of the useful structures we can build with pairs is a
+<a id="index-sequence"></a>
+<em>sequence</em>—an ordered collection of data objects.  There are, of
+course, many ways to represent sequences in terms of pairs.  One particularly
+straightforward representation is illustrated in <a href="#Figure-2_002e4">Figure 2.4</a>, where the
+sequence 1, 2, 3, 4 is represented as a chain of pairs.  The <code>car</code> of each
+pair is the corresponding item in the chain, and the <code>cdr</code> of the pair is
+the next pair in the chain.  The <code>cdr</code> of the final pair signals the end
+of the sequence by pointing to a distinguished value that is not a pair,
+represented in box-and-pointer diagrams as a diagonal line and in programs as
+the value of the variable <code>nil</code>.  The entire sequence is constructed by
+nested <code>cons</code> operations:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">1</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">2</span><span class="pln">
+            </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">3</span><span class="pln">
+                  </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> nil</span><span class="clo">))))</span></pre></div>
+
+<figure class="float">
+<a id="Figure-2_002e4"></a>
+<object style="width: 48.95ex; height: 11.83ex;" data="fig/chap2/Fig2.4e.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.4:</strong> The sequence 1, 2, 3, 4 represented as a chain of pairs.</p>
+</figcaption>
+</figure>
+
+<p>Such a sequence of pairs, formed by nested <code>cons</code>es, is called a
+<a id="index-list"></a>
+<em>list</em>, and Scheme provides a primitive called <code>list</code> to help in
+constructing lists.<a class="footnote_link" id="DOCF74" href="#FOOT74"><sup>74</sup></a>  The above sequence could be produced by <code>(list 1 2 3 4)</code>.
+In general,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">list ⟨</span><var><span class="pln">a</span><span class="pun">₁</span></var><span class="pln">⟩ ⟨</span><var><span class="pln">a</span><span class="pun">₂</span></var><span class="pln">⟩ </span><span class="roman"><span class="pun">…</span></span><span class="pln"> ⟨</span><var><span class="pln">a</span><span class="pun">ₙ</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>is equivalent to
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> ⟨</span><var><span class="pln">a</span><span class="pun">₁</span></var><span class="pln">⟩
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> ⟨</span><var><span class="pln">a</span><span class="pun">₂</span></var><span class="pln">⟩
+            </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="roman"><span class="pun">…</span></span><span class="pln">
+                  </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> ⟨</span><var><span class="pln">a</span><span class="pun">ₙ</span></var><span class="pln">⟩
+                        nil</span><span class="clo">)</span><span class="roman"><span class="pun">…</span></span><span class="clo">)))</span></pre></div>
+
+<p>Lisp systems conventionally print lists by printing the sequence of elements,
+enclosed in parentheses.  Thus, the data object in <a href="#Figure-2_002e4">Figure 2.4</a> is printed
+as <code>(1 2 3 4)</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> one-through-four </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">))</span><span class="pln">
+
+one-through-four
+</span><i><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>Be careful not to confuse the expression <code>(list 1 2 3 4)</code> with the list
+<code>(1 2 3 4)</code>, which is the result obtained when the expression is
+evaluated.  Attempting to evaluate the expression <code>(1 2 3 4)</code> will signal
+an error when the interpreter tries to apply the procedure <code>1</code> to
+arguments <code>2</code>, <code>3</code>, <code>4</code>.
+</p>
+<p>We can think of <code>car</code> as selecting the first item in the list, and of
+<code>cdr</code> as selecting the sublist consisting of all but the first item.
+Nested applications of <code>car</code> and <code>cdr</code> can be used to extract the
+second, third, and subsequent items in the list.<a class="footnote_link" id="DOCF75" href="#FOOT75"><sup>75</sup></a> The constructor <code>cons</code>
+makes a list like the original one, but with an additional item at the
+beginning.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">car</span><span class="pln"> one-through-four</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">1</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> one-through-four</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">)</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> one-through-four</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">2</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">10</span><span class="pln"> one-through-four</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">10</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">)</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> one-through-four</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">5</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>The value of <code>nil</code>, used to terminate the chain of pairs, can be thought
+of as a sequence of no elements, the <a id="index-empty-list"></a>
+<em>empty list</em>.  The word
+<a id="index-nil"></a>
+<em>nil</em> is a contraction of the Latin word <em>nihil</em>, which means
+“nothing.”<a class="footnote_link" id="DOCF76" href="#FOOT76"><sup>76</sup></a>
+</p>
+<a id="List-operations"></a>
+<h5 class="subsubheading">List operations</h5>
+
+<p>The use of pairs to represent sequences of elements as lists is accompanied by
+conventional programming techniques for manipulating lists by successively
+“<code>cdr</code>ing down” the lists.  For example, the procedure <code>list-ref</code>
+takes as arguments a list and a number <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> and returns the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>n</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> item of
+the list.  It is customary to number the elements of the list beginning with 0.
+The method for computing <code>list-ref</code> is the following:
+</p>
+<ul>
+<li> For <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math>, <code>list-ref</code> should return the <code>car</code> of the list.
+
+</li><li> Otherwise, <code>list-ref</code> should return  the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>-st item of the
+<code>cdr</code> of the list.
+
+</li></ul>
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list-ref items n</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> items</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">list-ref </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> items</span><span class="clo">)</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> squares 
+  </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">16</span><span class="pln"> </span><span class="lit">25</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">list-ref squares </span><span class="lit">3</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">16</span></i>
+</pre></div>
+
+<p>Often we <code>cdr</code> down the whole list.  To aid in this, Scheme includes a
+primitive predicate <code>null?</code>, which tests whether its argument is the empty
+list.  The procedure <code>length</code>, which returns the number of items in a
+list, illustrates this typical pattern of use:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">length items</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? items</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">0</span><span class="pln">
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pln">length </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> items</span><span class="clo">)))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> odds
+  </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">7</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">length odds</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">4</span></i>
+</pre></div>
+
+<p>The <code>length</code> procedure implements a simple recursive plan. The reduction
+step is:
+</p>
+<ul>
+<li> The <code>length</code> of any list is 1 plus the <code>length</code> of the <code>cdr</code> of
+the list.
+
+</li></ul>
+
+<p>This is applied successively until we reach the base case:
+</p>
+<ul>
+<li> The <code>length</code> of the empty list is 0.
+
+</li></ul>
+
+<p>We could also compute <code>length</code> in an iterative style:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">length items</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">length-iter a count</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? a</span><span class="clo">)</span><span class="pln">
+        count
+        </span><span class="opn">(</span><span class="pln">length-iter </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> a</span><span class="clo">)</span><span class="pln"> 
+                     </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> count</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">length-iter items </span><span class="lit">0</span><span class="clo">))</span></pre></div>
+
+<p>Another conventional programming technique is to “<code>cons</code> up” an answer
+list while <code>cdr</code>ing down a list, as in the procedure <code>append</code>, which
+takes two lists as arguments and combines their elements to make a new list:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">append squares odds</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">16</span><span class="pln"> </span><span class="lit">25</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">7</span><span class="clo">)</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">append odds squares</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">16</span><span class="pln"> </span><span class="lit">25</span><span class="clo">)</span></i>
+</pre></div>
+
+<p><code>Append</code> is also implemented using a recursive plan.  To <code>append</code>
+lists <code>list1</code> and <code>list2</code>, do the following:
+</p>
+<ul>
+<li> If <code>list1</code> is the empty list, then the result is just <code>list2</code>.
+
+</li><li> Otherwise, <code>append</code> the <code>cdr</code> of <code>list1</code> and <code>list2</code>, and
+<code>cons</code> the <code>car</code> of <code>list1</code> onto the result:
+
+</li></ul>
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">append list1 list2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? list1</span><span class="clo">)</span><span class="pln">
+      list2
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> list1</span><span class="clo">)</span><span class="pln"> 
+            </span><span class="opn">(</span><span class="pln">append </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> list1</span><span class="clo">)</span><span class="pln"> 
+                    list2</span><span class="clo">))))</span></pre></div>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e17"></a>Exercise 2.17:</strong> Define a procedure
+<code>last-pair</code> that returns the list that contains only the last element of a
+given (nonempty) list:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">last-pair </span><span class="opn">(</span><span class="pln">list </span><span class="lit">23</span><span class="pln"> </span><span class="lit">72</span><span class="pln"> </span><span class="lit">149</span><span class="pln"> </span><span class="lit">34</span><span class="clo">))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">34</span><span class="clo">)</span></i>
+</pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e18"></a>Exercise 2.18:</strong> Define a procedure <code>reverse</code>
+that takes a list as argument and returns a list of the same elements in
+reverse order:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">reverse </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">16</span><span class="pln"> </span><span class="lit">25</span><span class="clo">))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">25</span><span class="pln"> </span><span class="lit">16</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span></i>
+</pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e19"></a>Exercise 2.19:</strong> Consider the change-counting
+program of <a href="1_002e2_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>.  It would be nice to be able to easily change
+the currency used by the program, so that we could compute the number of ways
+to change a British pound, for example.  As the program is written, the
+knowledge of the currency is distributed partly into the procedure
+<code>first-denomination</code> and partly into the procedure <code>count-change</code>
+(which knows that there are five kinds of U.S. coins).  It would be nicer to be
+able to supply a list of coins to be used for making change.
+</p>
+<p>We want to rewrite the procedure <code>cc</code> so that its second argument is a
+list of the values of the coins to use rather than an integer specifying which
+coins to use.  We could then have lists that defined each kind of currency:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> us-coins 
+  </span><span class="opn">(</span><span class="pln">list </span><span class="lit">50</span><span class="pln"> </span><span class="lit">25</span><span class="pln"> </span><span class="lit">10</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> uk-coins 
+  </span><span class="opn">(</span><span class="pln">list </span><span class="lit">100</span><span class="pln"> </span><span class="lit">50</span><span class="pln"> </span><span class="lit">20</span><span class="pln"> </span><span class="lit">10</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0.5</span><span class="clo">))</span></pre></div>
+
+<p>We could then call <code>cc</code> as follows:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">cc </span><span class="lit">100</span><span class="pln"> us-coins</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">292</span></i>
+</pre></div>
+
+<p>To do this will require changing the program <code>cc</code> somewhat.  It will still
+have the same form, but it will access its second argument differently, as
+follows:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cc amount coin-values</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> amount </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pun">&lt;</span><span class="pln"> amount </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+             </span><span class="opn">(</span><span class="pln">no-more? coin-values</span><span class="clo">))</span><span class="pln"> 
+         </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln">
+         </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cc 
+             amount
+             </span><span class="opn">(</span><span class="pln">except-first-denomination 
+              coin-values</span><span class="clo">))</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">cc 
+             </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> amount
+                </span><span class="opn">(</span><span class="pln">first-denomination 
+                 coin-values</span><span class="clo">))</span><span class="pln">
+             coin-values</span><span class="clo">)))))</span></pre></div>
+
+<p>Define the procedures <code>first-denomination</code>,
+<code>except-first-denomination</code> and <code>no-more?</code> in terms of primitive
+operations on list structures.  Does the order of the list <code>coin-values</code>
+affect the answer produced by <code>cc</code>?  Why or why not?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e20"></a>Exercise 2.20:</strong> The procedures <code>+</code>,
+<code>*</code>, and <code>list</code> take arbitrary numbers of arguments. One way to
+define such procedures is to use <code>define</code> with <a id="index-dotted_002dtail-notation"></a>
+<em>dotted-tail notation</em>.  
+In a procedure definition, a parameter list that has a dot before
+the last parameter name indicates that, when the procedure is called, the
+initial parameters (if any) will have as values the initial arguments, as
+usual, but the final parameter’s value will be a <a id="index-list-2"></a>
+<em>list</em> of any
+remaining arguments.  For instance, given the definition
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x y </span><span class="pun">.</span><span class="pln"> z</span><span class="clo">)</span><span class="pln"> ⟨</span><var><span class="pln">body</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>the procedure <code>f</code> can be called with two or more arguments.  If we
+evaluate
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">f </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="clo">)</span></pre></div>
+
+<p>then in the body of <code>f</code>, <code>x</code> will be 1, <code>y</code> will be 2, and
+<code>z</code> will be the list <code>(3 4 5 6)</code>.  Given the definition
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">g </span><span class="pun">.</span><span class="pln"> w</span><span class="clo">)</span><span class="pln"> ⟨</span><var><span class="pln">body</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
+
+<p>the procedure <code>g</code> can be called with zero or more arguments.  If we
+evaluate
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">g </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="clo">)</span></pre></div>
+
+<p>then in the body of <code>g</code>, <code>w</code> will be the list <code>(1 2 3 4 5
+6)</code>.<a class="footnote_link" id="DOCF77" href="#FOOT77"><sup>77</sup></a>
+</p>
+<p>Use this notation to write a procedure <code>same-parity</code> that takes one or
+more integers and returns a list of all the arguments that have the same
+even-odd parity as the first argument.  For example,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">same-parity </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">7</span><span class="clo">)</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">same-parity </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">2</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">6</span><span class="clo">)</span></i>
+</pre></div>
+</blockquote>
+
+<a id="Mapping-over-lists"></a>
+<h5 class="subsubheading">Mapping over lists</h5>
+
+<p>One extremely useful operation is to apply some transformation to each element
+in a list and generate the list of results.  For instance, the following
+procedure scales each number in a list by a given factor:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">scale-list items factor</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? items</span><span class="clo">)</span><span class="pln">
+      nil
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> items</span><span class="clo">)</span><span class="pln"> factor</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">scale-list </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> items</span><span class="clo">)</span><span class="pln"> 
+                        factor</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">scale-list </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="clo">)</span><span class="pln"> </span><span class="lit">10</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">10</span><span class="pln"> </span><span class="lit">20</span><span class="pln"> </span><span class="lit">30</span><span class="pln"> </span><span class="lit">40</span><span class="pln"> </span><span class="lit">50</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>We can abstract this general idea and capture it as a common pattern expressed
+as a higher-order procedure, just as in <a href="1_002e3.xhtml#g_t1_002e3">1.3</a>.  The higher-order
+procedure here is called <code>map</code>.  <code>Map</code> takes as arguments a procedure
+of one argument and a list, and returns a list of the results produced by
+applying the procedure to each element in the list:<a class="footnote_link" id="DOCF78" href="#FOOT78"><sup>78</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">map proc items</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? items</span><span class="clo">)</span><span class="pln">
+      nil
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">proc </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> items</span><span class="clo">))</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">map proc </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> items</span><span class="clo">)))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">map abs </span><span class="opn">(</span><span class="pln">list </span><span class="lit">-10</span><span class="pln"> </span><span class="lit">2.5</span><span class="pln"> </span><span class="lit">-11.6</span><span class="pln"> </span><span class="lit">17</span><span class="clo">))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">10</span><span class="pln"> </span><span class="lit">2.5</span><span class="pln"> </span><span class="lit">11.6</span><span class="pln"> </span><span class="lit">17</span><span class="clo">)</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">16</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>Now we can give a new definition of <code>scale-list</code> in terms of <code>map</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">scale-list items factor</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x factor</span><span class="clo">))</span><span class="pln">
+       items</span><span class="clo">))</span></pre></div>
+
+<p><code>Map</code> is an important construct, not only because it captures a common
+pattern, but because it establishes a higher level of abstraction in dealing
+with lists.  In the original definition of <code>scale-list</code>, the recursive
+structure of the program draws attention to the element-by-element processing
+of the list.  Defining <code>scale-list</code> in terms of <code>map</code> suppresses that
+level of detail and emphasizes that scaling transforms a list of elements to a
+list of results.  The difference between the two definitions is not that the
+computer is performing a different process (it isn’t) but that we think about
+the process differently.  In effect, <code>map</code> helps establish an abstraction
+barrier that isolates the implementation of procedures that transform lists
+from the details of how the elements of the list are extracted and combined.
+Like the barriers shown in <a href="2_002e1_002e2.xhtml#Figure-2_002e1">Figure 2.1</a>, this abstraction gives us the
+flexibility to change the low-level details of how sequences are implemented,
+while preserving the conceptual framework of operations that transform
+sequences to sequences.  Section <a href="2_002e2_002e3.xhtml#g_t2_002e2_002e3">2.2.3</a> expands on this use of sequences
+as a framework for organizing programs.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e21"></a>Exercise 2.21:</strong> The procedure <code>square-list</code>
+takes a list of numbers as argument and returns a list of the squares of those
+numbers.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">square-list </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">16</span><span class="clo">)</span></i>
+</pre></div>
+
+<p>Here are two different definitions of <code>square-list</code>.  Complete both of
+them by filling in the missing expressions:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square-list items</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? items</span><span class="clo">)</span><span class="pln">
+      nil
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> ⟨</span><span class="pun">??</span><span class="pln">⟩ ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square-list items</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">map ⟨</span><span class="pun">??</span><span class="pln">⟩ ⟨</span><span class="pun">??</span><span class="pln">⟩</span><span class="clo">))</span></pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e22"></a>Exercise 2.22:</strong> Louis Reasoner tries to rewrite
+the first <code>square-list</code> procedure of <a href="#Exercise-2_002e21">Exercise 2.21</a> so that it
+evolves an iterative process:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square-list items</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">iter things answer</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? things</span><span class="clo">)</span><span class="pln">
+        answer
+        </span><span class="opn">(</span><span class="pln">iter </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> things</span><span class="clo">)</span><span class="pln">
+              </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> things</span><span class="clo">))</span><span class="pln">
+                    answer</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">iter items nil</span><span class="clo">))</span></pre></div>
+
+<p>Unfortunately, defining <code>square-list</code> this way produces the answer list in
+the reverse order of the one desired.  Why?
+</p>
+<p>Louis then tries to fix his bug by interchanging the arguments to <code>cons</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square-list items</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">iter things answer</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? things</span><span class="clo">)</span><span class="pln">
+        answer
+        </span><span class="opn">(</span><span class="pln">iter </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> things</span><span class="clo">)</span><span class="pln">
+              </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> answer
+                    </span><span class="opn">(</span><span class="pln">square 
+                     </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> things</span><span class="clo">))))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">iter items nil</span><span class="clo">))</span></pre></div>
+
+<p>This doesn’t work either.  Explain.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e23"></a>Exercise 2.23:</strong> The procedure <code>for-each</code> is
+similar to <code>map</code>.  It takes as arguments a procedure and a list of
+elements.  However, rather than forming a list of the results, <code>for-each</code>
+just applies the procedure to each of the elements in turn, from left to right.
+The values returned by applying the procedure to the elements are not used at
+all—<code>for-each</code> is used with procedures that perform an action, such as
+printing.  For example,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">for-each 
+ </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">display x</span><span class="clo">))</span><span class="pln">
+ </span><span class="opn">(</span><span class="pln">list </span><span class="lit">57</span><span class="pln"> </span><span class="lit">321</span><span class="pln"> </span><span class="lit">88</span><span class="clo">))</span><span class="pln">
+
+</span><i><span class="lit">57</span></i><span class="pln">
+</span><i><span class="lit">321</span></i><span class="pln">
+</span><i><span class="lit">88</span></i>
+</pre></div>
+
+<p>The value returned by the call to <code>for-each</code> (not illustrated above) can
+be something arbitrary, such as true.  Give an implementation of
+<code>for-each</code>.
+</p></blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT74"><p><a class="footnote_backlink" href="#DOCF74"><sup>74</sup></a>
+In this book, we use <a id="index-list-1"></a>
+<em>list</em> to mean a
+chain of pairs terminated by the end-of-list marker.  In contrast, the term
+<a id="index-list-structure"></a>
+<em>list structure</em> refers to any data structure made out of pairs, not
+just to lists.</p>
+</div>
+<div id="FOOT75"><p><a class="footnote_backlink" href="#DOCF75"><sup>75</sup></a>
+Since nested
+applications of <code>car</code> and <code>cdr</code> are cumbersome to write, Lisp
+dialects provide abbreviations for them—for instance,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> ⟨</span><var><span class="pln">arg</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> ⟨</span><var><span class="pln">arg</span></var><span class="pln">⟩</span><span class="clo">))</span></pre></div>
+
+<p>The names of all such procedures start with <code>c</code> and end with <code>r</code>.
+Each <code>a</code> between them stands for a <code>car</code> operation and each <code>d</code>
+for a <code>cdr</code> operation, to be applied in the same order in which they
+appear in the name.  The names <code>car</code> and <code>cdr</code> persist because simple
+combinations like <code>cadr</code> are pronounceable.</p>
+</div>
+<div id="FOOT76"><p><a class="footnote_backlink" href="#DOCF76"><sup>76</sup></a>
+It’s remarkable how much energy in the standardization of
+Lisp dialects has been dissipated in arguments that are literally over nothing:
+Should <code>nil</code> be an ordinary name?  Should the value of <code>nil</code> be a
+symbol?  Should it be a list?  Should it be a pair?  In Scheme, <code>nil</code> is
+an ordinary name, which we use in this section as a variable whose value is the
+end-of-list marker (just as <code>true</code> is an ordinary variable that has a true
+value).  Other dialects of Lisp, including Common Lisp, treat <code>nil</code> as a
+special symbol.  The authors of this book, who have endured too many language
+standardization brawls, would like to avoid the entire issue.  Once we have
+introduced quotation in <a href="2_002e3.xhtml#g_t2_002e3">2.3</a>, we will denote the empty list as
+<code>'()</code> and dispense with the variable <code>nil</code> entirely.</p>
+</div>
+<div id="FOOT77"><p><a class="footnote_backlink" href="#DOCF77"><sup>77</sup></a>
+To define <code>f</code> and <code>g</code> using <code>lambda</code> we would
+write
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> f </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y </span><span class="pun">.</span><span class="pln"> z</span><span class="clo">)</span><span class="pln"> ⟨</span><var><span class="pln">body</span></var><span class="pln">⟩</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> g </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> w ⟨</span><var><span class="pln">body</span></var><span class="pln">⟩</span><span class="clo">))</span></pre></div>
+</div>
+<div id="FOOT78"><p><a class="footnote_backlink" href="#DOCF78"><sup>78</sup></a>
+<a id="Footnote-78"></a>Scheme standardly provides a <code>map</code> procedure that
+is more general than the one described here.  This more general <code>map</code>
+takes a procedure of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> arguments, together with <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> lists, and applies
+the procedure to all the first elements of the lists, all the second elements
+of the lists, and so on, returning a list of the results.  For example:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">map </span><span class="pun">+</span><span class="pln"> 
+     </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="clo">)</span><span class="pln"> 
+     </span><span class="opn">(</span><span class="pln">list </span><span class="lit">40</span><span class="pln"> </span><span class="lit">50</span><span class="pln"> </span><span class="lit">60</span><span class="clo">)</span><span class="pln"> 
+     </span><span class="opn">(</span><span class="pln">list </span><span class="lit">700</span><span class="pln"> </span><span class="lit">800</span><span class="pln"> </span><span class="lit">900</span><span class="clo">))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">741</span><span class="pln"> </span><span class="lit">852</span><span class="pln"> </span><span class="lit">963</span><span class="clo">)</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> y</span><span class="clo">)))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">(</span><span class="pln">list </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="clo">))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">9</span><span class="pln"> </span><span class="lit">12</span><span class="pln"> </span><span class="lit">15</span><span class="clo">)</span></i>
+</pre></div>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="2_002e2_002e2.xhtml#g_t2_002e2_002e2" accesskey="n" rel="next">2.2.2</a>, Previous: <a href="2_002e2.xhtml#g_t2_002e2" accesskey="p" rel="prev">2.2</a>, Up: <a href="2_002e2.xhtml#g_t2_002e2" accesskey="u" rel="prev">2.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

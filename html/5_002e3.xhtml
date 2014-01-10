@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 5.3</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 5.3" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 5.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-5.xhtml#Chapter-5" rel="prev" title="Chapter 5" />
+<link href="5_002e3_002e1.xhtml#g_t5_002e3_002e1" rel="next" title="5.3.1" />
+<link href="5_002e2_002e4.xhtml#g_t5_002e2_002e4" rel="prev" title="5.2.4" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t5_002e3"></a>
+<nav class="header">
+<p>
+Next: <a href="5_002e3_002e1.xhtml#g_t5_002e3_002e1" accesskey="n" rel="next">5.3.1</a>, Previous: <a href="5_002e2_002e4.xhtml#g_t5_002e2_002e4" accesskey="p" rel="prev">5.2.4</a>, Up: <a href="Chapter-5.xhtml#Chapter-5" accesskey="u" rel="prev">Chapter 5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Storage-Allocation-and-Garbage-Collection"></a>
+<h3 class="section"><span class="secnum">5.3</span><span class="sectitle">Storage Allocation and Garbage Collection</span></h3>
+
+<p>In section <a href="5_002e4.xhtml#g_t5_002e4">5.4</a>, we will show how to implement a Scheme evaluator as a
+register machine.  In order to simplify the discussion, we will assume that our
+register machines can be equipped with a <a id="index-list_002dstructured-memory"></a>
+<em>list-structured memory</em>, in
+which the basic operations for manipulating list-structured data are primitive.
+Postulating the existence of such a memory is a useful abstraction when one is
+focusing on the mechanisms of control in a Scheme interpreter, but this does
+not reflect a realistic view of the actual primitive data operations of
+contemporary computers.  To obtain a more complete picture of how a Lisp system
+operates, we must investigate how list structure can be represented in a way
+that is compatible with conventional computer memories.
+</p>
+<p>There are two considerations in implementing list structure.  The first is
+purely an issue of representation: how to represent the “box-and-pointer”
+structure of Lisp pairs, using only the storage and addressing capabilities of
+typical computer memories.  The second issue concerns the management of memory
+as a computation proceeds.  The operation of a Lisp system depends crucially on
+the ability to continually create new data objects.  These include objects that
+are explicitly created by the Lisp procedures being interpreted as well as
+structures created by the interpreter itself, such as environments and argument
+lists.  Although the constant creation of new data objects would pose no
+problem on a computer with an infinite amount of rapidly addressable memory,
+computer memories are available only in finite sizes (more’s the pity).  Lisp
+systems thus provide an <a id="index-automatic-storage-allocation"></a>
+<em>automatic storage allocation</em> facility to
+support the illusion of an infinite memory.  When a data object is no longer
+needed, the memory allocated to it is automatically recycled and used to
+construct new data objects.  There are various techniques for providing such
+automatic storage allocation.  The method we shall discuss in this section is
+called <a id="index-garbage-collection"></a>
+<em>garbage collection</em>.
+</p><table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e3_002e1.xhtml#g_t5_002e3_002e1" accesskey="1">5.3.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Memory as Vectors
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e3_002e2.xhtml#g_t5_002e3_002e2" accesskey="2">5.3.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Maintaining the Illusion of Infinite Memory
+</td></tr>
+</table>
+
+<hr />
+<nav class="header">
+<p>
+Next: <a href="5_002e3_002e1.xhtml#g_t5_002e3_002e1" accesskey="n" rel="next">5.3.1</a>, Previous: <a href="5_002e2_002e4.xhtml#g_t5_002e2_002e4" accesskey="p" rel="prev">5.2.4</a>, Up: <a href="Chapter-5.xhtml#Chapter-5" accesskey="u" rel="prev">Chapter 5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

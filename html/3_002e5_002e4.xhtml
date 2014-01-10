@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 3.5.4</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 3.5.4" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 3.5.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="3_002e5.xhtml#g_t3_002e5" rel="prev" title="3.5" />
+<link href="3_002e5_002e5.xhtml#g_t3_002e5_002e5" rel="next" title="3.5.5" />
+<link href="3_002e5_002e3.xhtml#g_t3_002e5_002e3" rel="prev" title="3.5.3" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t3_002e5_002e4"></a>
+<nav class="header">
+<p>
+Next: <a href="3_002e5_002e5.xhtml#g_t3_002e5_002e5" accesskey="n" rel="next">3.5.5</a>, Previous: <a href="3_002e5_002e3.xhtml#g_t3_002e5_002e3" accesskey="p" rel="prev">3.5.3</a>, Up: <a href="3_002e5.xhtml#g_t3_002e5" accesskey="u" rel="prev">3.5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Streams-and-Delayed-Evaluation"></a>
+<h4 class="subsection"><span class="secnum">3.5.4</span><span class="sectitle">Streams and Delayed Evaluation</span></h4>
+
+<p>The <code>integral</code> procedure at the end of the preceding section shows how we
+can use streams to model signal-processing systems that contain feedback loops.
+The feedback loop for the adder shown in <a href="3_002e5_002e3.xhtml#Figure-3_002e32">Figure 3.32</a> is modeled by the
+fact that <code>integral</code>’s internal stream <code>int</code> is defined in terms of
+itself:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> int
+  </span><span class="opn">(</span><span class="pln">cons-stream 
+   initial-value
+   </span><span class="opn">(</span><span class="pln">add-streams 
+    </span><span class="opn">(</span><span class="pln">scale-stream integrand dt</span><span class="clo">)</span><span class="pln"> int</span><span class="clo">)))</span></pre></div>
+
+<p>The interpreter’s ability to deal with such an implicit definition depends on
+the <code>delay</code> that is incorporated into <code>cons-stream</code>.  Without this
+<code>delay</code>, the interpreter could not construct <code>int</code> before evaluating
+both arguments to <code>cons-stream</code>, which would require that <code>int</code>
+already be defined.  In general, <code>delay</code> is crucial for using streams to
+model signal-processing systems that contain loops.  Without <code>delay</code>, our
+models would have to be formulated so that the inputs to any signal-processing
+component would be fully evaluated before the output could be produced.  This
+would outlaw loops.
+</p>
+<p>Unfortunately, stream models of systems with loops may require uses of
+<code>delay</code> beyond the “hidden” <code>delay</code> supplied by <code>cons-stream</code>.
+For instance, <a href="#Figure-3_002e34">Figure 3.34</a> shows a signal-processing system for solving
+the differential equation <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>d</mi>
+    <mi>t</mi>
+    <mo>=</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> where <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> is a given
+function.  The figure shows a mapping component, which applies <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> to its
+input signal, linked in a feedback loop to an integrator in a manner very
+similar to that of the analog computer circuits that are actually used to solve
+such equations.
+</p>
+<figure class="float">
+<a id="Figure-3_002e34"></a>
+<object style="width: 44.98ex; height: 18.91ex;" data="fig/chap3/Fig3.34.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 3.34:</strong> An “analog computer circuit” that solves the equation <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>d</mi>
+    <mi>t</mi>
+    <mo>=</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.</p>
+</figcaption>
+</figure>
+
+<p>Assuming we are given an initial value <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>y</mi>
+    <mn>0</mn>
+  </msub>
+</math> for <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>, we could try to model
+this system using the procedure
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">solve f y0 dt</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> y </span><span class="opn">(</span><span class="pln">integral dy y0 dt</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> dy </span><span class="opn">(</span><span class="pln">stream-map f y</span><span class="clo">))</span><span class="pln">
+  y</span><span class="clo">)</span></pre></div>
+
+<p>This procedure does not work, because in the first line of <code>solve</code> the
+call to <code>integral</code> requires that the input <code>dy</code> be defined, which
+does not happen until the second line of <code>solve</code>.
+</p>
+<p>On the other hand, the intent of our definition does make sense, because we
+can, in principle, begin to generate the <code>y</code> stream without knowing
+<code>dy</code>.  Indeed, <code>integral</code> and many other stream operations have
+properties similar to those of <code>cons-stream</code>, in that we can generate part
+of the answer given only partial information about the arguments.  For
+<code>integral</code>, the first element of the output stream is the specified
+<code>initial-value</code>.  Thus, we can generate the first element of the output
+stream without evaluating the integrand <code>dy</code>.  Once we know the first
+element of <code>y</code>, the <code>stream-map</code> in the second line of <code>solve</code>
+can begin working to generate the first element of <code>dy</code>, which will
+produce the next element of <code>y</code>, and so on.
+</p>
+<p>To take advantage of this idea, we will redefine <code>integral</code> to expect the
+integrand stream to be a <a id="index-delayed-argument"></a>
+<em>delayed argument</em>.  <code>Integral</code> will
+<code>force</code> the integrand to be evaluated only when it is required to generate
+more than the first element of the output stream:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">integral
+         delayed-integrand initial-value dt</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> int
+    </span><span class="opn">(</span><span class="pln">cons-stream 
+     initial-value
+     </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">integrand 
+            </span><span class="opn">(</span><span class="pln">force delayed-integrand</span><span class="clo">)))</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">add-streams 
+        </span><span class="opn">(</span><span class="pln">scale-stream integrand dt</span><span class="clo">)</span><span class="pln">
+        int</span><span class="clo">))))</span><span class="pln">
+  int</span><span class="clo">)</span></pre></div>
+
+<p>Now we can implement our <code>solve</code> procedure by delaying the evaluation of
+<code>dy</code> in the definition of <code>y</code>:<a class="footnote_link" id="DOCF199" href="#FOOT199"><sup>199</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">solve f y0 dt</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> y </span><span class="opn">(</span><span class="pln">integral </span><span class="opn">(</span><span class="kwd">delay</span><span class="pln"> dy</span><span class="clo">)</span><span class="pln"> y0 dt</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> dy </span><span class="opn">(</span><span class="pln">stream-map f y</span><span class="clo">))</span><span class="pln">
+  y</span><span class="clo">)</span></pre></div>
+
+<p>In general, every caller of <code>integral</code> must now <code>delay</code> the integrand
+argument.  We can demonstrate that the <code>solve</code> procedure works by
+approximating <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>e</mi>
+    <mo>≈<!-- ≈ --></mo>
+    <mn>2.718</mn>
+  </mrow>
+</math> by computing the value at <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo>=</mo>
+    <mn>1</mn>
+  </mrow>
+</math> of the
+solution to the differential equation <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>d</mi>
+    <mi>t</mi>
+    <mo>=</mo>
+    <mi>y</mi>
+  </mrow>
+</math> with initial
+condition <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">(</mo>
+    <mn>0</mn>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>1</mn>
+  </mrow>
+</math>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">stream-ref 
+ </span><span class="opn">(</span><span class="pln">solve </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y</span><span class="clo">)</span><span class="pln"> y</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0.001</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1000</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">2.716924</span></i>
+</pre></div>
+
+<blockquote>
+<p><strong><a id="Exercise-3_002e77"></a>Exercise 3.77:</strong> The <code>integral</code> procedure
+used above was analogous to the “implicit” definition of the infinite stream
+of integers in <a href="3_002e5_002e2.xhtml#g_t3_002e5_002e2">3.5.2</a>.  Alternatively, we can give a definition of
+<code>integral</code> that is more like <code>integers-starting-from</code> (also in
+<a href="3_002e5_002e2.xhtml#g_t3_002e5_002e2">3.5.2</a>):
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">integral
+         integrand initial-value dt</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">cons-stream 
+   initial-value
+   </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">stream-null? integrand</span><span class="clo">)</span><span class="pln">
+       the-empty-stream
+       </span><span class="opn">(</span><span class="pln">integral 
+        </span><span class="opn">(</span><span class="pln">stream-cdr integrand</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> dt </span><span class="opn">(</span><span class="pln">stream-car integrand</span><span class="clo">))</span><span class="pln">
+           initial-value</span><span class="clo">)</span><span class="pln">
+        dt</span><span class="clo">))))</span></pre></div>
+
+<p>When used in systems with loops, this procedure has the same problem as does
+our original version of <code>integral</code>.  Modify the procedure so that it
+expects the <code>integrand</code> as a delayed argument and hence can be used in the
+<code>solve</code> procedure shown above.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-3_002e78"></a>Exercise 3.78:</strong> Consider the problem of designing
+a signal-processing system to study the homogeneous second-order linear
+differential equation
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <msup>
+          <mi>d</mi>
+          <mn>2</mn>
+        </msup>
+        <mspace width="-0.07em"/>
+        <mi>y</mi>
+      </mrow>
+      <mrow>
+        <mi>d</mi>
+        <msup>
+          <mi>t</mi>
+          <mn>2</mn>
+        </msup>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mo>−<!-- − --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mrow>
+          <mi>d</mi>
+          <mi>y</mi>
+        </mrow>
+        <mrow>
+          <mi>d</mi>
+          <mi>t</mi>
+        </mrow>
+      </mfrac>
+    </mrow>
+  </mrow>
+  <mo>−<!-- − --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>b</mi>
+    <mi>y</mi>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>0.</mn>
+  </mrow>
+</math>
+The output stream, modeling <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>, is generated by a network that contains a
+loop. This is because the value of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>d</mi>
+      <mn>2</mn>
+    </msup>
+    <mspace width="-0.1em"/>
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>d</mi>
+    <msup>
+      <mi>t</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math> depends upon the
+values of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>d</mi>
+    <mi>t</mi>
+  </mrow>
+</math> and both of these are determined by
+integrating <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>d</mi>
+      <mn>2</mn>
+    </msup>
+    <mspace width="-0.1em"/>
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>d</mi>
+    <msup>
+      <mi>t</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math>.  The diagram we would like to encode is
+shown in <a href="#Figure-3_002e35">Figure 3.35</a>.  Write a procedure <code>solve-2nd</code> that takes as
+arguments the constants <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>t</mi>
+  </mrow>
+</math> and the initial values
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>y</mi>
+    <mn>0</mn>
+  </msub>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>d</mi>
+  <msub>
+    <mi>y</mi>
+    <mn>0</mn>
+  </msub>
+</math> for <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>d</mi>
+    <mi>t</mi>
+  </mrow>
+</math> and generates the
+stream of successive values of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>.
+</p></blockquote>
+
+<figure class="float">
+<a id="Figure-3_002e35"></a>
+<object style="width: 44.72ex; height: 38.94ex;" data="fig/chap3/Fig3.35b.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 3.35:</strong> Signal-flow diagram for the solution to a second-order linear differential equation.</p>
+</figcaption>
+</figure>
+
+<blockquote>
+<p><strong><a id="Exercise-3_002e79"></a>Exercise 3.79:</strong> Generalize the <code>solve-2nd</code>
+procedure of <a href="#Exercise-3_002e78">Exercise 3.78</a> so that it can be used to solve general
+second-order differential equations <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>d</mi>
+      <mn>2</mn>
+    </msup>
+    <mspace width="-0.1em"/>
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>d</mi>
+    <msup>
+      <mi>t</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>d</mi>
+    <mi>y</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>d</mi>
+    <mi>t</mi>
+    <mo>,</mo>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.
+</p></blockquote>
+
+<figure class="float">
+<a id="Figure-3_002e36"></a>
+<object style="width: 40.49ex; height: 21.76ex;" data="fig/chap3/Fig3.36.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 3.36:</strong> A series RLC circuit.</p>
+</figcaption>
+</figure>
+
+<blockquote>
+<p><strong><a id="Exercise-3_002e80"></a>Exercise 3.80:</strong> A <a id="index-series-RLC-circuit"></a>
+<em>series RLC circuit</em>
+consists of a resistor, a capacitor, and an inductor connected in series, as
+shown in <a href="#Figure-3_002e36">Figure 3.36</a>.  If <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>R</mi>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>L</mi>
+</math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>C</mi>
+</math> are the resistance,
+inductance, and capacitance, then the relations between voltage <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>v</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> and
+current <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mi>i</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> for the three components are described by the equations
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+    <mtr>
+      <mtd>
+        <msub>
+          <mi>v</mi>
+          <mi>R</mi>
+        </msub>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <msub>
+          <mi>i</mi>
+          <mi>R</mi>
+        </msub>
+        <mi>R</mi>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <msub>
+          <mi>v</mi>
+          <mi>L</mi>
+        </msub>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mi>L</mi>
+        <mspace width="thinmathspace"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <msub>
+                <mi>i</mi>
+                <mi>L</mi>
+              </msub>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>t</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <msub>
+          <mi>i</mi>
+          <mi>C</mi>
+        </msub>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mi>C</mi>
+        <mspace width="thinmathspace"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <msub>
+                <mi>v</mi>
+                <mi>C</mi>
+              </msub>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>t</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+and the circuit connections dictate the relations
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+    <mtr>
+      <mtd>
+        <msub>
+          <mi>i</mi>
+          <mi>R</mi>
+        </msub>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <msub>
+          <mi>i</mi>
+          <mi>L</mi>
+        </msub>
+        <mo>=</mo>
+        <mo>−<!-- − --></mo>
+        <msub>
+          <mi>i</mi>
+          <mi>C</mi>
+        </msub>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <msub>
+          <mi>v</mi>
+          <mi>C</mi>
+        </msub>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <msub>
+          <mi>v</mi>
+          <mi>L</mi>
+        </msub>
+        <mo>+</mo>
+        <msub>
+          <mi>v</mi>
+          <mi>R</mi>
+        </msub>
+        <mo>.</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+Combining these equations shows that the state of the circuit (summarized by
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>v</mi>
+    <mi>C</mi>
+  </msub>
+</math>, the voltage across the capacitor, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>i</mi>
+    <mi>L</mi>
+  </msub>
+</math>, the current in
+the inductor) is described by the pair of differential equations
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <msub>
+                <mi>v</mi>
+                <mi>C</mi>
+              </msub>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>t</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mo>−<!-- − --></mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <msub>
+              <mi>i</mi>
+              <mi>L</mi>
+            </msub>
+            <mi>C</mi>
+          </mfrac>
+        </mrow>
+        <mspace width="thinmathspace"/>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <msub>
+                <mi>i</mi>
+                <mi>L</mi>
+              </msub>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>t</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mn>1</mn>
+            <mi>L</mi>
+          </mfrac>
+        </mrow>
+        <mspace width="thinmathspace"/>
+        <msub>
+          <mi>v</mi>
+          <mi>C</mi>
+        </msub>
+        <mo>−<!-- − --></mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mi>R</mi>
+            <mi>L</mi>
+          </mfrac>
+        </mrow>
+        <mspace width="thinmathspace"/>
+        <msub>
+          <mi>i</mi>
+          <mi>L</mi>
+        </msub>
+        <mo>.</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+The signal-flow diagram representing this system of differential equations is
+shown in <a href="#Figure-3_002e37">Figure 3.37</a>.
+</p></blockquote>
+
+<figure class="float">
+<a id="Figure-3_002e37"></a>
+<object style="width: 42.48ex; height: 49.30ex;" data="fig/chap3/Fig3.37.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 3.37:</strong> A signal-flow diagram for the solution to a series RLC circuit.</p>
+</figcaption>
+</figure>
+
+<blockquote>
+<p>Write a procedure <code>RLC</code> that takes as arguments the parameters <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>R</mi>
+</math>,
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>L</mi>
+</math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>C</mi>
+</math> of the circuit and the time increment <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>t</mi>
+  </mrow>
+</math>.  In a manner
+similar to that of the <code>RC</code> procedure of <a href="3_002e5_002e3.xhtml#Exercise-3_002e73">Exercise 3.73</a>, <code>RLC</code>
+should produce a procedure that takes the initial values of the state
+variables, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>v</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <msub>
+        <mi>C</mi>
+        <mn>0</mn>
+      </msub>
+    </mrow>
+  </msub>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>i</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <msub>
+        <mi>L</mi>
+        <mn>0</mn>
+      </msub>
+    </mrow>
+  </msub>
+</math>, and produces a pair (using
+<code>cons</code>) of the streams of states <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>v</mi>
+    <mi>C</mi>
+  </msub>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>i</mi>
+    <mi>L</mi>
+  </msub>
+</math>.  Using
+<code>RLC</code>, generate the pair of streams that models the behavior of a series
+RLC circuit with <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>R</mi>
+</math> = 1 ohm, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>C</mi>
+</math> = 0.2 farad, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>L</mi>
+</math> = 1 henry, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>t</mi>
+  </mrow>
+</math>
+= 0.1 second, and initial values <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>i</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <msub>
+        <mi>L</mi>
+        <mn>0</mn>
+      </msub>
+    </mrow>
+  </msub>
+</math> = 0 amps and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>v</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <msub>
+        <mi>C</mi>
+        <mn>0</mn>
+      </msub>
+    </mrow>
+  </msub>
+</math> =
+10 volts.
+</p></blockquote>
+
+<a id="Normal_002dorder-evaluation"></a>
+<h5 class="subsubheading">Normal-order evaluation</h5>
+
+<p>The examples in this section illustrate how the explicit use of <code>delay</code>
+and <code>force</code> provides great programming flexibility, but the same examples
+also show how this can make our programs more complex.  Our new <code>integral</code>
+procedure, for instance, gives us the power to model systems with loops, but we
+must now remember that <code>integral</code> should be called with a delayed
+integrand, and every procedure that uses <code>integral</code> must be aware of this.
+In effect, we have created two classes of procedures: ordinary procedures and
+procedures that take delayed arguments.  In general, creating separate classes
+of procedures forces us to create separate classes of higher-order procedures
+as well.<a class="footnote_link" id="DOCF200" href="#FOOT200"><sup>200</sup></a>
+</p>
+<p>One way to avoid the need for two different classes of procedures is to make
+all procedures take delayed arguments.  We could adopt a model of evaluation in
+which all arguments to procedures are automatically delayed and arguments are
+forced only when they are actually needed (for example, when they are required
+by a primitive operation).  This would transform our language to use
+normal-order evaluation, which we first described when we introduced the
+substitution model for evaluation in <a href="1_002e1_002e5.xhtml#g_t1_002e1_002e5">1.1.5</a>.  Converting to
+normal-order evaluation provides a uniform and elegant way to simplify the use
+of delayed evaluation, and this would be a natural strategy to adopt if we were
+concerned only with stream processing.  In <a href="4_002e2.xhtml#g_t4_002e2">4.2</a>, after we have
+studied the evaluator, we will see how to transform our language in just this
+way.  Unfortunately, including delays in procedure calls wreaks havoc with our
+ability to design programs that depend on the order of events, such as programs
+that use assignment, mutate data, or perform input or output.  Even the single
+<code>delay</code> in <code>cons-stream</code> can cause great confusion, as illustrated by
+<a href="3_002e5_002e1.xhtml#Exercise-3_002e51">Exercise 3.51</a> and <a href="3_002e5_002e1.xhtml#Exercise-3_002e52">Exercise 3.52</a>.  As far as anyone knows,
+mutability and delayed evaluation do not mix well in programming languages, and
+devising ways to deal with both of these at once is an active area of research.
+</p>
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT199"><p><a class="footnote_backlink" href="#DOCF199"><sup>199</sup></a>
+This procedure is not
+guaranteed to work in all Scheme implementations, although for any
+implementation there is a simple variation that will work.  The problem has to
+do with subtle differences in the ways that Scheme implementations handle
+internal definitions.  (See <a href="4_002e1_002e6.xhtml#g_t4_002e1_002e6">4.1.6</a>.)</p>
+</div>
+<div id="FOOT200"><p><a class="footnote_backlink" href="#DOCF200"><sup>200</sup></a>
+This is a small reflection, in Lisp, of the difficulties that
+conventional strongly typed languages such as Pascal have in coping with
+higher-order procedures.  In such languages, the programmer must specify the
+data types of the arguments and the result of each procedure: number, logical
+value, sequence, and so on.  Consequently, we could not express an abstraction
+such as “map a given procedure <code>proc</code> over all the elements in a
+sequence” by a single higher-order procedure such as <code>stream-map</code>.
+Rather, we would need a different mapping procedure for each different
+combination of argument and result data types that might be specified for a
+<code>proc</code>.  Maintaining a practical notion of “data type” in the presence
+of higher-order procedures raises many difficult issues.  One way of dealing
+with this problem is illustrated by the language ML (<a href="References.xhtml#Gordon-et-al_002e-1979">Gordon et al. 1979</a>), 
+whose “polymorphic data types” include templates for
+higher-order transformations between data types.  Moreover, data types for most
+procedures in ML are never explicitly declared by the programmer.  Instead, ML
+includes a <a id="index-type_002dinferencing"></a>
+<em>type-inferencing</em> mechanism that uses information in the
+environment to deduce the data types for newly defined procedures.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="3_002e5_002e5.xhtml#g_t3_002e5_002e5" accesskey="n" rel="next">3.5.5</a>, Previous: <a href="3_002e5_002e3.xhtml#g_t3_002e5_002e3" accesskey="p" rel="prev">3.5.3</a>, Up: <a href="3_002e5.xhtml#g_t3_002e5" accesskey="u" rel="prev">3.5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

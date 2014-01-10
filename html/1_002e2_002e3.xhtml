@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 1.2.3</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 1.2.3" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 1.2.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="1_002e2.xhtml#g_t1_002e2" rel="prev" title="1.2" />
+<link href="1_002e2_002e4.xhtml#g_t1_002e2_002e4" rel="next" title="1.2.4" />
+<link href="1_002e2_002e2.xhtml#g_t1_002e2_002e2" rel="prev" title="1.2.2" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t1_002e2_002e3"></a>
+<nav class="header">
+<p>
+Next: <a href="1_002e2_002e4.xhtml#g_t1_002e2_002e4" accesskey="n" rel="next">1.2.4</a>, Previous: <a href="1_002e2_002e2.xhtml#g_t1_002e2_002e2" accesskey="p" rel="prev">1.2.2</a>, Up: <a href="1_002e2.xhtml#g_t1_002e2" accesskey="u" rel="prev">1.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Orders-of-Growth"></a>
+<h4 class="subsection"><span class="secnum">1.2.3</span><span class="sectitle">Orders of Growth</span></h4>
+
+<p>The previous examples illustrate that processes can differ considerably in the
+rates at which they consume computational resources.  One convenient way to
+describe this difference is to use the notion of <a id="index-order-of-growth"></a>
+<em>order of growth</em> to
+obtain a gross measure of the resources required by a process as the inputs
+become larger.
+</p>
+<p>Let <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> be a parameter that measures the size of the problem, and let
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>R</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> be the amount of resources the process requires for a problem of
+size <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  In our previous examples we took <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> to be the number for which
+a given function is to be computed, but there are other possibilities.  For
+instance, if our goal is to compute an approximation to the square root of a
+number, we might take <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> to be the number of digits accuracy required.  For
+matrix multiplication we might take <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> to be the number of rows in the
+matrices.  In general there are a number of properties of the problem with
+respect to which it will be desirable to analyze a given process.  Similarly,
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>R</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> might measure the number of internal storage registers used, the
+number of elementary machine operations performed, and so on.  In computers
+that do only a fixed number of operations at a time, the time required will be
+proportional to the number of elementary machine operations performed.
+</p>
+<p>We say that <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>R</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> has order of growth <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, written
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>R</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> (pronounced “theta of
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>”), if there are positive constants <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>k</mi>
+    <mn>1</mn>
+  </msub>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>k</mi>
+    <mn>2</mn>
+  </msub>
+</math>
+independent of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> such that <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>k</mi>
+      <mn>1</mn>
+    </msub>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>≤<!-- ≤ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>R</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>≤<!-- ≤ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>k</mi>
+      <mn>2</mn>
+    </msub>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> 
+for any sufficiently large value of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  (In other words, for large <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>,
+the value <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>R</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> is sandwiched between <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>k</mi>
+      <mn>1</mn>
+    </msub>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> and
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>k</mi>
+      <mn>2</mn>
+    </msub>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.)
+</p>
+<p>For instance, with the linear recursive process for computing factorial
+described in <a href="1_002e2_002e1.xhtml#g_t1_002e2_002e1">1.2.1</a> the number of steps grows proportionally to
+the input <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Thus, the steps required for this process grows as
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  We also saw that the space required grows as
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  For the iterative factorial, the number of steps is still
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> but the space is <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>—that is,
+constant.<a class="footnote_link" id="DOCF36" href="#FOOT36"><sup>36</sup></a> The
+tree-recursive Fibonacci computation requires <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>φ<!-- φ --></mi>
+      <mi>n</mi>
+    </msup>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+steps and space <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, where <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>φ<!-- φ --></mi>
+</math> is the golden ratio
+described in <a href="1_002e2_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>.
+</p>
+<p>Orders of growth provide only a crude description of the behavior of a process.
+For example, a process requiring <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>n</mi>
+    <mn>2</mn>
+  </msup>
+</math> steps and a process requiring
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1000</mn>
+    <msup>
+      <mi>n</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math> steps and a process requiring <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>3</mn>
+    <msup>
+      <mi>n</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>10</mn>
+    <mi>n</mi>
+  </mrow>
+  <mo>+</mo>
+  <mn>17</mn>
+</math> steps all
+have <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <msup>
+      <mi>n</mi>
+      <mn>2</mn>
+    </msup>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> order of growth.  On the other hand, order of growth
+provides a useful indication of how we may expect the behavior of the process
+to change as we change the size of the problem.  For a <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+(linear) process, doubling the size will roughly double the amount of resources
+used.  For an exponential process, each increment in problem size will multiply
+the resource utilization by a constant factor.  In the remainder of 
+<a href="1_002e2.xhtml#g_t1_002e2">1.2</a> we will examine two algorithms whose order of growth is logarithmic,
+so that doubling the problem size increases the resource requirement by a
+constant amount.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e14"></a>Exercise 1.14:</strong> Draw the tree illustrating the
+process generated by the <code>count-change</code> procedure of <a href="1_002e2_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>
+in making change for 11 cents.  What are the orders of growth of the space and
+number of steps used by this process as the amount to be changed increases?
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e15"></a>Exercise 1.15:</strong> The sine of an angle (specified
+in radians) can be computed by making use of the approximation 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>sin</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>x</mi>
+    <mo>≈<!-- ≈ --></mo>
+    <mi>x</mi>
+  </mrow>
+</math> if <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> is sufficiently small, and the trigonometric
+identity
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>sin</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>x</mi>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>3</mn>
+    <mi>sin</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mfrac>
+      <mi>x</mi>
+      <mn>3</mn>
+    </mfrac>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>−<!-- − --></mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>4</mn>
+    <msup>
+      <mi>sin</mi>
+      <mn>3</mn>
+    </msup>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mfrac>
+      <mi>x</mi>
+      <mn>3</mn>
+    </mfrac>
+  </mrow>
+</math>
+
+to reduce the size of the argument of sin.  (For purposes of this
+exercise an angle is considered “sufficiently small” if its magnitude is not
+greater than 0.1 radians.) These ideas are incorporated in the following
+procedures:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cube x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x x</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cube x</span><span class="clo">))))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sine angle</span><span class="clo">)</span><span class="pln">
+   </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">not </span><span class="opn">(</span><span class="pun">&gt;</span><span class="pln"> </span><span class="opn">(</span><span class="pln">abs angle</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0.1</span><span class="clo">))</span><span class="pln">
+       angle
+       </span><span class="opn">(</span><span class="pln">p </span><span class="opn">(</span><span class="pln">sine </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> angle </span><span class="lit">3.0</span><span class="clo">)))))</span></pre></div>
+
+<ol>
+<li> How many times is the procedure <code>p</code> applied when <code>(sine 12.15)</code> is
+evaluated?
+
+</li><li> What is the order of growth in space and number of steps (as a function of
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>) used by the process generated by the <code>sine</code> procedure when
+<code>(sine a)</code> is evaluated?
+
+</li></ol>
+</blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT36"><p><a class="footnote_backlink" href="#DOCF36"><sup>36</sup></a>
+These statements mask a great deal of oversimplification.
+For instance, if we count process steps as “machine operations” we are making
+the assumption that the number of machine operations needed to perform, say, a
+multiplication is independent of the size of the numbers to be multiplied,
+which is false if the numbers are sufficiently large.  Similar remarks hold for
+the estimates of space.  Like the design and description of a process, the
+analysis of a process can be carried out at various levels of abstraction.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="1_002e2_002e4.xhtml#g_t1_002e2_002e4" accesskey="n" rel="next">1.2.4</a>, Previous: <a href="1_002e2_002e2.xhtml#g_t1_002e2_002e2" accesskey="p" rel="prev">1.2.2</a>, Up: <a href="1_002e2.xhtml#g_t1_002e2" accesskey="u" rel="prev">1.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

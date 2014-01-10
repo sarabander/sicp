@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 2.4</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 2.4" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 2.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-2.xhtml#Chapter-2" rel="prev" title="Chapter 2" />
+<link href="2_002e4_002e1.xhtml#g_t2_002e4_002e1" rel="next" title="2.4.1" />
+<link href="2_002e3_002e4.xhtml#g_t2_002e3_002e4" rel="prev" title="2.3.4" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t2_002e4"></a>
+<nav class="header">
+<p>
+Next: <a href="2_002e4_002e1.xhtml#g_t2_002e4_002e1" accesskey="n" rel="next">2.4.1</a>, Previous: <a href="2_002e3_002e4.xhtml#g_t2_002e3_002e4" accesskey="p" rel="prev">2.3.4</a>, Up: <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev">Chapter 2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Multiple-Representations-for-Abstract-Data"></a>
+<h3 class="section"><span class="secnum">2.4</span><span class="sectitle">Multiple Representations for Abstract Data</span></h3>
+
+<p>We have introduced data abstraction, a methodology for structuring systems in
+such a way that much of a program can be specified independent of the choices
+involved in implementing the data objects that the program manipulates.  For
+example, we saw in <a href="2_002e1_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a> how to separate the task of designing a
+program that uses rational numbers from the task of implementing rational
+numbers in terms of the computer language’s primitive mechanisms for
+constructing compound data.  The key idea was to erect an abstraction barrier
+– in this case, the selectors and constructors for rational numbers
+(<code>make-rat</code>, <code>numer</code>, <code>denom</code>)—that isolates the way rational
+numbers are used from their underlying representation in terms of list
+structure.  A similar abstraction barrier isolates the details of the
+procedures that perform rational arithmetic (<code>add-rat</code>, <code>sub-rat</code>,
+<code>mul-rat</code>, and <code>div-rat</code>) from the “higher-level” procedures that
+use rational numbers.  The resulting program has the structure shown in
+<a href="2_002e1_002e2.xhtml#Figure-2_002e1">Figure 2.1</a>.
+</p>
+<p>These data-abstraction barriers are powerful tools for controlling complexity.
+By isolating the underlying representations of data objects, we can divide the
+task of designing a large program into smaller tasks that can be performed
+separately.  But this kind of data abstraction is not yet powerful enough,
+because it may not always make sense to speak of “the underlying
+representation” for a data object.
+</p>
+<p>For one thing, there might be more than one useful representation for a data
+object, and we might like to design systems that can deal with multiple
+representations.  To take a simple example, complex numbers may be represented
+in two almost equivalent ways: in rectangular form (real and imaginary parts)
+and in polar form (magnitude and angle).  Sometimes rectangular form is more
+appropriate and sometimes polar form is more appropriate.  Indeed, it is
+perfectly plausible to imagine a system in which complex numbers are
+represented in both ways, and in which the procedures for manipulating complex
+numbers work with either representation.
+</p>
+<p>More importantly, programming systems are often designed by many people working
+over extended periods of time, subject to requirements that change over time.
+In such an environment, it is simply not possible for everyone to agree in
+advance on choices of data representation.  So in addition to the
+data-abstraction barriers that isolate representation from use, we need
+abstraction barriers that isolate different design choices from each other and
+permit different choices to coexist in a single program.  Furthermore, since
+large programs are often created by combining pre-existing modules that were
+designed in isolation, we need conventions that permit programmers to
+incorporate modules into larger systems <a id="index-additively-1"></a>
+<em>additively</em>, that is, without
+having to redesign or reimplement these modules.
+</p>
+<p>In this section, we will learn how to cope with data that may be represented in
+different ways by different parts of a program.  This requires constructing
+<a id="index-generic-procedures-1"></a>
+<em>generic procedures</em>—procedures that can operate on data that may be
+represented in more than one way.  Our main technique for building generic
+procedures will be to work in terms of data objects that have <a id="index-type-tags"></a>
+<em>type tags</em>, 
+that is, data objects that include explicit information about how they
+are to be processed.  We will also discuss <a id="index-data_002ddirected"></a>
+<em>data-directed</em> programming,
+a powerful and convenient implementation strategy for additively assembling
+systems with generic operations.
+</p>
+<p>We begin with the simple complex-number example. We will see how type tags and
+data-directed style enable us to design separate rectangular and polar
+representations for complex numbers while maintaining the notion of an abstract
+“complex-number” data object.  We will accomplish this by defining arithmetic
+procedures for complex numbers (<code>add-complex</code>, <code>sub-complex</code>,
+<code>mul-complex</code>, and <code>div-complex</code>) in terms of generic selectors that
+access parts of a complex number independent of how the number is represented.
+The resulting complex-number system, as shown in <a href="#Figure-2_002e19">Figure 2.19</a>, contains
+two different kinds of abstraction barriers.  The “horizontal” abstraction
+barriers play the same role as the ones in <a href="2_002e1_002e2.xhtml#Figure-2_002e1">Figure 2.1</a>.  They isolate
+“higher-level” operations from “lower-level” representations.  In addition,
+there is a “vertical” barrier that gives us the ability to separately design
+and install alternative representations.
+</p>
+<figure class="float">
+<a id="Figure-2_002e19"></a>
+<object style="width: 40.41ex; height: 33.41ex;" data="fig/chap2/Fig2.19a.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.19:</strong> Data-abstraction barriers in the complex-number system.</p>
+</figcaption>
+</figure>
+
+<p>In <a href="2_002e5.xhtml#g_t2_002e5">2.5</a> we will show how to use type tags and data-directed style
+to develop a generic arithmetic package.  This provides procedures (<code>add</code>,
+<code>mul</code>, and so on) that can be used to manipulate all sorts of “numbers”
+and can be easily extended when a new kind of number is needed.  In 
+<a href="2_002e5_002e3.xhtml#g_t2_002e5_002e3">2.5.3</a>, we’ll show how to use generic arithmetic in a system that performs
+symbolic algebra.
+</p>
+<table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="2_002e4_002e1.xhtml#g_t2_002e4_002e1" accesskey="1">2.4.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Representations for Complex Numbers
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="2_002e4_002e2.xhtml#g_t2_002e4_002e2" accesskey="2">2.4.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Tagged data
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="2_002e4_002e3.xhtml#g_t2_002e4_002e3" accesskey="3">2.4.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Data-Directed Programming and Additivity
+</td></tr>
+</table>
+
+<hr />
+<nav class="header">
+<p>
+Next: <a href="2_002e4_002e1.xhtml#g_t2_002e4_002e1" accesskey="n" rel="next">2.4.1</a>, Previous: <a href="2_002e3_002e4.xhtml#g_t2_002e3_002e4" accesskey="p" rel="prev">2.3.4</a>, Up: <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev">Chapter 2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

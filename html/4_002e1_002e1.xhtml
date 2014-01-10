@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 4.1.1</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.1.1" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.1.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="4_002e1.xhtml#g_t4_002e1" rel="prev" title="4.1" />
+<link href="4_002e1_002e2.xhtml#g_t4_002e1_002e2" rel="next" title="4.1.2" />
+<link href="4_002e1.xhtml#g_t4_002e1" rel="prev" title="4.1" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t4_002e1_002e1"></a>
+<nav class="header">
+<p>
+Next: <a href="4_002e1_002e2.xhtml#g_t4_002e1_002e2" accesskey="n" rel="next">4.1.2</a>, Previous: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="p" rel="prev">4.1</a>, Up: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="u" rel="prev">4.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="The-Core-of-the-Evaluator"></a>
+<h4 class="subsection"><span class="secnum">4.1.1</span><span class="sectitle">The Core of the Evaluator</span></h4>
+
+<p>The evaluation process can be described as the interplay between two
+procedures: <code>eval</code> and <code>apply</code>.
+</p>
+<a id="Eval"></a>
+<h5 class="subsubheading">Eval</h5>
+
+<p><code>Eval</code> takes as arguments an expression and an environment.  It classifies
+the expression and directs its evaluation.  <code>Eval</code> is structured as a case
+analysis of the syntactic type of the expression to be evaluated.  In order to
+keep the procedure general, we express the determination of the type of an
+expression abstractly, making no commitment to any particular representation
+for the various types of expressions.  Each type of expression has a predicate
+that tests for it and an abstract means for selecting its parts.  This
+<a id="index-abstract-syntax"></a>
+<em>abstract syntax</em> makes it easy to see how we can change the syntax of
+the language by using the same evaluator, but with a different collection of
+syntax procedures.
+</p>
+<p><b>Primitive expressions</b>
+</p>
+<ul>
+<li> For self-evaluating expressions, such as numbers, <code>eval</code> returns the
+expression itself.
+
+</li><li> <code>Eval</code> must look up variables in the environment to find their values.
+
+</li></ul>
+
+<p><b>Special forms</b>
+</p>
+<ul>
+<li> For quoted expressions, <code>eval</code> returns the expression that was quoted.
+
+</li><li> An assignment to (or a definition of) a variable must recursively call
+<code>eval</code> to compute the new value to be associated with the variable.  The
+environment must be modified to change (or create) the binding of the variable.
+
+</li><li> An <code>if</code> expression requires special processing of its parts, so as to
+evaluate the consequent if the predicate is true, and otherwise to evaluate the
+alternative.
+
+</li><li> A <code>lambda</code> expression must be transformed into an applicable procedure by
+packaging together the parameters and body specified by the <code>lambda</code>
+expression with the environment of the evaluation.
+
+</li><li> A <code>begin</code> expression requires evaluating its sequence of expressions in
+the order in which they appear.
+
+</li><li> A case analysis (<code>cond</code>) is transformed into a nest of <code>if</code>
+expressions and then evaluated.
+
+</li></ul>
+
+<p><b>Combinations</b>
+</p>
+<ul>
+<li> For a procedure application, <code>eval</code> must recursively evaluate the operator
+part and the operands of the combination.  The resulting procedure and
+arguments are passed to <code>apply</code>, which handles the actual procedure
+application.
+
+</li></ul>
+
+<p>Here is the definition of <code>eval</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">eval exp env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">self-evaluating? exp</span><span class="clo">)</span><span class="pln"> 
+         exp</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">variable? exp</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">lookup-variable-value exp env</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">quoted? exp</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">text-of-quotation exp</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">assignment? exp</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">eval-assignment exp env</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">definition? exp</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">eval-definition exp env</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">if</span><span class="pun">?</span><span class="pln"> exp</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">eval-if exp env</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">lambda</span><span class="pun">?</span><span class="pln"> exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-procedure 
+          </span><span class="opn">(</span><span class="pln">lambda-parameters exp</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">lambda-body exp</span><span class="clo">)</span><span class="pln">
+          env</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">begin</span><span class="pun">?</span><span class="pln"> exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">eval-sequence 
+          </span><span class="opn">(</span><span class="pln">begin-actions exp</span><span class="clo">)</span><span class="pln"> 
+          env</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">cond</span><span class="pun">?</span><span class="pln"> exp</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">cond-</span><span class="pun">&gt;</span><span class="kwd">if</span><span class="pln"> exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">application? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">apply </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">operator exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)</span><span class="pln">
+                </span><span class="opn">(</span><span class="pln">list-of-values 
+                 </span><span class="opn">(</span><span class="pln">operands exp</span><span class="clo">)</span><span class="pln"> 
+                 env</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln">
+         </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown expression 
+                 type: EVAL"</span><span class="pln"> exp</span><span class="clo">))))</span></pre></div>
+
+<p>For clarity, <code>eval</code> has been implemented as a case analysis using
+<code>cond</code>.  The disadvantage of this is that our procedure handles only a few
+distinguishable types of expressions, and no new ones can be defined without
+editing the definition of <code>eval</code>.  In most Lisp implementations,
+dispatching on the type of an expression is done in a data-directed style.
+This allows a user to add new types of expressions that <code>eval</code> can
+distinguish, without modifying the definition of <code>eval</code> itself.  (See
+<a href="4_002e1_002e2.xhtml#Exercise-4_002e3">Exercise 4.3</a>.)
+</p>
+<a id="Apply"></a>
+<h5 class="subsubheading">Apply</h5>
+
+<p><code>Apply</code> takes two arguments, a procedure and a list of arguments to which
+the procedure should be applied.  <code>Apply</code> classifies procedures into two
+kinds: It calls <code>apply-primitive-procedure</code> to apply primitives; it
+applies compound procedures by sequentially evaluating the expressions that
+make up the body of the procedure.  The environment for the evaluation of the
+body of a compound procedure is constructed by extending the base environment
+carried by the procedure to include a frame that binds the parameters of the
+procedure to the arguments to which the procedure is to be applied.  Here is
+the definition of <code>apply</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply procedure arguments</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">primitive-procedure? procedure</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">apply-primitive-procedure 
+          procedure 
+          arguments</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">compound-procedure? procedure</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">eval-sequence
+           </span><span class="opn">(</span><span class="pln">procedure-body procedure</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">extend-environment
+             </span><span class="opn">(</span><span class="pln">procedure-parameters 
+              procedure</span><span class="clo">)</span><span class="pln">
+             arguments
+             </span><span class="opn">(</span><span class="pln">procedure-environment 
+              procedure</span><span class="clo">))))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln">
+         </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown procedure 
+                 type: APPLY"</span><span class="pln"> 
+                procedure</span><span class="clo">))))</span></pre></div>
+
+<a id="Procedure-arguments"></a>
+<h5 class="subsubheading">Procedure arguments</h5>
+
+<p>When <code>eval</code> processes a procedure application, it uses
+<code>list-of-values</code> to produce the list of arguments to which the procedure
+is to be applied. <code>List-of-values</code> takes as an argument the operands of
+the combination.  It evaluates each operand and returns a list of the
+corresponding values:<a class="footnote_link" id="DOCF209" href="#FOOT209"><sup>209</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list-of-values exps env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">no-operands? exps</span><span class="clo">)</span><span class="pln">
+      </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">first-operand exps</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">list-of-values 
+             </span><span class="opn">(</span><span class="pln">rest-operands exps</span><span class="clo">)</span><span class="pln"> 
+             env</span><span class="clo">))))</span></pre></div>
+
+<a id="Conditionals"></a>
+<h5 class="subsubheading">Conditionals</h5>
+
+<p><code>Eval-if</code> evaluates the predicate part of an <code>if</code> expression in the
+given environment.  If the result is true, <code>eval-if</code> evaluates the
+consequent, otherwise it evaluates the alternative:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">eval-if exp env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">true? </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">if-predicate exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">if-consequent exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">if-alternative exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)))</span></pre></div>
+
+<p>The use of <code>true?</code> in <code>eval-if</code> highlights the issue of the
+connection between an implemented language and an implementation language.  The
+<code>if-predicate</code> is evaluated in the language being implemented and thus
+yields a value in that language.  The interpreter predicate <code>true?</code>
+translates that value into a value that can be tested by the <code>if</code> in the
+implementation language: The metacircular representation of truth might not be
+the same as that of the underlying Scheme.<a class="footnote_link" id="DOCF210" href="#FOOT210"><sup>210</sup></a>
+</p>
+<a id="Sequences"></a>
+<h5 class="subsubheading">Sequences</h5>
+
+<p><code>Eval-sequence</code> is used by <code>apply</code> to evaluate the sequence of
+expressions in a procedure body and by <code>eval</code> to evaluate the sequence of
+expressions in a <code>begin</code> expression.  It takes as arguments a sequence of
+expressions and an environment, and evaluates the expressions in the order in
+which they occur.  The value returned is the value of the final expression.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">eval-sequence exps env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">last-exp? exps</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">first-exp exps</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">first-exp exps</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">eval-sequence </span><span class="opn">(</span><span class="pln">rest-exps exps</span><span class="clo">)</span><span class="pln"> 
+                        env</span><span class="clo">))))</span></pre></div>
+
+<a id="Assignments-and-definitions"></a>
+<h5 class="subsubheading">Assignments and definitions</h5>
+
+<p>The following procedure handles assignments to variables.  It calls <code>eval</code>
+to find the value to be assigned and transmits the variable and the resulting
+value to <code>set-variable-value!</code> to be installed in the designated
+environment.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">eval-assignment exp env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">set-variable-value! 
+   </span><span class="opn">(</span><span class="pln">assignment-variable exp</span><span class="clo">)</span><span class="pln">
+   </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">assignment-value exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)</span><span class="pln">
+   env</span><span class="clo">)</span><span class="pln">
+  </span><span class="lit">'ok</span><span class="clo">)</span></pre></div>
+
+<p>Definitions of variables are handled in a similar manner.<a class="footnote_link" id="DOCF211" href="#FOOT211"><sup>211</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">eval-definition exp env</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">define-variable! 
+    </span><span class="opn">(</span><span class="pln">definition-variable exp</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">definition-value exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)</span><span class="pln">
+    env</span><span class="clo">)</span><span class="pln">
+  </span><span class="lit">'ok</span><span class="clo">)</span></pre></div>
+
+<p>We have chosen here to return the symbol <code>ok</code> as the value of an
+assignment or a definition.<a class="footnote_link" id="DOCF212" href="#FOOT212"><sup>212</sup></a>
+</p>
+<blockquote>
+<p><strong><a id="Exercise-4_002e1"></a>Exercise 4.1:</strong> Notice that we cannot tell whether
+the metacircular evaluator evaluates operands from left to right or from right
+to left.  Its evaluation order is inherited from the underlying Lisp: If the
+arguments to <code>cons</code> in <code>list-of-values</code> are evaluated from left to
+right, then <code>list-of-values</code> will evaluate operands from left to right;
+and if the arguments to <code>cons</code> are evaluated from right to left, then
+<code>list-of-values</code> will evaluate operands from right to left.
+</p>
+<p>Write a version of <code>list-of-values</code> that evaluates operands from left to
+right regardless of the order of evaluation in the underlying Lisp.  Also write
+a version of <code>list-of-values</code> that evaluates operands from right to left.
+</p></blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT209"><p><a class="footnote_backlink" href="#DOCF209"><sup>209</sup></a>
+We could have simplified the <code>application?</code>
+clause in <code>eval</code> by using <code>map</code> (and stipulating that <code>operands</code>
+returns a list) rather than writing an explicit <code>list-of-values</code>
+procedure.  We chose not to use <code>map</code> here to emphasize the fact that the
+evaluator can be implemented without any use of higher-order procedures (and
+thus could be written in a language that doesn’t have higher-order procedures),
+even though the language that it supports will include higher-order
+procedures.</p>
+</div>
+<div id="FOOT210"><p><a class="footnote_backlink" href="#DOCF210"><sup>210</sup></a>
+In this case, the language
+being implemented and the implementation language are the same.  Contemplation
+of the meaning of <code>true?</code> here yields expansion of consciousness without
+the abuse of substance.</p>
+</div>
+<div id="FOOT211"><p><a class="footnote_backlink" href="#DOCF211"><sup>211</sup></a>
+This
+implementation of <code>define</code> ignores a subtle issue in the handling of
+internal definitions, although it works correctly in most cases.  We will see
+what the problem is and how to solve it in <a href="4_002e1_002e6.xhtml#g_t4_002e1_002e6">4.1.6</a>.</p>
+</div>
+<div id="FOOT212"><p><a class="footnote_backlink" href="#DOCF212"><sup>212</sup></a>
+As we said when we introduced
+<code>define</code> and <code>set!</code>, these values are implementation-dependent in
+Scheme—that is, the implementor can choose what value to return.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="4_002e1_002e2.xhtml#g_t4_002e1_002e2" accesskey="n" rel="next">4.1.2</a>, Previous: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="p" rel="prev">4.1</a>, Up: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="u" rel="prev">4.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

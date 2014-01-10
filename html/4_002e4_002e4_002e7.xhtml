@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 4.4.4.7</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.4.4.7" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.4.4.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="4_002e4_002e4.xhtml#g_t4_002e4_002e4" rel="prev" title="4.4.4" />
+<link href="4_002e4_002e4_002e8.xhtml#g_t4_002e4_002e4_002e8" rel="next" title="4.4.4.8" />
+<link href="4_002e4_002e4_002e6.xhtml#g_t4_002e4_002e4_002e6" rel="prev" title="4.4.4.6" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t4_002e4_002e4_002e7"></a>
+<nav class="header">
+<p>
+Next: <a href="4_002e4_002e4_002e8.xhtml#g_t4_002e4_002e4_002e8" accesskey="n" rel="next">4.4.4.8</a>, Previous: <a href="4_002e4_002e4_002e6.xhtml#g_t4_002e4_002e4_002e6" accesskey="p" rel="prev">4.4.4.6</a>, Up: <a href="4_002e4_002e4.xhtml#g_t4_002e4_002e4" accesskey="u" rel="prev">4.4.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Query-Syntax-Procedures"></a>
+<h5 class="subsubsection"><span class="secnum">4.4.4.7</span><span class="sectitle">Query Syntax Procedures</span></h5>
+
+<p><code>Type</code> and <code>contents</code>, used by <code>qeval</code> (<a href="4_002e4_002e4_002e2.xhtml#g_t4_002e4_002e4_002e2">4.4.4.2</a>),
+specify that a special form is identified by the symbol in its <code>car</code>.
+They are the same as the <code>type-tag</code> and <code>contents</code> procedures in
+<a href="2_002e4_002e2.xhtml#g_t2_002e4_002e2">2.4.2</a>, except for the error message.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">type exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pair? exp</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> exp</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown expression TYPE"</span><span class="pln">
+             exp</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">contents exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pair? exp</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> exp</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown expression CONTENTS"</span><span class="pln">
+             exp</span><span class="clo">)))</span></pre></div>
+
+<p>The following procedures, used by <code>query-driver-loop</code> (in 
+<a href="4_002e4_002e4_002e1.xhtml#g_t4_002e4_002e4_002e1">4.4.4.1</a>), specify that rules and assertions are added to the data base by
+expressions of the form <code>(assert! ⟨<var>rule-or-assertion</var>⟩)</code>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">assertion-to-be-added? exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="pln">type exp</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'assert!</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-assertion-body exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="opn">(</span><span class="pln">contents exp</span><span class="clo">)))</span></pre></div>
+
+<p>Here are the syntax definitions for the <code>and</code>, <code>or</code>, <code>not</code>, and
+<code>lisp-value</code> special forms (<a href="4_002e4_002e4_002e2.xhtml#g_t4_002e4_002e4_002e2">4.4.4.2</a>):
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">empty-conjunction? exps</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? exps</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">first-conjunct exps</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> exps</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">rest-conjuncts exps</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> exps</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">empty-disjunction? exps</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? exps</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">first-disjunct exps</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> exps</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">rest-disjuncts exps</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> exps</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">negated-query exps</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> exps</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">predicate exps</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> exps</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">args exps</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> exps</span><span class="clo">))</span></pre></div>
+
+<p>The following three procedures define the syntax of rules:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">rule? statement</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">tagged-list? statement </span><span class="lit">'rule</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">conclusion rule</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> rule</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">rule-body rule</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? </span><span class="opn">(</span><span class="kwd">cddr</span><span class="pln"> rule</span><span class="clo">))</span><span class="pln">
+      </span><span class="lit">'</span><span class="opn">(</span><span class="pln">always-true</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">caddr</span><span class="pln"> rule</span><span class="clo">)))</span></pre></div>
+
+<p><code>Query-driver-loop</code> (<a href="4_002e4_002e4_002e1.xhtml#g_t4_002e4_002e4_002e1">4.4.4.1</a>) calls
+<code>query-syntax-process</code> to transform pattern variables in the expression,
+which have the form <code>?symbol</code>, into the internal format <code>(? symbol)</code>.
+That is to say, a pattern such as <code>(job ?x ?y)</code> is actually represented
+internally by the system as <code>(job (? x) (? y))</code>.  This increases the
+efficiency of query processing, since it means that the system can check to see
+if an expression is a pattern variable by checking whether the <code>car</code> of
+the expression is the symbol <code>?</code>, rather than having to extract characters
+from the symbol.  The syntax transformation is accomplished by the following
+procedure:<a class="footnote_link" id="DOCF285" href="#FOOT285"><sup>285</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">query-syntax-process exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">map-over-symbols expand-question-mark exp</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">map-over-symbols proc exp</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">pair? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">map-over-symbols 
+                proc </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> exp</span><span class="clo">))</span><span class="pln">
+               </span><span class="opn">(</span><span class="pln">map-over-symbols 
+                proc </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> exp</span><span class="clo">))))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">symbol? exp</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">proc exp</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> exp</span><span class="clo">)))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">expand-question-mark symbol</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">chars </span><span class="opn">(</span><span class="pln">symbol-</span><span class="pun">&gt;</span><span class="pln">string symbol</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">string=</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="pln">substring chars </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> </span><span class="str">"?"</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="pln">string-</span><span class="pun">&gt;</span><span class="pln">symbol
+                  </span><span class="opn">(</span><span class="pln">substring
+                   chars 
+                   </span><span class="lit">1</span><span class="pln"> 
+                   </span><span class="opn">(</span><span class="pln">string-length chars</span><span class="clo">))))</span><span class="pln">
+        symbol</span><span class="clo">)))</span></pre></div>
+
+<p>Once the variables are transformed in this way, the variables in a pattern are
+lists starting with <code>?</code>, and the constant symbols (which need to be
+recognized for data-base indexing, <a href="4_002e4_002e4_002e5.xhtml#g_t4_002e4_002e4_002e5">4.4.4.5</a>) are just the symbols.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">var? exp</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tagged-list? exp </span><span class="lit">'</span><span class="pun">?</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">constant-symbol? exp</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">symbol? exp</span><span class="clo">))</span></pre></div>
+
+<p>Unique variables are constructed during rule application (in 
+<a href="4_002e4_002e4_002e4.xhtml#g_t4_002e4_002e4_002e4">4.4.4.4</a>) by means of the following procedures.  The unique identifier for
+a rule application is a number, which is incremented each time a rule is
+applied.
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> rule-counter </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">new-rule-application-id</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> rule-counter </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> rule-counter</span><span class="clo">))</span><span class="pln">
+  rule-counter</span><span class="clo">)</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-new-variable 
+         var rule-application-id</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">'</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> rule-application-id
+                 </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> var</span><span class="clo">))))</span></pre></div>
+
+<p>When <code>query-driver-loop</code> instantiates the query to print the answer, it
+converts any unbound pattern variables back to the right form for printing,
+using
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">contract-question-mark variable</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">string-</span><span class="pun">&gt;</span><span class="pln">symbol
+   </span><span class="opn">(</span><span class="pln">string-append </span><span class="str">"?"</span><span class="pln">
+     </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">number? </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> variable</span><span class="clo">))</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">string-append
+          </span><span class="opn">(</span><span class="pln">symbol-</span><span class="pun">&gt;</span><span class="pln">string </span><span class="opn">(</span><span class="kwd">caddr</span><span class="pln"> variable</span><span class="clo">))</span><span class="pln">
+          </span><span class="str">"-"</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">number-</span><span class="pun">&gt;</span><span class="pln">string </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> variable</span><span class="clo">)))</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">symbol-</span><span class="pun">&gt;</span><span class="pln">string </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> variable</span><span class="clo">))))))</span></pre></div>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT285"><p><a class="footnote_backlink" href="#DOCF285"><sup>285</sup></a>
+Most Lisp systems give the user the ability to modify the
+ordinary <code>read</code> procedure to perform such transformations by defining
+<a id="index-reader-macro-characters"></a>
+<em>reader macro characters</em>.  Quoted expressions are already handled in
+this way: The reader automatically translates <code>'expression</code> into
+<code>(quote expression)</code> before the evaluator sees it.  We could arrange for
+<code>?expression</code> to be transformed into <code>(? expression)</code> in the same
+way; however, for the sake of clarity we have included the transformation
+procedure here explicitly.
+</p>
+<p><code>Expand-question-mark</code> and <code>contract-question-mark</code> use several
+procedures with <code>string</code> in their names.  These are Scheme primitives.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="4_002e4_002e4_002e8.xhtml#g_t4_002e4_002e4_002e8" accesskey="n" rel="next">4.4.4.8</a>, Previous: <a href="4_002e4_002e4_002e6.xhtml#g_t4_002e4_002e4_002e6" accesskey="p" rel="prev">4.4.4.6</a>, Up: <a href="4_002e4_002e4.xhtml#g_t4_002e4_002e4" accesskey="u" rel="prev">4.4.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

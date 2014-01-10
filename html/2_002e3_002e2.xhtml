@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 2.3.2</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 2.3.2" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 2.3.2" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="2_002e3.xhtml#g_t2_002e3" rel="prev" title="2.3" />
+<link href="2_002e3_002e3.xhtml#g_t2_002e3_002e3" rel="next" title="2.3.3" />
+<link href="2_002e3_002e1.xhtml#g_t2_002e3_002e1" rel="prev" title="2.3.1" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t2_002e3_002e2"></a>
+<nav class="header">
+<p>
+Next: <a href="2_002e3_002e3.xhtml#g_t2_002e3_002e3" accesskey="n" rel="next">2.3.3</a>, Previous: <a href="2_002e3_002e1.xhtml#g_t2_002e3_002e1" accesskey="p" rel="prev">2.3.1</a>, Up: <a href="2_002e3.xhtml#g_t2_002e3" accesskey="u" rel="prev">2.3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Example_003a-Symbolic-Differentiation"></a>
+<h4 class="subsection"><span class="secnum">2.3.2</span><span class="sectitle">Example: Symbolic Differentiation</span></h4>
+
+<p>As an illustration of symbol manipulation and a further illustration of data
+abstraction, consider the design of a procedure that performs symbolic
+differentiation of algebraic expressions.  We would like the procedure to take
+as arguments an algebraic expression and a variable and to return the
+derivative of the expression with respect to the variable.  For example, if the
+arguments to the procedure are <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>+</mo>
+    <mi>b</mi>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>c</mi>
+  </mrow>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>, the
+procedure should return <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <mi>a</mi>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>b</mi>
+  </mrow>
+</math>.  Symbolic differentiation is of
+special historical significance in Lisp.  It was one of the motivating examples
+behind the development of a computer language for symbol manipulation.
+Furthermore, it marked the beginning of the line of research that led to the
+development of powerful systems for symbolic mathematical work, which are
+currently being used by a growing number of applied mathematicians and
+physicists.
+</p>
+<p>In developing the symbolic-differentiation program, we will follow the same
+strategy of data abstraction that we followed in developing the rational-number
+system of <a href="2_002e1_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a>.  That is, we will first define a differentiation
+algorithm that operates on abstract objects such as “sums,” “products,” and
+“variables” without worrying about how these are to be represented.  Only
+afterward will we address the representation problem.
+</p>
+<a id="The-differentiation-program-with-abstract-data"></a>
+<h5 class="subsubheading">The differentiation program with abstract data</h5>
+
+<p>In order to keep things simple, we will consider a very simple
+symbolic-differentiation program that handles expressions that are built up
+using only the operations of addition and multiplication with two arguments.
+Differentiation of any such expression can be carried out by applying the
+following reduction rules:
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mrow>
+          <mi>d</mi>
+          <mi>c</mi>
+        </mrow>
+        <mrow>
+          <mi>d</mi>
+          <mi>x</mi>
+        </mrow>
+      </mfrac>
+    </mrow>
+    <mspace width="thinmathspace"/>
+    <mo>=</mo>
+    <mspace width="thinmathspace"/>
+    <mn>0</mn>
+    <mo>,</mo>
+  </mrow>
+  <mspace width="1em"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>for </mtext>
+    <mi>c</mi>
+    <mtext> a constant </mtext>
+  </mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>or a variable </mtext>
+  </mrow>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>different from </mtext>
+    <mi>x</mi>
+    <mo>,</mo>
+  </mrow>
+</math>
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mn>1</mn>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mo stretchy="false">(</mo>
+              <mi>u</mi>
+              <mo>+</mo>
+              <mi>v</mi>
+              <mo stretchy="false">)</mo>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>u</mi>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>v</mi>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mo stretchy="false">(</mo>
+              <mi>u</mi>
+              <mi>v</mi>
+              <mo stretchy="false">)</mo>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mi>u</mi>
+        <mspace width="0.1em"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>v</mi>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>+</mo>
+        <mi>v</mi>
+        <mspace width="0.1em"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>u</mi>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>.</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+Observe that the latter two rules are recursive in nature.  That is, to obtain
+the derivative of a sum we first find the derivatives of the terms and add
+them.  Each of the terms may in turn be an expression that needs to be
+decomposed.  Decomposing into smaller and smaller pieces will eventually
+produce pieces that are either constants or variables, whose derivatives will
+be either 0 or 1.
+</p>
+<p>To embody these rules in a procedure we indulge in a little wishful thinking,
+as we did in designing the rational-number implementation.  If we had a means
+for representing algebraic expressions, we should be able to tell whether an
+expression is a sum, a product, a constant, or a variable.  We should be able
+to extract the parts of an expression.  For a sum, for example we want to be
+able to extract the addend (first term) and the augend (second term).  We
+should also be able to construct expressions from parts.  Let us assume that we
+already have procedures to implement the following selectors, constructors, and
+predicates:
+</p>
+<div class="example">
+<pre class="example">(variable? e)          <span class="roman">Is <code>e</code> a variable?</span>
+(same-variable? v1 v2) <span class="roman">Are <code>v1</code> and <code>v2</code> the same variable?</span>
+(sum? e)               <span class="roman">Is <code>e</code> a sum?</span>
+(addend e)             <span class="roman">Addend of the sum <code>e</code>.</span>
+(augend e)             <span class="roman">Augend of the sum <code>e</code>.</span>
+(make-sum a1 a2)       <span class="roman">Construct the sum of <code>a1</code> and <code>a2</code>.</span>
+(product? e)           <span class="roman">Is <code>e</code> a product?</span>
+(multiplier e)         <span class="roman">Multiplier of the product <code>e</code>.</span>
+(multiplicand e)       <span class="roman">Multiplicand of the product <code>e</code>.</span>
+(make-product m1 m2)   <span class="roman">Construct the product of <code>m1</code> and <code>m2</code>.</span>
+</pre></div>
+
+<p>Using these, and the primitive predicate <code>number?</code>, which identifies
+numbers, we can express the differentiation rules as the following procedure:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">deriv exp var</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">number? exp</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">variable? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">same-variable? exp var</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">sum? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-sum </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">addend exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)</span><span class="pln">
+                   </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">augend exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">product? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-sum
+          </span><span class="opn">(</span><span class="pln">make-product 
+           </span><span class="opn">(</span><span class="pln">multiplier exp</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">multiplicand exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">make-product 
+           </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">multiplier exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">multiplicand exp</span><span class="clo">))))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"unknown expression 
+                      type: DERIV"</span><span class="pln"> exp</span><span class="clo">))))</span></pre></div>
+
+<p>This <code>deriv</code> procedure incorporates the complete differentiation
+algorithm.  Since it is expressed in terms of abstract data, it will work no
+matter how we choose to represent algebraic expressions, as long as we design a
+proper set of selectors and constructors.  This is the issue we must address
+next.
+</p>
+<a id="Representing-algebraic-expressions"></a>
+<h5 class="subsubheading">Representing algebraic expressions</h5>
+
+<p>We can imagine many ways to use list structure to represent algebraic
+expressions.  For example, we could use lists of symbols that mirror the usual
+algebraic notation, representing <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>b</mi>
+  </mrow>
+</math> as the list <code>(a * x + b)</code>.  
+However, one especially straightforward choice is to use the same
+parenthesized prefix notation that Lisp uses for combinations; that is, to
+represent <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>a</mi>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>b</mi>
+  </mrow>
+</math> as <code>(+ (* a x) b)</code>.  Then our data
+representation for the differentiation problem is as follows:
+</p>
+<ul>
+<li> The variables are symbols.  They are identified by the primitive predicate
+<code>symbol?</code>:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">variable? x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">symbol? x</span><span class="clo">))</span></pre></div>
+
+</li><li> Two variables are the same if the symbols representing them are <code>eq?</code>:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">same-variable? v1 v2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">variable? v1</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">variable? v2</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> v1 v2</span><span class="clo">)))</span></pre></div>
+
+</li><li> Sums and products are constructed as lists:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-sum a1 a2</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'</span><span class="pun">+</span><span class="pln"> a1 a2</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-product m1 m2</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'</span><span class="pun">*</span><span class="pln"> m1 m2</span><span class="clo">))</span></pre></div>
+
+</li><li> A sum is a list whose first element is the symbol <code>+</code>:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sum? x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pair? x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'</span><span class="pun">+</span><span class="clo">)))</span></pre></div>
+
+</li><li> The addend is the second item of the sum list:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">addend s</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> s</span><span class="clo">))</span></pre></div>
+
+</li><li> The augend is the third item of the sum list:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">augend s</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">caddr</span><span class="pln"> s</span><span class="clo">))</span></pre></div>
+
+</li><li> A product is a list whose first element is the symbol <code>*</code>:
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">product? x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">pair? x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'</span><span class="pun">*</span><span class="clo">)))</span></pre></div>
+
+</li><li> The multiplier is the second item of the product list:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">multiplier p</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> p</span><span class="clo">))</span></pre></div>
+
+</li><li> The multiplicand is the third item of the product list:
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">multiplicand p</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">caddr</span><span class="pln"> p</span><span class="clo">))</span></pre></div>
+
+</li></ul>
+
+<p>Thus, we need only combine these with the algorithm as embodied by <code>deriv</code>
+in order to have a working symbolic-differentiation program.  Let us look at
+some examples of its behavior:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">3</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> y</span><span class="clo">))</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">3</span><span class="clo">))</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span></i><span class="pln">
+   </span><i><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> y</span><span class="clo">))</span></i><span class="pln">
+      </span><i><span class="opn">(</span><span class="pun">+</span><span class="pln">  x </span><span class="lit">3</span><span class="clo">)))</span></i>
+</pre></div>
+
+<p>The program produces answers that are correct; however, they are unsimplified.
+It is true that
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <mi>d</mi>
+        <mo stretchy="false">(</mo>
+        <mi>x</mi>
+        <mi>y</mi>
+        <mo stretchy="false">)</mo>
+      </mrow>
+      <mrow>
+        <mi>d</mi>
+        <mi>x</mi>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mn>0</mn>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mi>y</mi>
+    <mo>,</mo>
+  </mrow>
+</math>
+but we would like the program to know that <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mn>0</mn>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>⋅<!-- ⋅ --></mo>
+    <mi>y</mi>
+    <mo>=</mo>
+    <mi>y</mi>
+  </mrow>
+</math>,
+and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>0</mn>
+    <mo>+</mo>
+    <mi>y</mi>
+    <mo>=</mo>
+    <mi>y</mi>
+  </mrow>
+</math>.  The answer for the second example should have been
+simply <code>y</code>.  As the third example shows, this becomes a serious issue when
+the expressions are complex.
+</p>
+<p>Our difficulty is much like the one we encountered with the rational-number
+implementation: we haven’t reduced answers to simplest form.  To accomplish the
+rational-number reduction, we needed to change only the constructors and the
+selectors of the implementation.  We can adopt a similar strategy here.  We
+won’t change <code>deriv</code> at all.  Instead, we will change <code>make-sum</code> so
+that if both summands are numbers, <code>make-sum</code> will add them and return
+their sum.  Also, if one of the summands is 0, then <code>make-sum</code> will return
+the other summand:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-sum a1 a2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln">number? a1 </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> a2</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln">number? a2 </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> a1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">number? a1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">number? a2</span><span class="clo">))</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> a1 a2</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'</span><span class="pun">+</span><span class="pln"> a1 a2</span><span class="clo">))))</span></pre></div>
+
+<p>This uses the procedure <code>=number?</code>, which checks whether an expression is
+equal to a given number:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln">number? exp num</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">number? exp</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> exp num</span><span class="clo">)))</span></pre></div>
+
+<p>Similarly, we will change <code>make-product</code> to build in the rules that 0
+times anything is 0 and 1 times anything is the thing itself:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-product m1 m2</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln">number? m1 </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> 
+             </span><span class="opn">(</span><span class="pun">=</span><span class="pln">number? m2 </span><span class="lit">0</span><span class="clo">))</span><span class="pln"> 
+         </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln">number? m1 </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> m2</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pun">=</span><span class="pln">number? m2 </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> m1</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">number? m1</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">number? m2</span><span class="clo">))</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> m1 m2</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'</span><span class="pun">*</span><span class="pln"> m1 m2</span><span class="clo">))))</span></pre></div>
+
+<p>Here is how this version works on our three examples:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">3</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">1</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="pln">y</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">3</span><span class="clo">))</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> y </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">3</span><span class="clo">)))</span></i>
+</pre></div>
+
+<p>Although this is quite an improvement, the third example shows that there is
+still a long way to go before we get a program that puts expressions into a
+form that we might agree is “simplest.”  The problem of algebraic
+simplification is complex because, among other reasons, a form that may be
+simplest for one purpose may not be for another.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e56"></a>Exercise 2.56:</strong> Show how to extend the basic
+differentiator to handle more kinds of expressions.  For instance, implement
+the differentiation rule
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <mi>d</mi>
+        <mo stretchy="false">(</mo>
+        <msup>
+          <mi>u</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mspace width="0.1ex"/>
+            <mi>n</mi>
+          </mrow>
+        </msup>
+        <mo stretchy="false">)</mo>
+      </mrow>
+      <mrow>
+        <mi>d</mi>
+        <mi>x</mi>
+      </mrow>
+    </mfrac>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <msup>
+      <mi>u</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mspace width="0.1ex"/>
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msup>
+    <mspace width="thinmathspace"/>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mrow>
+          <mi>d</mi>
+          <mi>u</mi>
+        </mrow>
+        <mrow>
+          <mi>d</mi>
+          <mi>x</mi>
+        </mrow>
+      </mfrac>
+    </mrow>
+  </mrow>
+</math>
+by adding a new clause to the <code>deriv</code> program and defining appropriate
+procedures <code>exponentiation?</code>, <code>base</code>, <code>exponent</code>, and
+<code>make-exponentiation</code>.  (You may use the symbol <code>**</code> to denote
+exponentiation.)  Build in the rules that anything raised to the power 0 is 1
+and anything raised to the power 1 is the thing itself.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e57"></a>Exercise 2.57:</strong> Extend the differentiation
+program to handle sums and products of arbitrary numbers of (two or more)
+terms.  Then the last example above could be expressed as
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">deriv </span><span class="lit">'</span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> x </span><span class="lit">3</span><span class="clo">))</span><span class="pln"> </span><span class="lit">'x</span><span class="clo">)</span></pre></div>
+
+<p>Try to do this by changing only the representation for sums and products,
+without changing the <code>deriv</code> procedure at all.  For example, the
+<code>addend</code> of a sum would be the first term, and the <code>augend</code> would be
+the sum of the rest of the terms.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e58"></a>Exercise 2.58:</strong> Suppose we want to modify the
+differentiation program so that it works with ordinary mathematical notation,
+in which <code>+</code> and <code>*</code> are infix rather than prefix operators.  Since
+the differentiation program is defined in terms of abstract data, we can modify
+it to work with different representations of expressions solely by changing the
+predicates, selectors, and constructors that define the representation of the
+algebraic expressions on which the differentiator is to operate.
+</p>
+<ol>
+<li> Show how to do this in order to differentiate algebraic expressions presented
+in infix form, such as <code>(x + (3 * (x + (y + 2))))</code>.  To simplify the task,
+assume that <code>+</code> and <code>*</code> always take two arguments and that
+expressions are fully parenthesized.
+
+</li><li> The problem becomes substantially harder if we allow standard algebraic
+notation, such as <code>(x + 3 * (x + y + 2))</code>, which drops unnecessary
+parentheses and assumes that multiplication is done before addition.  Can you
+design appropriate predicates, selectors, and constructors for this notation
+such that our derivative program still works?
+
+</li></ol>
+</blockquote>
+
+<hr />
+<nav class="header">
+<p>
+Next: <a href="2_002e3_002e3.xhtml#g_t2_002e3_002e3" accesskey="n" rel="next">2.3.3</a>, Previous: <a href="2_002e3_002e1.xhtml#g_t2_002e3_002e1" accesskey="p" rel="prev">2.3.1</a>, Up: <a href="2_002e3.xhtml#g_t2_002e3" accesskey="u" rel="prev">2.3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

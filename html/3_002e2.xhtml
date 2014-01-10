@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 3.2</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 3.2" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 3.2" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-3.xhtml#Chapter-3" rel="prev" title="Chapter 3" />
+<link href="3_002e2_002e1.xhtml#g_t3_002e2_002e1" rel="next" title="3.2.1" />
+<link href="3_002e1_002e3.xhtml#g_t3_002e1_002e3" rel="prev" title="3.1.3" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t3_002e2"></a>
+<nav class="header">
+<p>
+Next: <a href="3_002e2_002e1.xhtml#g_t3_002e2_002e1" accesskey="n" rel="next">3.2.1</a>, Previous: <a href="3_002e1_002e3.xhtml#g_t3_002e1_002e3" accesskey="p" rel="prev">3.1.3</a>, Up: <a href="Chapter-3.xhtml#Chapter-3" accesskey="u" rel="prev">Chapter 3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="The-Environment-Model-of-Evaluation"></a>
+<h3 class="section"><span class="secnum">3.2</span><span class="sectitle">The Environment Model of Evaluation</span></h3>
+
+<p>When we introduced compound procedures in <a href="Chapter-1.xhtml#Chapter-1">Chapter 1</a>, we used the
+substitution model of evaluation (<a href="1_002e1_002e5.xhtml#g_t1_002e1_002e5">1.1.5</a>) to define what is meant
+by applying a procedure to arguments:
+</p>
+<ul>
+<li> To apply a compound procedure to arguments, evaluate the body of the procedure
+with each formal parameter replaced by the corresponding argument.
+
+</li></ul>
+
+<p>Once we admit assignment into our programming language, such a definition is no
+longer adequate.  In particular, <a href="3_002e1_002e3.xhtml#g_t3_002e1_002e3">3.1.3</a> argued that, in the
+presence of assignment, a variable can no longer be considered to be merely a
+name for a value.  Rather, a variable must somehow designate a “place” in
+which values can be stored.  In our new model of evaluation, these places will
+be maintained in structures called <a id="index-environments"></a>
+<em>environments</em>.
+</p>
+<p>An environment is a sequence of <a id="index-frames"></a>
+<em>frames</em>.  Each frame is a table
+(possibly empty) of <a id="index-bindings"></a>
+<em>bindings</em>, which associate variable names with
+their corresponding values.  (A single frame may contain at most one binding
+for any variable.)  Each frame also has a pointer to its <a id="index-enclosing-environment"></a>
+<em>enclosing environment</em>, 
+unless, for the purposes of discussion, the frame is considered
+to be <a id="index-global-1"></a>
+<em>global</em>.  The <a id="index-value-of-a-variable"></a>
+<em>value of a variable</em> with respect to an
+environment is the value given by the binding of the variable in the first
+frame in the environment that contains a binding for that variable.  If no
+frame in the sequence specifies a binding for the variable, then the variable
+is said to be <a id="index-unbound"></a>
+<em>unbound</em> in the environment.
+</p>
+<p><a href="#Figure-3_002e1">Figure 3.1</a> shows a simple environment structure consisting of three
+frames, labeled I, II, and III.  In the diagram, A, B, C, and D are pointers to
+environments.  C and D point to the same environment.  The variables <code>z</code>
+and <code>x</code> are bound in frame II, while <code>y</code> and <code>x</code> are bound in
+frame I.  The value of <code>x</code> in environment D is 3.  The value of <code>x</code>
+with respect to environment B is also 3.  This is determined as follows: We
+examine the first frame in the sequence (frame III) and do not find a binding
+for <code>x</code>, so we proceed to the enclosing environment D and find the binding
+in frame I.  On the other hand, the value of <code>x</code> in environment A is 7,
+because the first frame in the sequence (frame II) contains a binding of
+<code>x</code> to 7.  With respect to environment A, the binding of <code>x</code> to 7 in
+frame II is said to <a id="index-shadow"></a>
+<em>shadow</em> the binding of <code>x</code> to 3 in frame I.
+</p>
+<figure class="float">
+<a id="Figure-3_002e1"></a>
+<object style="width: 26.51ex; height: 23.31ex;" data="fig/chap3/Fig3.1b.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 3.1:</strong> A simple environment structure.</p>
+</figcaption>
+</figure>
+
+<p>The environment is crucial to the evaluation process, because it determines the
+context in which an expression should be evaluated.  Indeed, one could say that
+expressions in a programming language do not, in themselves, have any meaning.
+Rather, an expression acquires a meaning only with respect to some environment
+in which it is evaluated.  Even the interpretation of an expression as
+straightforward as <code>(+ 1 1)</code> depends on an understanding that one is
+operating in a context in which <code>+</code> is the symbol for addition.  Thus, in
+our model of evaluation we will always speak of evaluating an expression with
+respect to some environment.  To describe interactions with the interpreter, we
+will suppose that there is a global environment, consisting of a single frame
+(with no enclosing environment) that includes values for the symbols associated
+with the primitive procedures.  For example, the idea that <code>+</code> is the
+symbol for addition is captured by saying that the symbol <code>+</code> is bound in
+the global environment to the primitive addition procedure.
+</p>
+<table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="3_002e2_002e1.xhtml#g_t3_002e2_002e1" accesskey="1">3.2.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">The Rules for Evaluation
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="3_002e2_002e2.xhtml#g_t3_002e2_002e2" accesskey="2">3.2.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Applying Simple Procedures
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="3_002e2_002e3.xhtml#g_t3_002e2_002e3" accesskey="3">3.2.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Frames as the Repository of Local State
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="3_002e2_002e4.xhtml#g_t3_002e2_002e4" accesskey="4">3.2.4</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Internal Definitions
+</td></tr>
+</table>
+
+<hr />
+<nav class="header">
+<p>
+Next: <a href="3_002e2_002e1.xhtml#g_t3_002e2_002e1" accesskey="n" rel="next">3.2.1</a>, Previous: <a href="3_002e1_002e3.xhtml#g_t3_002e1_002e3" accesskey="p" rel="prev">3.1.3</a>, Up: <a href="Chapter-3.xhtml#Chapter-3" accesskey="u" rel="prev">Chapter 3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

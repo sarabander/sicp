@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 4.4</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.4" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-4.xhtml#Chapter-4" rel="prev" title="Chapter 4" />
+<link href="4_002e4_002e1.xhtml#g_t4_002e4_002e1" rel="next" title="4.4.1" />
+<link href="4_002e3_002e3.xhtml#g_t4_002e3_002e3" rel="prev" title="4.3.3" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t4_002e4"></a>
+<nav class="header">
+<p>
+Next: <a href="4_002e4_002e1.xhtml#g_t4_002e4_002e1" accesskey="n" rel="next">4.4.1</a>, Previous: <a href="4_002e3_002e3.xhtml#g_t4_002e3_002e3" accesskey="p" rel="prev">4.3.3</a>, Up: <a href="Chapter-4.xhtml#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Logic-Programming"></a>
+<h3 class="section"><span class="secnum">4.4</span><span class="sectitle">Logic Programming</span></h3>
+
+<p>In <a href="Chapter-1.xhtml#Chapter-1">Chapter 1</a> we stressed that computer science deals with imperative (how
+to) knowledge, whereas mathematics deals with declarative (what is) knowledge.
+Indeed, programming languages require that the programmer express knowledge in
+a form that indicates the step-by-step methods for solving particular problems.
+On the other hand, high-level languages provide, as part of the language
+implementation, a substantial amount of methodological knowledge that frees the
+user from concern with numerous details of how a specified computation will
+progress.
+</p>
+<p>Most programming languages, including Lisp, are organized around computing the
+values of mathematical functions.  Expression-oriented languages (such as Lisp,
+Fortran, and Algol) capitalize on the “pun” that an expression that describes
+the value of a function may also be interpreted as a means of computing that
+value.  Because of this, most programming languages are strongly biased toward
+unidirectional computations (computations with well-defined inputs and
+outputs).  There are, however, radically different programming languages that
+relax this bias.  We saw one such example in <a href="3_002e3_002e5.xhtml#g_t3_002e3_002e5">3.3.5</a>, where the
+objects of computation were arithmetic constraints.  In a constraint system the
+direction and the order of computation are not so well specified; in carrying
+out a computation the system must therefore provide more detailed “how to”
+knowledge than would be the case with an ordinary arithmetic computation.  This
+does not mean, however, that the user is released altogether from the
+responsibility of providing imperative knowledge.  There are many constraint
+networks that implement the same set of constraints, and the user must choose
+from the set of mathematically equivalent networks a suitable network to
+specify a particular computation.
+</p>
+<p>The nondeterministic program evaluator of <a href="4_002e3.xhtml#g_t4_002e3">4.3</a> also moves away
+from the view that programming is about constructing algorithms for computing
+unidirectional functions.  In a nondeterministic language, expressions can have
+more than one value, and, as a result, the computation is dealing with
+relations rather than with single-valued functions.  Logic programming extends
+this idea by combining a relational vision of programming with a powerful kind
+of symbolic pattern matching called <a id="index-unification"></a>
+<em>unification</em>.<a class="footnote_link" id="DOCF262" href="#FOOT262"><sup>262</sup></a>
+</p>
+<p>This approach, when it works, can be a very powerful way to write programs.
+Part of the power comes from the fact that a single “what is” fact can be
+used to solve a number of different problems that would have different “how
+to” components.  As an example, consider the <code>append</code> operation, which
+takes two lists as arguments and combines their elements to form a single list.
+In a procedural language such as Lisp, we could define <code>append</code> in terms
+of the basic list constructor <code>cons</code>, as we did in <a href="2_002e2_002e1.xhtml#g_t2_002e2_002e1">2.2.1</a>:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">append x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? x</span><span class="clo">)</span><span class="pln"> 
+      y 
+      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">append </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> y</span><span class="clo">))))</span></pre></div>
+
+<p>This procedure can be regarded as a translation into Lisp of the following two
+rules, the first of which covers the case where the first list is empty and the
+second of which handles the case of a nonempty list, which is a <code>cons</code> of
+two parts:
+</p>
+<ul>
+<li> For any list <code>y</code>, the empty list and <code>y</code> <code>append</code> to form
+<code>y</code>.
+
+</li><li> For any <code>u</code>, <code>v</code>, <code>y</code>, and <code>z</code>, <code>(cons u v)</code> and
+<code>y</code> <code>append</code> to form <code>(cons u z)</code> if <code>v</code> and <code>y</code>
+<code>append</code> to form <code>z</code>.<a class="footnote_link" id="DOCF263" href="#FOOT263"><sup>263</sup></a>
+
+</li></ul>
+
+<p>Using the <code>append</code> procedure, we can answer questions such as
+</p>
+<blockquote>
+<p>Find the <code>append</code> of <code>(a b)</code> and <code>(c d)</code>.
+</p></blockquote>
+
+<p>But the same two rules are also sufficient for answering the following sorts of
+questions, which the procedure can’t answer:
+</p>
+<blockquote>
+<p>Find a list <code>y</code> that <code>append</code>s with <code>(a b)</code> to produce <code>(a
+b c d)</code>.
+</p>
+<p>Find all <code>x</code> and <code>y</code> that <code>append</code> to form <code>(a b c d)</code>.
+</p></blockquote>
+
+<p>In a logic programming language, the programmer writes an <code>append</code>
+“procedure” by stating the two rules about <code>append</code> given above.  “How
+to” knowledge is provided automatically by the interpreter to allow this
+single pair of rules to be used to answer all three types of questions about
+<code>append</code>.<a class="footnote_link" id="DOCF264" href="#FOOT264"><sup>264</sup></a>
+</p>
+<p>Contemporary logic programming languages (including the one we implement here)
+have substantial deficiencies, in that their general “how to” methods can
+lead them into spurious infinite loops or other undesirable behavior.  Logic
+programming is an active field of research in computer
+science.<a class="footnote_link" id="DOCF265" href="#FOOT265"><sup>265</sup></a>
+</p>
+<p>Earlier in this chapter we explored the technology of implementing interpreters
+and described the elements that are essential to an interpreter for a Lisp-like
+language (indeed, to an interpreter for any conventional language).  Now we
+will apply these ideas to discuss an interpreter for a logic programming
+language.  We call this language the <a id="index-query-language"></a>
+<em>query language</em>, because it is
+very useful for retrieving information from data bases by formulating
+<a id="index-queries"></a>
+<em>queries</em>, or questions, expressed in the language.  Even though the
+query language is very different from Lisp, we will find it convenient to
+describe the language in terms of the same general framework we have been using
+all along: as a collection of primitive elements, together with means of
+combination that enable us to combine simple elements to create more complex
+elements and means of abstraction that enable us to regard complex elements as
+single conceptual units.  An interpreter for a logic programming language is
+considerably more complex than an interpreter for a language like Lisp.
+Nevertheless, we will see that our query-language interpreter contains many of
+the same elements found in the interpreter of <a href="4_002e1.xhtml#g_t4_002e1">4.1</a>.  In
+particular, there will be an “eval” part that classifies expressions
+according to type and an “apply” part that implements the language’s
+abstraction mechanism (procedures in the case of Lisp, and <a id="index-rules"></a>
+<em>rules</em> in
+the case of logic programming).  Also, a central role is played in the
+implementation by a frame data structure, which determines the correspondence
+between symbols and their associated values.  One additional interesting aspect
+of our query-language implementation is that we make substantial use of
+streams, which were introduced in <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>.
+</p>
+<table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="4_002e4_002e1.xhtml#g_t4_002e4_002e1" accesskey="1">4.4.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Deductive Information Retrieval
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="4_002e4_002e2.xhtml#g_t4_002e4_002e2" accesskey="2">4.4.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">How the Query System Works
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="4_002e4_002e3.xhtml#g_t4_002e4_002e3" accesskey="3">4.4.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Is Logic Programming Mathematical Logic?
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="4_002e4_002e4.xhtml#g_t4_002e4_002e4" accesskey="4">4.4.4</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Implementing the Query System
+</td></tr>
+</table>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT262"><p><a class="footnote_backlink" href="#DOCF262"><sup>262</sup></a>
+Logic
+programming has grown out of a long history of research in automatic theorem
+proving.  Early theorem-proving programs could accomplish very little, because
+they exhaustively searched the space of possible proofs.  The major
+breakthrough that made such a search plausible was the discovery in the early
+1960s of the <a id="index-unification-algorithm"></a>
+<em>unification algorithm</em> and the <a id="index-resolution-principle"></a>
+<em>resolution principle</em> 
+(<a href="References.xhtml#Robinson-1965">Robinson 1965</a>).  Resolution was used, for example, by 
+<a href="References.xhtml#Green-and-Raphael-_00281968_0029">Green and Raphael (1968)</a> (see also <a href="References.xhtml#Green-1969">Green 1969</a>) as the basis for a deductive
+question-answering system.  During most of this period, researchers
+concentrated on algorithms that are guaranteed to find a proof if one exists.
+Such algorithms were difficult to control and to direct toward a proof.  
+<a href="References.xhtml#Hewitt-_00281969_0029">Hewitt (1969)</a> recognized the possibility of merging the control structure of a
+programming language with the operations of a logic-manipulation system,
+leading to the work in automatic search mentioned in <a href="4_002e3_002e1.xhtml#g_t4_002e3_002e1">4.3.1</a>
+(<a href="4_002e3_002e1.xhtml#Footnote-250">Footnote 250</a>).  At the same time that this was being done,
+Colmerauer, in Marseille, was developing rule-based systems for manipulating
+natural language (see <a href="References.xhtml#Colmerauer-et-al_002e-1973">Colmerauer et al. 1973</a>).  He invented a programming
+language called Prolog for representing those rules.  <a href="References.xhtml#Kowalski-_00281973_003b-1979_0029">Kowalski (1973; 1979)</a>, in
+Edinburgh, recognized that execution of a Prolog program could be interpreted
+as proving theorems (using a proof technique called linear Horn-clause
+resolution).  The merging of the last two strands led to the logic-programming
+movement.  Thus, in assigning credit for the development of logic programming,
+the French can point to Prolog’s genesis at the University of Marseille, while
+the British can highlight the work at the University of Edinburgh.  According
+to people at <abbr>MIT</abbr>, logic programming was developed by these groups in
+an attempt to figure out what Hewitt was talking about in his brilliant but
+impenetrable Ph.D. thesis.  For a history of logic programming, see 
+<a href="References.xhtml#Robinson-1983">Robinson 1983</a>.</p>
+</div>
+<div id="FOOT263"><p><a class="footnote_backlink" href="#DOCF263"><sup>263</sup></a>
+To see the correspondence between the
+rules and the procedure, let <code>x</code> in the procedure (where <code>x</code> is
+nonempty) correspond to <code>(cons u v)</code> in the rule.  Then <code>z</code> in the
+rule corresponds to the <code>append</code> of <code>(cdr x)</code> and <code>y</code>.</p>
+</div>
+<div id="FOOT264"><p><a class="footnote_backlink" href="#DOCF264"><sup>264</sup></a>
+This certainly does not relieve the user of the entire
+problem of how to compute the answer.  There are many different mathematically
+equivalent sets of rules for formulating the <code>append</code> relation, only some
+of which can be turned into effective devices for computing in any direction.
+In addition, sometimes “what is” information gives no clue “how to” compute
+an answer.  For example, consider the problem of computing the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> such that
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>=</mo>
+    <mi>x</mi>
+  </mrow>
+</math>.</p>
+</div>
+<div id="FOOT265"><p><a class="footnote_backlink" href="#DOCF265"><sup>265</sup></a>
+Interest in logic programming peaked during the early 80s
+when the Japanese government began an ambitious project aimed at building
+superfast computers optimized to run logic programming languages.  The speed of
+such computers was to be measured in LIPS (Logical Inferences Per Second)
+rather than the usual FLOPS (FLoating-point Operations Per Second).  Although
+the project succeeded in developing hardware and software as originally
+planned, the international computer industry moved in a different direction.
+See <a href="References.xhtml#Feigenbaum-and-Shrobe-1993">Feigenbaum and Shrobe 1993</a> for an overview evaluation of the Japanese
+project.  The logic programming community has also moved on to consider
+relational programming based on techniques other than simple pattern matching,
+such as the ability to deal with numerical constraints such as the ones
+illustrated in the constraint-propagation system of <a href="3_002e3_002e5.xhtml#g_t3_002e3_002e5">3.3.5</a>.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="4_002e4_002e1.xhtml#g_t4_002e4_002e1" accesskey="n" rel="next">4.4.1</a>, Previous: <a href="4_002e3_002e3.xhtml#g_t4_002e3_002e3" accesskey="p" rel="prev">4.3.3</a>, Up: <a href="Chapter-4.xhtml#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

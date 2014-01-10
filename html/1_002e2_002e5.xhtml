@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 1.2.5</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 1.2.5" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 1.2.5" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="1_002e2.xhtml#g_t1_002e2" rel="prev" title="1.2" />
+<link href="1_002e2_002e6.xhtml#g_t1_002e2_002e6" rel="next" title="1.2.6" />
+<link href="1_002e2_002e4.xhtml#g_t1_002e2_002e4" rel="prev" title="1.2.4" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t1_002e2_002e5"></a>
+<nav class="header">
+<p>
+Next: <a href="1_002e2_002e6.xhtml#g_t1_002e2_002e6" accesskey="n" rel="next">1.2.6</a>, Previous: <a href="1_002e2_002e4.xhtml#g_t1_002e2_002e4" accesskey="p" rel="prev">1.2.4</a>, Up: <a href="1_002e2.xhtml#g_t1_002e2" accesskey="u" rel="prev">1.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Greatest-Common-Divisors"></a>
+<h4 class="subsection"><span class="secnum">1.2.5</span><span class="sectitle">Greatest Common Divisors</span></h4>
+
+<p>The greatest common divisor (<abbr>GCD</abbr>) of two integers <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> is
+defined to be the largest integer that divides both <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> with no
+remainder.  For example, the <abbr>GCD</abbr> of 16 and 28 is 4.  In <a href="Chapter-2.xhtml#Chapter-2">Chapter 2</a>, when we investigate how to implement rational-number arithmetic, we will
+need to be able to compute <abbr>GCD</abbr>s in order to reduce rational numbers
+to lowest terms.  (To reduce a rational number to lowest terms, we must divide
+both the numerator and the denominator by their <abbr>GCD</abbr>.  For example,
+16/28 reduces to 4/7.)  One way to find the <abbr>GCD</abbr> of two integers is to
+factor them and search for common factors, but there is a famous algorithm that
+is much more efficient.
+</p>
+<p>The idea of the algorithm is based on the observation that, if <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>r</mi>
+</math> is the
+remainder when <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> is divided by <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>, then the common divisors of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> and
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> are precisely the same as the common divisors of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>r</mi>
+</math>.  Thus,
+we can use the equation
+</p>
+<div class="example">
+<pre class="example">GCD(a,b) = GCD(b,r)
+</pre></div>
+
+<p>to successively reduce the problem of computing a <abbr>GCD</abbr> to the problem
+of computing the <abbr>GCD</abbr> of smaller and smaller pairs of integers.  For
+example,
+</p>
+<div class="example">
+<pre class="example">GCD(206,40) = GCD(40,6)
+            = GCD(6,4)
+            = GCD(4,2)
+            = GCD(2,0) = 2
+</pre></div>
+
+<p>reduces <abbr>GCD</abbr>(206, 40) to <abbr>GCD</abbr>(2, 0), which is 2.  It is
+possible to show that starting with any two positive integers and performing
+repeated reductions will always eventually produce a pair where the second
+number is 0.  Then the <abbr>GCD</abbr> is the other number in the pair.  This
+method for computing the <abbr>GCD</abbr> is known as 
+<a id="index-Euclid_0027s-Algorithm"></a>
+<em>Euclid’s Algorithm</em>.<a class="footnote_link" id="DOCF42" href="#FOOT42"><sup>42</sup></a>
+</p>
+<p>It is easy to express Euclid’s Algorithm as a procedure:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">gcd a b</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> b </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+      a
+      </span><span class="opn">(</span><span class="pln">gcd b </span><span class="opn">(</span><span class="pln">remainder a b</span><span class="clo">))))</span></pre></div>
+
+<p>This generates an iterative process, whose number of steps grows as the
+logarithm of the numbers involved.
+</p>
+<p>The fact that the number of steps required by Euclid’s Algorithm has
+logarithmic growth bears an interesting relation to the Fibonacci numbers:
+</p>
+<blockquote>
+<p><strong>Lamé’s Theorem:</strong> If Euclid’s Algorithm requires <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> steps to
+compute the <abbr>GCD</abbr> of some pair, then the smaller number in the pair
+must be greater than or equal to the <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>k</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> Fibonacci number.<a class="footnote_link" id="DOCF43" href="#FOOT43"><sup>43</sup></a>
+</p></blockquote>
+
+<p>We can use this theorem to get an order-of-growth estimate for Euclid’s
+Algorithm.  Let <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> be the smaller of the two inputs to the procedure.  If
+the process takes <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> steps, then we must have 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+  <mo>≥<!-- ≥ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>≈<!-- ≈ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>φ<!-- φ --></mi>
+      <mi>k</mi>
+    </msup>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msqrt>
+      <mn>5</mn>
+    </msqrt>
+  </mrow>
+</math>.  Therefore the number of steps <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math>
+grows as the logarithm (to the base <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>φ<!-- φ --></mi>
+</math>) of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>.  Hence, the order of
+growth is <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e20"></a>Exercise 1.20:</strong> The process that a procedure
+generates is of course dependent on the rules used by the interpreter.  As an
+example, consider the iterative <code>gcd</code> procedure given above.  Suppose we
+were to interpret this procedure using normal-order evaluation, as discussed in
+<a href="1_002e1_002e5.xhtml#g_t1_002e1_002e5">1.1.5</a>.  (The normal-order-evaluation rule for <code>if</code> is
+described in <a href="1_002e1_002e6.xhtml#Exercise-1_002e5">Exercise 1.5</a>.)  Using the substitution method (for normal
+order), illustrate the process generated in evaluating <code>(gcd 206 40)</code> and
+indicate the <code>remainder</code> operations that are actually performed.  How many
+<code>remainder</code> operations are actually performed in the normal-order
+evaluation of <code>(gcd 206 40)</code>?  In the applicative-order evaluation?
+</p></blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT42"><p><a class="footnote_backlink" href="#DOCF42"><sup>42</sup></a>
+Euclid’s Algorithm is so called because 
+it appears in Euclid’s <cite>Elements</cite> (Book 7, ca. 300 <abbr>B.C.</abbr>).  
+According to <a href="References.xhtml#Knuth-_00281973_0029">Knuth (1973)</a>, it can be considered the oldest known nontrivial 
+algorithm.  The ancient Egyptian method of multiplication (<a href="1_002e2_002e4.xhtml#Exercise-1_002e18">Exercise 1.18</a>) is 
+surely older, but, as Knuth explains, Euclid’s algorithm is the oldest known to 
+have been presented as a general algorithm, rather than as a set of illustrative
+examples.</p>
+</div>
+<div id="FOOT43"><p><a class="footnote_backlink" href="#DOCF43"><sup>43</sup></a>
+This
+theorem was proved in 1845 by Gabriel Lamé, a French mathematician and
+engineer known chiefly for his contributions to mathematical physics.  To prove
+the theorem, we consider pairs <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mi>k</mi>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, where <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>a</mi>
+      <mi>k</mi>
+    </msub>
+    <mo>≥<!-- ≥ --></mo>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+  </mrow>
+</math>, 
+for which Euclid’s Algorithm terminates in <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> steps.  The proof
+is based on the claim that, if <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>+</mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>+</mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo stretchy="false">→<!-- → --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mi>k</mi>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo stretchy="false">→<!-- → --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> 
+are three successive pairs 
+in the reduction process, then we must have <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>+</mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <msub>
+    <mi>b</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>+</mo>
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+</math>.  
+To verify the claim, consider that a reduction step is defined by applying the 
+transformation <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>=</mo>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+  </mrow>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>=</mo>
+  </mrow>
+</math> remainder of <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>a</mi>
+    <mi>k</mi>
+  </msub>
+</math> 
+divided by <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mi>k</mi>
+  </msub>
+</math>.  The second equation means that <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>a</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>q</mi>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+  </mrow>
+</math> 
+for some positive integer <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>q</mi>
+</math>.  And since <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>q</mi>
+</math> must be at least 1 we have 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>a</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>q</mi>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <msub>
+    <mi>b</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>+</mo>
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+</math>.  But in the previous reduction 
+step we have <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>+</mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>=</mo>
+  <msub>
+    <mi>a</mi>
+    <mi>k</mi>
+  </msub>
+</math>.  Therefore, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>+</mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>=</mo>
+  <msub>
+    <mi>a</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <msub>
+    <mi>b</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>+</mo>
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+</math>.
+This verifies the claim.  Now we can prove the theorem by induction on <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math>, 
+the number of steps that the algorithm requires to terminate.  The result is true for 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>k</mi>
+    <mo>=</mo>
+    <mn>1</mn>
+  </mrow>
+</math>, since this merely requires that <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> be at least as large as <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>1</mn>
+  </mrow>
+</math>.  
+Now, assume that the result is true for all integers less than or equal
+to <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> and establish the result for <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>k</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+  </mrow>
+</math>.  
+Let <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>+</mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>+</mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo stretchy="false">→<!-- → --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mi>k</mi>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mi>k</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo stretchy="false">→<!-- → --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>b</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>k</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> 
+be successive pairs in the reduction 
+process.  By our induction hypotheses, we have <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> 
+and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.  Thus, applying the claim we just proved together with 
+the definition of the Fibonacci numbers gives 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>+</mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <msub>
+    <mi>b</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>+</mo>
+  <msub>
+    <mi>b</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>k</mi>
+      <mo>−<!-- − --></mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>≥<!-- ≥ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo>−<!-- − --></mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>Fib</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>k</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, 
+which completes the proof of Lamé’s Theorem.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="1_002e2_002e6.xhtml#g_t1_002e2_002e6" accesskey="n" rel="next">1.2.6</a>, Previous: <a href="1_002e2_002e4.xhtml#g_t1_002e2_002e4" accesskey="p" rel="prev">1.2.4</a>, Up: <a href="1_002e2.xhtml#g_t1_002e2" accesskey="u" rel="prev">1.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

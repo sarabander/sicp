@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 1.1</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 1.1" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 1.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-1.xhtml#Chapter-1" rel="prev" title="Chapter 1" />
+<link href="1_002e1_002e1.xhtml#g_t1_002e1_002e1" rel="next" title="1.1.1" />
+<link href="Chapter-1.xhtml#Chapter-1" rel="prev" title="Chapter 1" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t1_002e1"></a>
+<nav class="header">
+<p>
+Next: <a href="1_002e1_002e1.xhtml#g_t1_002e1_002e1" accesskey="n" rel="next">1.1.1</a>, Previous: <a href="Chapter-1.xhtml#Chapter-1" accesskey="p" rel="prev">Chapter 1</a>, Up: <a href="Chapter-1.xhtml#Chapter-1" accesskey="u" rel="prev">Chapter 1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="The-Elements-of-Programming"></a>
+<h3 class="section"><span class="secnum">1.1</span><span class="sectitle">The Elements of Programming</span></h3>
+
+<p>A powerful programming language is more than just a means for instructing a
+computer to perform tasks.  The language also serves as a framework within
+which we organize our ideas about processes.  Thus, when we describe a
+language, we should pay particular attention to the means that the language
+provides for combining simple ideas to form more complex ideas.  Every powerful
+language has three mechanisms for accomplishing this:
+</p>
+<ul>
+<li> <b>primitive expressions</b>,
+which represent the simplest entities the language is concerned with,
+
+</li><li> <b>means of combination</b>,
+by which compound elements are built from simpler ones, and
+
+</li><li> <b>means of abstraction</b>,
+by which compound elements can be named and manipulated as units.
+
+</li></ul>
+
+<p>In programming, we deal with two kinds of elements: procedures and data. (Later
+we will discover that they are really not so distinct.)  Informally, data is
+“stuff” that we want to manipulate, and procedures are descriptions of the
+rules for manipulating the data.  Thus, any powerful programming language
+should be able to describe primitive data and primitive procedures and should
+have methods for combining and abstracting procedures and data.
+</p>
+<p>In this chapter we will deal only with simple numerical data so that we can
+focus on the rules for building procedures.<a class="footnote_link" id="DOCF4" href="#FOOT4"><sup>4</sup></a> In later chapters we will see that these
+same rules allow us to build procedures to manipulate compound data as well.
+</p>
+<table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="1_002e1_002e1.xhtml#g_t1_002e1_002e1" accesskey="1">1.1.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Expressions
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="1_002e1_002e2.xhtml#g_t1_002e1_002e2" accesskey="2">1.1.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Naming and the Environment
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="1_002e1_002e3.xhtml#g_t1_002e1_002e3" accesskey="3">1.1.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Evaluating Combinations
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="1_002e1_002e4.xhtml#g_t1_002e1_002e4" accesskey="4">1.1.4</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Compound Procedures
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="1_002e1_002e5.xhtml#g_t1_002e1_002e5" accesskey="5">1.1.5</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">The Substitution Model for Procedure Application
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="1_002e1_002e6.xhtml#g_t1_002e1_002e6" accesskey="6">1.1.6</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Conditional Expressions and Predicates
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="1_002e1_002e7.xhtml#g_t1_002e1_002e7" accesskey="7">1.1.7</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Example: Square Roots by Newton’s Method
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="1_002e1_002e8.xhtml#g_t1_002e1_002e8" accesskey="8">1.1.8</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Procedures as Black-Box Abstractions
+</td></tr>
+</table>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT4"><p><a class="footnote_backlink" href="#DOCF4"><sup>4</sup></a>
+The characterization of
+numbers as “simple data” is a barefaced bluff.  In fact, the treatment of
+numbers is one of the trickiest and most confusing aspects of any programming
+language.  Some typical issues involved are these: Some computer systems
+distinguish <a id="index-integers"></a>
+<em>integers</em>, such as 2, from <a id="index-real-numbers"></a>
+<em>real numbers</em>, such as
+2.71.  Is the real number 2.00 different from the integer 2?  Are the
+arithmetic operations used for integers the same as the operations used for
+real numbers?  Does 6 divided by 2 produce 3, or 3.0?  How large a number can
+we represent?  How many decimal places of accuracy can we represent?  Is the
+range of integers the same as the range of real numbers?  Above and beyond
+these questions, of course, lies a collection of issues concerning roundoff and
+truncation errors—the entire science of numerical analysis.  Since our focus
+in this book is on large-scale program design rather than on numerical
+techniques, we are going to ignore these problems.  The numerical examples in
+this chapter will exhibit the usual roundoff behavior that one observes when
+using arithmetic operations that preserve a limited number of decimal places of
+accuracy in noninteger operations.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="1_002e1_002e1.xhtml#g_t1_002e1_002e1" accesskey="n" rel="next">1.1.1</a>, Previous: <a href="Chapter-1.xhtml#Chapter-1" accesskey="p" rel="prev">Chapter 1</a>, Up: <a href="Chapter-1.xhtml#Chapter-1" accesskey="u" rel="prev">Chapter 1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

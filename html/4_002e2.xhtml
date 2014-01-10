@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 4.2</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.2" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.2" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-4.xhtml#Chapter-4" rel="prev" title="Chapter 4" />
+<link href="4_002e2_002e1.xhtml#g_t4_002e2_002e1" rel="next" title="4.2.1" />
+<link href="4_002e1_002e7.xhtml#g_t4_002e1_002e7" rel="prev" title="4.1.7" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t4_002e2"></a>
+<nav class="header">
+<p>
+Next: <a href="4_002e2_002e1.xhtml#g_t4_002e2_002e1" accesskey="n" rel="next">4.2.1</a>, Previous: <a href="4_002e1_002e7.xhtml#g_t4_002e1_002e7" accesskey="p" rel="prev">4.1.7</a>, Up: <a href="Chapter-4.xhtml#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Variations-on-a-Scheme-_002d_002d_002d-Lazy-Evaluation"></a>
+<h3 class="section"><span class="secnum">4.2</span><span class="sectitle">Variations on a Scheme — Lazy Evaluation</span></h3>
+
+<p>Now that we have an evaluator expressed as a Lisp program, we can experiment
+with alternative choices in language design simply by modifying the evaluator.
+Indeed, new languages are often invented by first writing an evaluator that
+embeds the new language within an existing high-level language.  For example,
+if we wish to discuss some aspect of a proposed modification to Lisp with
+another member of the Lisp community, we can supply an evaluator that embodies
+the change.  The recipient can then experiment with the new evaluator and send
+back comments as further modifications.  Not only does the high-level
+implementation base make it easier to test and debug the evaluator; in
+addition, the embedding enables the designer to snarf<a class="footnote_link" id="DOCF235" href="#FOOT235"><sup>235</sup></a>
+features from the underlying language, just as our embedded Lisp evaluator uses
+primitives and control structure from the underlying Lisp.  Only later (if
+ever) need the designer go to the trouble of building a complete implementation
+in a low-level language or in hardware.  In this section and the next we
+explore some variations on Scheme that provide significant additional
+expressive power.
+</p>
+<table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="4_002e2_002e1.xhtml#g_t4_002e2_002e1" accesskey="1">4.2.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Normal Order and Applicative Order
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="4_002e2_002e2.xhtml#g_t4_002e2_002e2" accesskey="2">4.2.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">An Interpreter with Lazy Evaluation
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="4_002e2_002e3.xhtml#g_t4_002e2_002e3" accesskey="3">4.2.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Streams as Lazy Lists
+</td></tr>
+</table>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT235"><p><a class="footnote_backlink" href="#DOCF235"><sup>235</sup></a>
+Snarf: “To
+grab, especially a large document or file for the purpose of using it either
+with or without the owner’s permission.”  Snarf down: “To snarf, sometimes
+with the connotation of absorbing, processing, or understanding.”  (These
+definitions were snarfed from <a href="References.xhtml#Steele-et-al_002e-1983">Steele et al. 1983</a>.  See also <a href="References.xhtml#Raymond-1993">Raymond 1993</a>.)</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="4_002e2_002e1.xhtml#g_t4_002e2_002e1" accesskey="n" rel="next">4.2.1</a>, Previous: <a href="4_002e1_002e7.xhtml#g_t4_002e1_002e7" accesskey="p" rel="prev">4.1.7</a>, Up: <a href="Chapter-4.xhtml#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

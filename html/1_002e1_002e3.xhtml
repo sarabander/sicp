@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 1.1.3</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 1.1.3" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 1.1.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="1_002e1.xhtml#g_t1_002e1" rel="prev" title="1.1" />
+<link href="1_002e1_002e4.xhtml#g_t1_002e1_002e4" rel="next" title="1.1.4" />
+<link href="1_002e1_002e2.xhtml#g_t1_002e1_002e2" rel="prev" title="1.1.2" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t1_002e1_002e3"></a>
+<nav class="header">
+<p>
+Next: <a href="1_002e1_002e4.xhtml#g_t1_002e1_002e4" accesskey="n" rel="next">1.1.4</a>, Previous: <a href="1_002e1_002e2.xhtml#g_t1_002e1_002e2" accesskey="p" rel="prev">1.1.2</a>, Up: <a href="1_002e1.xhtml#g_t1_002e1" accesskey="u" rel="prev">1.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Evaluating-Combinations"></a>
+<h4 class="subsection"><span class="secnum">1.1.3</span><span class="sectitle">Evaluating Combinations</span></h4>
+
+<p>One of our goals in this chapter is to isolate issues about thinking
+procedurally.  As a case in point, let us consider that, in evaluating
+combinations, the interpreter is itself following a procedure.
+</p>
+<blockquote>
+<p>To evaluate a combination, do the following:
+</p>
+<ol>
+<li> Evaluate the subexpressions of the combination.
+
+</li><li> Apply the procedure that is the value of the leftmost subexpression (the
+operator) to the arguments that are the values of the other subexpressions (the
+operands).
+
+</li></ol>
+</blockquote>
+
+<p>Even this simple rule illustrates some important points about processes in
+general.  First, observe that the first step dictates that in order to
+accomplish the evaluation process for a combination we must first perform the
+evaluation process on each element of the combination.  Thus, the evaluation
+rule is <a id="index-recursive"></a>
+<em>recursive</em> in nature; that is, it includes, as one of its
+steps, the need to invoke the rule itself.<a class="footnote_link" id="DOCF10" href="#FOOT10"><sup>10</sup></a>
+</p>
+<p>Notice how succinctly the idea of recursion can be used to express what, in the
+case of a deeply nested combination, would otherwise be viewed as a rather
+complicated process.  For example, evaluating
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">6</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">7</span><span class="clo">))</span></pre></div>
+
+<p>requires that the evaluation rule be applied to four different combinations.
+We can obtain a picture of this process by representing the combination in the
+form of a tree, as shown in <a href="#Figure-1_002e1">Figure 1.1</a>.  Each combination is represented
+by a node with branches corresponding to the operator and the operands of the
+combination stemming from it.  The terminal nodes (that is, nodes with no
+branches stemming from them) represent either operators or numbers.  Viewing
+evaluation in terms of the tree, we can imagine that the values of the operands
+percolate upward, starting from the terminal nodes and then combining at higher
+and higher levels.  In general, we shall see that recursion is a very powerful
+technique for dealing with hierarchical, treelike objects.  In fact, the
+“percolate values upward” form of the evaluation rule is an example of a
+general kind of process known as <a id="index-tree-accumulation"></a>
+<em>tree accumulation</em>.
+</p>
+<figure class="float">
+<a id="Figure-1_002e1"></a>
+<object style="width: 20.38ex; height: 20.46ex;" data="fig/chap1/Fig1.1g.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 1.1:</strong> Tree representation, showing the value of each subcombination.</p>
+</figcaption>
+</figure>
+
+<p>Next, observe that the repeated application of the first step brings us to the
+point where we need to evaluate, not combinations, but primitive expressions
+such as numerals, built-in operators, or other names.  We take care of the
+primitive cases by stipulating that
+</p>
+<ul>
+<li> the values of numerals are the numbers that they name,
+
+</li><li> the values of built-in operators are the machine instruction sequences that
+carry out the corresponding operations, and
+
+</li><li> the values of other names are the objects associated with those names in the
+environment.
+
+</li></ul>
+
+<p>We may regard the second rule as a special case of the third one by stipulating
+that symbols such as <code>+</code> and <code>*</code> are also included in the global
+environment, and are associated with the sequences of machine instructions that
+are their “values.”  The key point to notice is the role of the environment
+in determining the meaning of the symbols in expressions.  In an interactive
+language such as Lisp, it is meaningless to speak of the value of an expression
+such as <code>(+ x 1)</code> without specifying any information about the environment
+that would provide a meaning for the symbol <code>x</code> (or even for the symbol
+<code>+</code>).  As we shall see in <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>, the general notion of the
+environment as providing a context in which evaluation takes place will play an
+important role in our understanding of program execution.
+</p>
+<p>Notice that the evaluation rule given above does not handle definitions.  For
+instance, evaluating <code>(define x 3)</code> does not apply <code>define</code> to two
+arguments, one of which is the value of the symbol <code>x</code> and the other of
+which is 3, since the purpose of the <code>define</code> is precisely to associate
+<code>x</code> with a value.  (That is, <code>(define x 3)</code> is not a combination.)
+</p>
+<p>Such exceptions to the general evaluation rule are called <a id="index-special-forms"></a>
+<em>special forms</em>.  
+<code>Define</code> is the only example of a special form that we have seen
+so far, but we will meet others shortly.  Each special form has its own
+evaluation rule. The various kinds of expressions (each with its associated
+evaluation rule) constitute the syntax of the programming language.  In
+comparison with most other programming languages, Lisp has a very simple
+syntax; that is, the evaluation rule for expressions can be described by a
+simple general rule together with specialized rules for a small number of
+special forms.<a class="footnote_link" id="DOCF11" href="#FOOT11"><sup>11</sup></a>
+</p>
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT10"><p><a class="footnote_backlink" href="#DOCF10"><sup>10</sup></a>
+It may seem strange that
+the evaluation rule says, as part of the first step, that we should evaluate
+the leftmost element of a combination, since at this point that can only be an
+operator such as <code>+</code> or <code>*</code> representing a built-in primitive
+procedure such as addition or multiplication.  We will see later that it is
+useful to be able to work with combinations whose operators are themselves
+compound expressions.</p>
+</div>
+<div id="FOOT11"><p><a class="footnote_backlink" href="#DOCF11"><sup>11</sup></a>
+Special syntactic forms that are simply convenient
+alternative surface structures for things that can be written in more uniform
+ways are sometimes called <a id="index-syntactic-sugar"></a>
+<em>syntactic sugar</em>, to use a phrase coined by
+Peter Landin.  In comparison with users of other languages, Lisp programmers,
+as a rule, are less concerned with matters of syntax.  (By contrast, examine
+any Pascal manual and notice how much of it is devoted to descriptions of
+syntax.)  This disdain for syntax is due partly to the flexibility of Lisp,
+which makes it easy to change surface syntax, and partly to the observation
+that many “convenient” syntactic constructs, which make the language less
+uniform, end up causing more trouble than they are worth when programs become
+large and complex.  In the words of Alan Perlis, “Syntactic sugar causes
+cancer of the semicolon.”</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="1_002e1_002e4.xhtml#g_t1_002e1_002e4" accesskey="n" rel="next">1.1.4</a>, Previous: <a href="1_002e1_002e2.xhtml#g_t1_002e1_002e2" accesskey="p" rel="prev">1.1.2</a>, Up: <a href="1_002e1.xhtml#g_t1_002e1" accesskey="u" rel="prev">1.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

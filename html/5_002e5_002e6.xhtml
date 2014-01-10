@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 5.5.6</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 5.5.6" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 5.5.6" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="5_002e5.xhtml#g_t5_002e5" rel="prev" title="5.5" />
+<link href="5_002e5_002e7.xhtml#g_t5_002e5_002e7" rel="next" title="5.5.7" />
+<link href="5_002e5_002e5.xhtml#g_t5_002e5_002e5" rel="prev" title="5.5.5" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t5_002e5_002e6"></a>
+<nav class="header">
+<p>
+Next: <a href="5_002e5_002e7.xhtml#g_t5_002e5_002e7" accesskey="n" rel="next">5.5.7</a>, Previous: <a href="5_002e5_002e5.xhtml#g_t5_002e5_002e5" accesskey="p" rel="prev">5.5.5</a>, Up: <a href="5_002e5.xhtml#g_t5_002e5" accesskey="u" rel="prev">5.5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Lexical-Addressing"></a>
+<h4 class="subsection"><span class="secnum">5.5.6</span><span class="sectitle">Lexical Addressing</span></h4>
+
+<p>One of the most common optimizations performed by compilers is the optimization
+of variable lookup.  Our compiler, as we have implemented it so far, generates
+code that uses the <code>lookup-variable-value</code> operation of the evaluator
+machine.  This searches for a variable by comparing it with each variable that
+is currently bound, working frame by frame outward through the run-time
+environment.  This search can be expensive if the frames are deeply nested or
+if there are many variables.  For example, consider the problem of looking up
+the value of <code>x</code> while evaluating the expression <code>(* x y z)</code> in an
+application of the procedure that is returned by
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">x </span><span class="lit">3</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y </span><span class="lit">4</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d e</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">y </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a b x</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">z </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> c d x</span><span class="clo">)))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y z</span><span class="clo">))))</span></pre></div>
+
+<p>Since a <code>let</code> expression is just syntactic sugar for a <code>lambda</code>
+combination, this expression is equivalent to
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln">
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d e</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x y z</span><span class="clo">))</span><span class="pln">
+      </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a b x</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> c d x</span><span class="clo">))))</span><span class="pln">
+ </span><span class="lit">3</span><span class="pln">
+ </span><span class="lit">4</span><span class="clo">)</span></pre></div>
+
+<p>Each time <code>lookup-variable-value</code> searches for <code>x</code>, it must determine
+that the symbol <code>x</code> is not <code>eq?</code> to <code>y</code> or <code>z</code> (in the
+first frame), nor to <code>a</code>, <code>b</code>, <code>c</code>, <code>d</code>, or <code>e</code> (in
+the second frame).  We will assume, for the moment, that our programs do not
+use <code>define</code>—that variables are bound only with <code>lambda</code>.  Because
+our language is lexically scoped, the run-time environment for any expression
+will have a structure that parallels the lexical structure of the program in
+which the expression appears.<a class="footnote_link" id="DOCF330" href="#FOOT330"><sup>330</sup></a> Thus, the
+compiler can know, when it analyzes the above expression, that each time the
+procedure is applied the variable <code>x</code> in <code>(* x y z)</code> will be found
+two frames out from the current frame and will be the first variable in that
+frame.
+</p>
+<p>We can exploit this fact by inventing a new kind of variable-lookup operation,
+<code>lexical-address-lookup</code>, that takes as arguments an environment and a
+<a id="index-lexical-address"></a>
+<em>lexical address</em> that consists of two numbers: a <a id="index-frame-number"></a>
+<em>frame number</em>, 
+which specifies how many frames to pass over, and a
+<a id="index-displacement-number"></a>
+<em>displacement number</em>, which specifies how many variables to pass over
+in that frame.  <code>Lexical-address-lookup</code> will produce the value of the
+variable stored at that lexical address relative to the current environment.
+If we add the <code>lexical-address-lookup</code> operation to our machine, we can
+make the compiler generate code that references variables using this operation,
+rather than <code>lookup-variable-value</code>.  Similarly, our compiled code can use
+a new <code>lexical-address-set!</code>  operation instead of
+<code>set-variable-value!</code>.
+</p>
+<p>In order to generate such code, the compiler must be able to determine the
+lexical address of a variable it is about to compile a reference to.  The
+lexical address of a variable in a program depends on where one is in the code.
+For example, in the following program, the address of <code>x</code> in expression
+<code>⟨</code><var>e1</var><code>⟩</code> is (2, 0)—two frames back and the first variable in the frame.  At
+that point <code>y</code> is at address (0, 0) and <code>c</code> is at address (1, 2).  In
+expression <code>⟨</code><var>e2</var><code>⟩</code>, <code>x</code> is at (1, 0), <code>y</code> is at (1, 1), and <code>c</code>
+is at (0, 2).
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln">
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d e</span><span class="clo">)</span><span class="pln">
+     </span><span class="opn">((</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">y z</span><span class="clo">)</span><span class="pln"> ⟨</span><var><span class="pln">e1</span></var><span class="pln">⟩</span><span class="clo">)</span><span class="pln">
+      ⟨</span><var><span class="pln">e2</span></var><span class="pln">⟩
+      </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> c d x</span><span class="clo">))))</span><span class="pln">
+ </span><span class="lit">3</span><span class="pln">
+ </span><span class="lit">4</span><span class="clo">)</span></pre></div>
+
+<p>One way for the compiler to produce code that uses lexical addressing is to
+maintain a data structure called a <a id="index-compile_002dtime-environment"></a>
+<em>compile-time environment</em>.  This
+keeps track of which variables will be at which positions in which frames in
+the run-time environment when a particular variable-access operation is
+executed.  The compile-time environment is a list of frames, each containing a
+list of variables.  (There will of course be no values bound to the variables,
+since values are not computed at compile time.)  The compile-time environment
+becomes an additional argument to <code>compile</code> and is passed along to each
+code generator.  The top-level call to <code>compile</code> uses an empty
+compile-time environment.  When a <code>lambda</code> body is compiled,
+<code>compile-lambda-body</code> extends the compile-time environment by a frame
+containing the procedure’s parameters, so that the sequence making up the body
+is compiled with that extended environment.  At each point in the compilation,
+<code>compile-variable</code> and <code>compile-assignment</code> use the compile-time
+environment in order to generate the appropriate lexical addresses.
+</p>
+<p><a href="#Exercise-5_002e39">Exercise 5.39</a> through <a href="#Exercise-5_002e43">Exercise 5.43</a> describe how to complete this
+sketch of the lexical-addressing strategy in order to incorporate lexical
+lookup into the compiler.  <a href="#Exercise-5_002e44">Exercise 5.44</a> describes another use for the
+compile-time environment.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-5_002e39"></a>Exercise 5.39:</strong> Write a procedure
+<code>lexical-address-lookup</code> that implements the new lookup operation.  It
+should take two arguments—a lexical address and a run-time environment—and
+return the value of the variable stored at the specified lexical address.
+<code>Lexical-address-lookup</code> should signal an error if the value of the
+variable is the symbol <code>*unassigned*</code>.<a class="footnote_link" id="DOCF331" href="#FOOT331"><sup>331</sup></a> Also write a procedure
+<code>lexical-address-set!</code> that implements the operation that changes the
+value of the variable at a specified lexical address.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e40"></a>Exercise 5.40:</strong> Modify the compiler to maintain
+the compile-time environment as described above.  That is, add a
+compile-time-environment argument to <code>compile</code> and the various code
+generators, and extend it in <code>compile-lambda-body</code>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e41"></a>Exercise 5.41:</strong> Write a procedure
+<code>find-variable</code> that takes as arguments a variable and a compile-time
+environment and returns the lexical address of the variable with respect to
+that environment.  For example, in the program fragment that is shown above,
+the compile-time environment during the compilation of expression <code>⟨</code><var>e1</var><code>⟩</code> is
+<code>((y z) (a b c d e) (x y))</code>.  <code>Find-variable</code> should produce
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">find-variable 
+ </span><span class="lit">'c</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="pln">y z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d e</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="clo">)</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">find-variable 
+ </span><span class="lit">'x</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="pln">y z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d e</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)))</span><span class="pln">
+</span><i><span class="opn">(</span><span class="lit">2</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">find-variable 
+ </span><span class="lit">'w</span><span class="pln"> </span><span class="lit">'</span><span class="opn">((</span><span class="pln">y z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a b c d e</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)))</span><span class="pln">
+</span><i><span class="pln">not-found</span></i>
+</pre></div>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e42"></a>Exercise 5.42:</strong> Using <code>find-variable</code> from
+<a href="#Exercise-5_002e41">Exercise 5.41</a>, rewrite <code>compile-variable</code> and
+<code>compile-assignment</code> to output lexical-address instructions.  In cases
+where <code>find-variable</code> returns <code>not-found</code> (that is, where the
+variable is not in the compile-time environment), you should have the code
+generators use the evaluator operations, as before, to search for the binding.
+(The only place a variable that is not found at compile time can be is in the
+global environment, which is part of the run-time environment but is not part
+of the compile-time environment.<a class="footnote_link" id="DOCF332" href="#FOOT332"><sup>332</sup></a>  Thus, if you wish, you may have the evaluator operations look
+directly in the global environment, which can be obtained with the operation
+<code>(op get-global-environment)</code>, instead of having them search the whole
+run-time environment found in <code>env</code>.)  Test the modified compiler on a few
+simple cases, such as the nested <code>lambda</code> combination at the beginning of
+this section.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e43"></a>Exercise 5.43:</strong> We argued in <a href="4_002e1_002e6.xhtml#g_t4_002e1_002e6">4.1.6</a>
+that internal definitions for block structure should not be considered “real”
+<code>define</code>s.  Rather, a procedure body should be interpreted as if the
+internal variables being defined were installed as ordinary <code>lambda</code>
+variables initialized to their correct values using <code>set!</code>.  
+<a href="4_002e1_002e6.xhtml#g_t4_002e1_002e6">4.1.6</a> and <a href="4_002e1_002e6.xhtml#Exercise-4_002e16">Exercise 4.16</a> showed how to modify the metacircular
+interpreter to accomplish this by scanning out internal definitions.  Modify
+the compiler to perform the same transformation before it compiles a procedure
+body.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-5_002e44"></a>Exercise 5.44:</strong> In this section we have focused
+on the use of the compile-time environment to produce lexical addresses.  But
+there are other uses for compile-time environments.  For instance, in
+<a href="5_002e5_002e5.xhtml#Exercise-5_002e38">Exercise 5.38</a> we increased the efficiency of compiled code by open-coding
+primitive procedures.  Our implementation treated the names of open-coded
+procedures as reserved words.  If a program were to rebind such a name, the
+mechanism described in <a href="5_002e5_002e5.xhtml#Exercise-5_002e38">Exercise 5.38</a> would still open-code it as a
+primitive, ignoring the new binding.  For example, consider the procedure
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="pun">*</span><span class="pln"> a b x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> b y</span><span class="clo">)))</span></pre></div>
+
+<p>which computes a linear combination of <code>x</code> and <code>y</code>.  We might call it
+with arguments <code>+matrix</code>, <code>*matrix</code>, and four matrices, but the
+open-coding compiler would still open-code the <code>+</code> and the <code>*</code> in
+<code>(+ (* a x) (* b y))</code> as primitive <code>+</code> and <code>*</code>.  Modify the
+open-coding compiler to consult the compile-time environment in order to
+compile the correct code for expressions involving the names of primitive
+procedures.  (The code will work correctly as long as the program does not
+<code>define</code> or <code>set!</code> these names.)
+</p></blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT330"><p><a class="footnote_backlink" href="#DOCF330"><sup>330</sup></a>
+This is not true if we allow internal
+definitions, unless we scan them out.  See <a href="#Exercise-5_002e43">Exercise 5.43</a>.  </p>
+</div>
+<div id="FOOT331"><p><a class="footnote_backlink" href="#DOCF331"><sup>331</sup></a>
+This is the modification
+to variable lookup required if we implement the scanning method to eliminate
+internal definitions (<a href="#Exercise-5_002e43">Exercise 5.43</a>).  We will need to eliminate these
+definitions in order for lexical addressing to work.</p>
+</div>
+<div id="FOOT332"><p><a class="footnote_backlink" href="#DOCF332"><sup>332</sup></a>
+Lexical addresses cannot be used to
+access variables in the global environment, because these names can be defined
+and redefined interactively at any time.  With internal definitions scanned
+out, as in <a href="#Exercise-5_002e43">Exercise 5.43</a>, the only definitions the compiler sees are
+those at top level, which act on the global environment.  Compilation of a
+definition does not cause the defined name to be entered in the compile-time
+environment.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="5_002e5_002e7.xhtml#g_t5_002e5_002e7" accesskey="n" rel="next">5.5.7</a>, Previous: <a href="5_002e5_002e5.xhtml#g_t5_002e5_002e5" accesskey="p" rel="prev">5.5.5</a>, Up: <a href="5_002e5.xhtml#g_t5_002e5" accesskey="u" rel="prev">5.5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

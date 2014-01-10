@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 2.4.3</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 2.4.3" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 2.4.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="2_002e4.xhtml#g_t2_002e4" rel="prev" title="2.4" />
+<link href="2_002e5.xhtml#g_t2_002e5" rel="next" title="2.5" />
+<link href="2_002e4_002e2.xhtml#g_t2_002e4_002e2" rel="prev" title="2.4.2" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t2_002e4_002e3"></a>
+<nav class="header">
+<p>
+Next: <a href="2_002e5.xhtml#g_t2_002e5" accesskey="n" rel="next">2.5</a>, Previous: <a href="2_002e4_002e2.xhtml#g_t2_002e4_002e2" accesskey="p" rel="prev">2.4.2</a>, Up: <a href="2_002e4.xhtml#g_t2_002e4" accesskey="u" rel="prev">2.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Data_002dDirected-Programming-and-Additivity"></a>
+<h4 class="subsection"><span class="secnum">2.4.3</span><span class="sectitle">Data-Directed Programming and Additivity</span></h4>
+
+<p>The general strategy of checking the type of a datum and calling an appropriate
+procedure is called <a id="index-dispatching-on-type"></a>
+<em>dispatching on type</em>.  This is a powerful strategy
+for obtaining modularity in system design.  On the other hand, implementing the
+dispatch as in <a href="2_002e4_002e2.xhtml#g_t2_002e4_002e2">2.4.2</a> has two significant weaknesses.  One
+weakness is that the generic interface procedures (<code>real-part</code>,
+<code>imag-part</code>, <code>magnitude</code>, and <code>angle</code>) must know about all the
+different representations.  For instance, suppose we wanted to incorporate a
+new representation for complex numbers into our complex-number system.  We
+would need to identify this new representation with a type, and then add a
+clause to each of the generic interface procedures to check for the new type
+and apply the appropriate selector for that representation.
+</p>
+<p>Another weakness of the technique is that even though the individual
+representations can be designed separately, we must guarantee that no two
+procedures in the entire system have the same name.  This is why Ben and Alyssa
+had to change the names of their original procedures from <a href="2_002e4_002e1.xhtml#g_t2_002e4_002e1">2.4.1</a>.
+</p>
+<p>The issue underlying both of these weaknesses is that the technique for
+implementing generic interfaces is not <a id="index-additive"></a>
+<em>additive</em>.  The person
+implementing the generic selector procedures must modify those procedures each
+time a new representation is installed, and the people interfacing the
+individual representations must modify their code to avoid name conflicts.  In
+each of these cases, the changes that must be made to the code are
+straightforward, but they must be made nonetheless, and this is a source of
+inconvenience and error.  This is not much of a problem for the complex-number
+system as it stands, but suppose there were not two but hundreds of different
+representations for complex numbers.  And suppose that there were many generic
+selectors to be maintained in the abstract-data interface.  Suppose, in fact,
+that no one programmer knew all the interface procedures or all the
+representations.  The problem is real and must be addressed in such programs as
+large-scale data-base-management systems.
+</p>
+<p>What we need is a means for modularizing the system design even further.  This
+is provided by the programming technique known as <a id="index-data_002ddirected-programming-1"></a>
+<em>data-directed programming</em>.  
+To understand how data-directed programming works, begin with
+the observation that whenever we deal with a set of generic operations that are
+common to a set of different types we are, in effect, dealing with a
+two-dimensional table that contains the possible operations on one axis and the
+possible types on the other axis.  The entries in the table are the procedures
+that implement each operation for each type of argument presented.  In the
+complex-number system developed in the previous section, the correspondence
+between operation name, data type, and actual procedure was spread out among
+the various conditional clauses in the generic interface procedures.  But the
+same information could have been organized in a table, as shown in <a href="#Figure-2_002e22">Figure 2.22</a>.
+</p>
+<figure class="float">
+<a id="Figure-2_002e22"></a>
+<object style="width: 63.29ex; height: 20.98ex;" data="fig/chap2/Fig2.22.std.svg" type="image/svg+xml">SVG</object>
+
+<figcaption class="float-caption">
+<p><strong>Figure 2.22:</strong> Table of operations for the complex-number system.</p>
+</figcaption>
+</figure>
+
+<p>Data-directed programming is the technique of designing programs to work with
+such a table directly.  Previously, we implemented the mechanism that
+interfaces the complex-arithmetic code with the two representation packages as
+a set of procedures that each perform an explicit dispatch on type.  Here we
+will implement the interface as a single procedure that looks up the
+combination of the operation name and argument type in the table to find the
+correct procedure to apply, and then applies it to the contents of the
+argument.  If we do this, then to add a new representation package to the
+system we need not change any existing procedures; we need only add new entries
+to the table.
+</p>
+<p>To implement this plan, assume that we have two procedures, <code>put</code> and
+<code>get</code>, for manipulating the operation-and-type table:
+</p>
+<ul>
+<li> <code>(put ⟨<var>op</var>⟩ ⟨<var>type</var>⟩ ⟨<var>item</var>⟩)</code> installs the 
+<code>⟨</code><var>item</var><code>⟩</code> in the table, indexed by the 
+<code>⟨</code><var>op</var><code>⟩</code> and the <code>⟨</code><var>type</var><code>⟩</code>.
+
+</li><li> <code>(get ⟨<var>op</var>⟩ ⟨<var>type</var>⟩)</code> looks up the <code>⟨</code><var>op</var><code>⟩</code>, 
+<code>⟨</code><var>type</var><code>⟩</code> entry in the table and returns the item found there.  
+If no item is found, <code>get</code> returns false.
+
+</li></ul>
+
+<p>For now, we can assume that <code>put</code> and <code>get</code> are included in our
+language.  In <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> (<a href="3_002e3_002e3.xhtml#g_t3_002e3_002e3">3.3.3</a>) we
+will see how to implement these and other operations for manipulating tables.
+</p>
+<p>Here is how data-directed programming can be used in the complex-number system.
+Ben, who developed the rectangular representation, implements his code just as
+he did originally.  He defines a collection of procedures, or a
+<a id="index-package"></a>
+<em>package</em>, and interfaces these to the rest of the system by adding
+entries to the table that tell the system how to operate on rectangular
+numbers.  This is accomplished by calling the following procedure:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">install-rectangular-package</span><span class="clo">)</span><span class="pln">
+  </span><span class="roman"><span class="com">;; internal procedures</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">)</span><span class="pln"> 
+    </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">))</span><span class="pln">
+             </span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pln">atan </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> r </span><span class="opn">(</span><span class="pln">cos a</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> r </span><span class="opn">(</span><span class="pln">sin a</span><span class="clo">))))</span><span class="pln">
+  </span><span class="roman"><span class="com">;; interface to the rest of the system</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag x</span><span class="clo">)</span><span class="pln"> 
+    </span><span class="opn">(</span><span class="pln">attach-tag </span><span class="lit">'rectangular</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'real-part</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">rectangular</span><span class="clo">)</span><span class="pln"> real-part</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'imag-part</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">rectangular</span><span class="clo">)</span><span class="pln"> imag-part</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'magnitude</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">rectangular</span><span class="clo">)</span><span class="pln"> magnitude</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'angle</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">rectangular</span><span class="clo">)</span><span class="pln"> angle</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make-from-real-imag</span><span class="pln"> </span><span class="lit">'rectangular</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make-from-mag-ang</span><span class="pln"> </span><span class="lit">'rectangular</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">r a</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">))))</span><span class="pln">
+  </span><span class="lit">'done</span><span class="clo">)</span></pre></div>
+
+<p>Notice that the internal procedures here are the same procedures from 
+<a href="2_002e4_002e1.xhtml#g_t2_002e4_002e1">2.4.1</a> that Ben wrote when he was working in isolation.  No changes are
+necessary in order to interface them to the rest of the system.  Moreover,
+since these procedure definitions are internal to the installation procedure,
+Ben needn’t worry about name conflicts with other procedures outside the
+rectangular package.  To interface these to the rest of the system, Ben
+installs his <code>real-part</code> procedure under the operation name
+<code>real-part</code> and the type <code>(rectangular)</code>, and similarly for the other
+selectors.<a class="footnote_link" id="DOCF111" href="#FOOT111"><sup>111</sup></a>  The interface also defines the
+constructors to be used by the external system.<a class="footnote_link" id="DOCF112" href="#FOOT112"><sup>112</sup></a>  These are identical to
+Ben’s internally defined constructors, except that they attach the tag.
+</p>
+<p>Alyssa’s polar package is analogous:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">install-polar-package</span><span class="clo">)</span><span class="pln">
+  </span><span class="roman"><span class="com">;; internal procedures</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> r a</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">cos </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sin </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">)))</span><span class="pln">
+          </span><span class="opn">(</span><span class="pln">atan y x</span><span class="clo">)))</span><span class="pln">
+  </span><span class="roman"><span class="com">;; interface to the rest of the system</span></span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tag x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">attach-tag </span><span class="lit">'polar</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'real-part</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">polar</span><span class="clo">)</span><span class="pln"> real-part</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'imag-part</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">polar</span><span class="clo">)</span><span class="pln"> imag-part</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'magnitude</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">polar</span><span class="clo">)</span><span class="pln"> magnitude</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'angle</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">polar</span><span class="clo">)</span><span class="pln"> angle</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make-from-real-imag</span><span class="pln"> </span><span class="lit">'polar</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x y</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">put </span><span class="lit">'make-from-mag-ang</span><span class="pln"> </span><span class="lit">'polar</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">r a</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="pln">tag </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">))))</span><span class="pln">
+  </span><span class="lit">'done</span><span class="clo">)</span></pre></div>
+
+<p>Even though Ben and Alyssa both still use their original procedures defined
+with the same names as each other’s (e.g., <code>real-part</code>), these definitions
+are now internal to different procedures (see <a href="1_002e1_002e8.xhtml#g_t1_002e1_002e8">1.1.8</a>), so there is
+no name conflict.
+</p>
+<p>The complex-arithmetic selectors access the table by means of a general
+“operation” procedure called <code>apply-generic</code>, which applies a generic
+operation to some arguments.  <code>Apply-generic</code> looks in the table under the
+name of the operation and the types of the arguments and applies the resulting
+procedure if one is present:<a class="footnote_link" id="DOCF113" href="#FOOT113"><sup>113</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply-generic op </span><span class="pun">.</span><span class="pln"> args</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">type-tags </span><span class="opn">(</span><span class="pln">map type-tag args</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">proc </span><span class="opn">(</span><span class="pln">get op type-tags</span><span class="clo">)))</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> proc
+          </span><span class="opn">(</span><span class="pln">apply proc </span><span class="opn">(</span><span class="pln">map contents args</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">(</span><span class="err">error</span><span class="pln">
+            </span><span class="str">"No method for these types: 
+             APPLY-GENERIC"</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">list op type-tags</span><span class="clo">))))))</span></pre></div>
+
+<p>Using <code>apply-generic</code>, we can define our generic selectors as follows:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">real-part z</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'real-part</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">imag-part z</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'imag-part</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">magnitude z</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'magnitude</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">angle z</span><span class="clo">)</span><span class="pln"> 
+  </span><span class="opn">(</span><span class="pln">apply-generic </span><span class="lit">'angle</span><span class="pln"> z</span><span class="clo">))</span></pre></div>
+
+<p>Observe that these do not change at all if a new representation is added to the
+system.
+</p>
+<p>We can also extract from the table the constructors to be used by the programs
+external to the packages in making complex numbers from real and imaginary
+parts and from magnitudes and angles.  As in <a href="2_002e4_002e2.xhtml#g_t2_002e4_002e2">2.4.2</a>, we construct
+rectangular numbers whenever we have real and imaginary parts, and polar
+numbers whenever we have magnitudes and angles:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'make-from-real-imag</span><span class="pln"> 
+        </span><span class="lit">'rectangular</span><span class="clo">)</span><span class="pln"> 
+   x y</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-mag-ang r a</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'make-from-mag-ang</span><span class="pln"> 
+        </span><span class="lit">'polar</span><span class="clo">)</span><span class="pln"> 
+   r a</span><span class="clo">))</span></pre></div>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e73"></a>Exercise 2.73:</strong> <a href="2_002e3_002e2.xhtml#g_t2_002e3_002e2">2.3.2</a> described a
+program that performs symbolic differentiation:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">deriv exp var</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">number? exp</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">variable? exp</span><span class="clo">)</span><span class="pln"> 
+         </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">same-variable? exp var</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">sum? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-sum </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">addend exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)</span><span class="pln">
+                   </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">augend exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)))</span><span class="pln">
+        </span><span class="opn">((</span><span class="pln">product? exp</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">(</span><span class="pln">make-sum
+           </span><span class="opn">(</span><span class="pln">make-product 
+            </span><span class="opn">(</span><span class="pln">multiplier exp</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">multiplicand exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">))</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">make-product 
+            </span><span class="opn">(</span><span class="pln">deriv </span><span class="opn">(</span><span class="pln">multiplier exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">multiplicand exp</span><span class="clo">))))</span><span class="pln">
+        ⟨</span><var><span class="pln">more rules can be added here</span></var><span class="pln">⟩
+        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"unknown expression type:
+                      DERIV"</span><span class="pln"> exp</span><span class="clo">))))</span></pre></div>
+
+<p>We can regard this program as performing a dispatch on the type of the
+expression to be differentiated.  In this situation the “type tag” of the
+datum is the algebraic operator symbol (such as <code>+</code>) and the operation
+being performed is <code>deriv</code>.  We can transform this program into
+data-directed style by rewriting the basic derivative procedure as
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">deriv exp var</span><span class="clo">)</span><span class="pln">
+   </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">number? exp</span><span class="clo">)</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+         </span><span class="opn">((</span><span class="pln">variable? exp</span><span class="clo">)</span><span class="pln"> 
+           </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">same-variable? exp var</span><span class="clo">)</span><span class="pln"> 
+               </span><span class="lit">1</span><span class="pln"> 
+               </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
+         </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">((</span><span class="pln">get </span><span class="lit">'deriv</span><span class="pln"> </span><span class="opn">(</span><span class="pln">operator exp</span><span class="clo">))</span><span class="pln"> 
+                </span><span class="opn">(</span><span class="pln">operands exp</span><span class="clo">)</span><span class="pln"> 
+                var</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">operator exp</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> exp</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">operands exp</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> exp</span><span class="clo">))</span></pre></div>
+
+<ol>
+<li> Explain what was done above.  Why can’t we assimilate the predicates
+<code>number?</code> and <code>variable?</code> into the data-directed dispatch?
+
+</li><li> Write the procedures for derivatives of sums and products, and the auxiliary
+code required to install them in the table used by the program above.
+
+</li><li> Choose any additional differentiation rule that you like, such as the one for
+exponents (<a href="2_002e3_002e2.xhtml#Exercise-2_002e56">Exercise 2.56</a>), and install it in this data-directed
+system.
+
+</li><li> In this simple algebraic manipulator the type of an expression is the algebraic
+operator that binds it together.  Suppose, however, we indexed the procedures
+in the opposite way, so that the dispatch line in <code>deriv</code> looked like
+
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">get </span><span class="opn">(</span><span class="pln">operator exp</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'deriv</span><span class="clo">)</span><span class="pln"> 
+ </span><span class="opn">(</span><span class="pln">operands exp</span><span class="clo">)</span><span class="pln"> var</span><span class="clo">)</span></pre></div>
+
+<p>What corresponding changes to the derivative system are required?
+</p>
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e74"></a>Exercise 2.74:</strong> Insatiable Enterprises, Inc., is
+a highly decentralized conglomerate company consisting of a large number of
+independent divisions located all over the world.  The company’s computer
+facilities have just been interconnected by means of a clever
+network-interfacing scheme that makes the entire network appear to any user to
+be a single computer.  Insatiable’s president, in her first attempt to exploit
+the ability of the network to extract administrative information from division
+files, is dismayed to discover that, although all the division files have been
+implemented as data structures in Scheme, the particular data structure used
+varies from division to division.  A meeting of division managers is hastily
+called to search for a strategy to integrate the files that will satisfy
+headquarters’ needs while preserving the existing autonomy of the divisions.
+</p>
+<p>Show how such a strategy can be implemented with data-directed programming.  As
+an example, suppose that each division’s personnel records consist of a single
+file, which contains a set of records keyed on employees’ names.  The structure
+of the set varies from division to division.  Furthermore, each employee’s
+record is itself a set (structured differently from division to division) that
+contains information keyed under identifiers such as <code>address</code> and
+<code>salary</code>.  In particular:
+</p>
+<ol>
+<li> Implement for headquarters a <code>get-record</code> procedure that retrieves a
+specified employee’s record from a specified personnel file.  The procedure
+should be applicable to any division’s file.  Explain how the individual
+divisions’ files should be structured.  In particular, what type information
+must be supplied?
+
+</li><li> Implement for headquarters a <code>get-salary</code> procedure that returns the
+salary information from a given employee’s record from any division’s personnel
+file.  How should the record be structured in order to make this operation
+work?
+
+</li><li> Implement for headquarters a <code>find-employee-record</code> procedure.  This
+should search all the divisions’ files for the record of a given employee and
+return the record.  Assume that this procedure takes as arguments an employee’s
+name and a list of all the divisions’ files.
+
+</li><li> When Insatiable takes over a new company, what changes must be made in order to
+incorporate the new personnel information into the central system?
+
+</li></ol>
+</blockquote>
+
+<a id="Message-passing"></a>
+<h5 class="subsubheading">Message passing</h5>
+
+<p>The key idea of data-directed programming is to handle generic operations in
+programs by dealing explicitly with operation-and-type tables, such as the
+table in <a href="#Figure-2_002e22">Figure 2.22</a>.  The style of programming we used in 
+<a href="2_002e4_002e2.xhtml#g_t2_002e4_002e2">2.4.2</a> organized the required dispatching on type by having each operation
+take care of its own dispatching.  In effect, this decomposes the
+operation-and-type table into rows, with each generic operation procedure
+representing a row of the table.
+</p>
+<p>An alternative implementation strategy is to decompose the table into columns
+and, instead of using “intelligent operations” that dispatch on data types,
+to work with “intelligent data objects” that dispatch on operation names.  We
+can do this by arranging things so that a data object, such as a rectangular
+number, is represented as a procedure that takes as input the required
+operation name and performs the operation indicated.  In such a discipline,
+<code>make-from-real-imag</code> could be written as
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-from-real-imag x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">dispatch op</span><span class="clo">)</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> op </span><span class="lit">'real-part</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> op </span><span class="lit">'imag-part</span><span class="clo">)</span><span class="pln"> y</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> op </span><span class="lit">'magnitude</span><span class="clo">)</span><span class="pln">
+           </span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square y</span><span class="clo">))))</span><span class="pln">
+          </span><span class="opn">((</span><span class="kwd">eq</span><span class="pun">?</span><span class="pln"> op </span><span class="lit">'angle</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">atan y x</span><span class="clo">))</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">else</span><span class="pln">
+           </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown op: 
+            MAKE-FROM-REAL-IMAG"</span><span class="pln"> op</span><span class="clo">))))</span><span class="pln">
+  dispatch</span><span class="clo">)</span></pre></div>
+
+<p>The corresponding <code>apply-generic</code> procedure, which applies a generic
+operation to an argument, now simply feeds the operation’s name to the data
+object and lets the object do the work:<a class="footnote_link" id="DOCF114" href="#FOOT114"><sup>114</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply-generic op arg</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">arg op</span><span class="clo">))</span></pre></div>
+
+<p>Note that the value returned by <code>make-from-real-imag</code> is a procedure—the
+internal <code>dispatch</code> procedure.  This is the procedure that is invoked when
+<code>apply-generic</code> requests an operation to be performed.
+</p>
+<p>This style of programming is called <a id="index-message-passing-1"></a>
+<em>message passing</em>.  The name comes
+from the image that a data object is an entity that receives the requested
+operation name as a “message.”  We have already seen an example of message
+passing in <a href="2_002e1_002e3.xhtml#g_t2_002e1_002e3">2.1.3</a>, where we saw how <code>cons</code>, <code>car</code>, and
+<code>cdr</code> could be defined with no data objects but only procedures.  Here we
+see that message passing is not a mathematical trick but a useful technique for
+organizing systems with generic operations.  In the remainder of this chapter
+we will continue to use data-directed programming, rather than message passing,
+to discuss generic arithmetic operations.  In <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> we will return to
+message passing, and we will see that it can be a powerful tool for structuring
+simulation programs.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e75"></a>Exercise 2.75:</strong> Implement the constructor
+<code>make-from-mag-ang</code> in message-passing style.  This procedure should be
+analogous to the <code>make-from-real-imag</code> procedure given above.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-2_002e76"></a>Exercise 2.76:</strong> As a large system with generic
+operations evolves, new types of data objects or new operations may be needed.
+For each of the three strategies—generic operations with explicit dispatch,
+data-directed style, and message-passing-style—describe the changes that
+must be made to a system in order to add new types or new operations.  Which
+organization would be most appropriate for a system in which new types must
+often be added?  Which would be most appropriate for a system in which new
+operations must often be added?
+</p></blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT111"><p><a class="footnote_backlink" href="#DOCF111"><sup>111</sup></a>
+We use the list <code>(rectangular)</code> rather than the symbol
+<code>rectangular</code> to allow for the possibility of operations with multiple
+arguments, not all of the same type.</p>
+</div>
+<div id="FOOT112"><p><a class="footnote_backlink" href="#DOCF112"><sup>112</sup></a>
+The type the
+constructors are installed under needn’t be a list because a constructor is
+always used to make an object of one particular type.</p>
+</div>
+<div id="FOOT113"><p><a class="footnote_backlink" href="#DOCF113"><sup>113</sup></a>
+<code>Apply-generic</code> uses the dotted-tail
+notation described in <a href="2_002e2_002e1.xhtml#Exercise-2_002e20">Exercise 2.20</a>, because different generic operations
+may take different numbers of arguments.  In <code>apply-generic</code>, <code>op</code>
+has as its value the first argument to <code>apply-generic</code> and <code>args</code> has
+as its value a list of the remaining arguments.
+</p>
+<p><code>Apply-generic</code> also uses the primitive procedure <code>apply</code>, which
+takes two arguments, a procedure and a list.  <code>Apply</code> applies the
+procedure, using the elements in the list as arguments.  For example,
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">apply </span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">))</span></pre></div>
+
+<p>returns 10.</p>
+</div>
+<div id="FOOT114"><p><a class="footnote_backlink" href="#DOCF114"><sup>114</sup></a>
+One limitation of this
+organization is it permits only generic procedures of one argument.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="2_002e5.xhtml#g_t2_002e5" accesskey="n" rel="next">2.5</a>, Previous: <a href="2_002e4_002e2.xhtml#g_t2_002e4_002e2" accesskey="p" rel="prev">2.4.2</a>, Up: <a href="2_002e4.xhtml#g_t2_002e4" accesskey="u" rel="prev">2.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

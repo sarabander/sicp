@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 5.5</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 5.5" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 5.5" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-5.xhtml#Chapter-5" rel="prev" title="Chapter 5" />
+<link href="5_002e5_002e1.xhtml#g_t5_002e5_002e1" rel="next" title="5.5.1" />
+<link href="5_002e4_002e4.xhtml#g_t5_002e4_002e4" rel="prev" title="5.4.4" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t5_002e5"></a>
+<nav class="header">
+<p>
+Next: <a href="5_002e5_002e1.xhtml#g_t5_002e5_002e1" accesskey="n" rel="next">5.5.1</a>, Previous: <a href="5_002e4_002e4.xhtml#g_t5_002e4_002e4" accesskey="p" rel="prev">5.4.4</a>, Up: <a href="Chapter-5.xhtml#Chapter-5" accesskey="u" rel="prev">Chapter 5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Compilation"></a>
+<h3 class="section"><span class="secnum">5.5</span><span class="sectitle">Compilation</span></h3>
+
+<p>The explicit-control evaluator of <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> is a register machine whose
+controller interprets Scheme programs.  In this section we will see how to run
+Scheme programs on a register machine whose controller is not a Scheme
+interpreter.
+</p>
+<p>The explicit-control evaluator machine is universal—it can carry out any
+computational process that can be described in Scheme.  The evaluator’s
+controller orchestrates the use of its data paths to perform the desired
+computation.  Thus, the evaluator’s data paths are universal: They are
+sufficient to perform any computation we desire, given an appropriate
+controller.<a class="footnote_link" id="DOCF318" href="#FOOT318"><sup>318</sup></a>
+</p>
+<p>Commercial general-purpose computers are register machines organized around a
+collection of registers and operations that constitute an efficient and
+convenient universal set of data paths.  The controller for a general-purpose
+machine is an interpreter for a register-machine language like the one we have
+been using.  This language is called the <a id="index-native-language"></a>
+<em>native language</em> of the
+machine, or simply <a id="index-machine-language"></a>
+<em>machine language</em>.  Programs written in machine
+language are sequences of instructions that use the machine’s data paths.  For
+example, the explicit-control evaluator’s instruction sequence can be thought
+of as a machine-language program for a general-purpose computer rather than as
+the controller for a specialized interpreter machine.
+</p>
+<p>There are two common strategies for bridging the gap between higher-level
+languages and register-machine languages.  The explicit-control evaluator
+illustrates the strategy of interpretation.  An interpreter written in the
+native language of a machine configures the machine to execute programs written
+in a language (called the <a id="index-source-language"></a>
+<em>source language</em>) that may differ from the
+native language of the machine performing the evaluation.  The primitive
+procedures of the source language are implemented as a library of subroutines
+written in the native language of the given machine.  A program to be
+interpreted (called the <a id="index-source-program"></a>
+<em>source program</em>) is represented as a data
+structure.  The interpreter traverses this data structure, analyzing the source
+program.  As it does so, it simulates the intended behavior of the source
+program by calling appropriate primitive subroutines from the library.
+</p>
+<p>In this section, we explore the alternative strategy of <a id="index-compilation"></a>
+<em>compilation</em>.
+A compiler for a given source language and machine translates a source program
+into an equivalent program (called the <a id="index-object-program"></a>
+<em>object program</em>) written in the
+machine’s native language.  The compiler that we implement in this section
+translates programs written in Scheme into sequences of instructions to be
+executed using the explicit-control evaluator machine’s data
+paths.<a class="footnote_link" id="DOCF319" href="#FOOT319"><sup>319</sup></a>
+</p>
+<p>Compared with interpretation, compilation can provide a great increase in the
+efficiency of program execution, as we will explain below in the overview of
+the compiler.  On the other hand, an interpreter provides a more powerful
+environment for interactive program development and debugging, because the
+source program being executed is available at run time to be examined and
+modified.  In addition, because the entire library of primitives is present,
+new programs can be constructed and added to the system during debugging.
+</p>
+<p>In view of the complementary advantages of compilation and interpretation,
+modern program-development environments pursue a mixed strategy.  Lisp
+interpreters are generally organized so that interpreted procedures and
+compiled procedures can call each other.  This enables a programmer to compile
+those parts of a program that are assumed to be debugged, thus gaining the
+efficiency advantage of compilation, while retaining the interpretive mode of
+execution for those parts of the program that are in the flux of interactive
+development and debugging.  In <a href="5_002e5_002e7.xhtml#g_t5_002e5_002e7">5.5.7</a>, after we have implemented
+the compiler, we will show how to interface it with our interpreter to produce
+an integrated interpreter-compiler development system.
+</p>
+<a id="An-overview-of-the-compiler"></a>
+<h5 class="subsubheading">An overview of the compiler</h5>
+
+<p>Our compiler is much like our interpreter, both in its structure and in the
+function it performs.  Accordingly, the mechanisms used by the compiler for
+analyzing expressions will be similar to those used by the interpreter.
+Moreover, to make it easy to interface compiled and interpreted code, we will
+design the compiler to generate code that obeys the same conventions of
+register usage as the interpreter: The environment will be kept in the
+<code>env</code> register, argument lists will be accumulated in <code>argl</code>, a
+procedure to be applied will be in <code>proc</code>, procedures will return their
+answers in <code>val</code>, and the location to which a procedure should return will
+be kept in <code>continue</code>.  In general, the compiler translates a source
+program into an object program that performs essentially the same register
+operations as would the interpreter in evaluating the same source program.
+</p>
+<p>This description suggests a strategy for implementing a rudimentary compiler:
+We traverse the expression in the same way the interpreter does.  When we
+encounter a register instruction that the interpreter would perform in
+evaluating the expression, we do not execute the instruction but instead
+accumulate it into a sequence.  The resulting sequence of instructions will be
+the object code.  Observe the efficiency advantage of compilation over
+interpretation.  Each time the interpreter evaluates an expression—for
+example, <code>(f 84 96)</code>—it performs the work of classifying the expression
+(discovering that this is a procedure application) and testing for the end of
+the operand list (discovering that there are two operands).  With a compiler,
+the expression is analyzed only once, when the instruction sequence is
+generated at compile time.  The object code produced by the compiler contains
+only the instructions that evaluate the operator and the two operands, assemble
+the argument list, and apply the procedure (in <code>proc</code>) to the arguments
+(in <code>argl</code>).
+</p>
+<p>This is the same kind of optimization we implemented in the analyzing evaluator
+of <a href="4_002e1_002e7.xhtml#g_t4_002e1_002e7">4.1.7</a>.  But there are further opportunities to gain efficiency
+in compiled code.  As the interpreter runs, it follows a process that must be
+applicable to any expression in the language.  In contrast, a given segment of
+compiled code is meant to execute some particular expression.  This can make a
+big difference, for example in the use of the stack to save registers.  When
+the interpreter evaluates an expression, it must be prepared for any
+contingency.  Before evaluating a subexpression, the interpreter saves all
+registers that will be needed later, because the subexpression might require an
+arbitrary evaluation.  A compiler, on the other hand, can exploit the structure
+of the particular expression it is processing to generate code that avoids
+unnecessary stack operations.
+</p>
+<p>As a case in point, consider the combination <code>(f 84 96)</code>.  Before the
+interpreter evaluates the operator of the combination, it prepares for this
+evaluation by saving the registers containing the operands and the environment,
+whose values will be needed later.  The interpreter then evaluates the operator
+to obtain the result in <code>val</code>, restores the saved registers, and finally
+moves the result from <code>val</code> to <code>proc</code>.  However, in the particular
+expression we are dealing with, the operator is the symbol <code>f</code>, whose
+evaluation is accomplished by the machine operation
+<code>lookup-variable-value</code>, which does not alter any registers.  The compiler
+that we implement in this section will take advantage of this fact and generate
+code that evaluates the operator using the instruction
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">assign proc 
+        </span><span class="opn">(</span><span class="pln">op lookup-variable-value</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">const f</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="pln">reg env</span><span class="clo">))</span></pre></div>
+
+<p>This code not only avoids the unnecessary saves and restores but also assigns
+the value of the lookup directly to <code>proc</code>, whereas the interpreter would
+obtain the result in <code>val</code> and then move this to <code>proc</code>.
+</p>
+<p>A compiler can also optimize access to the environment.  Having analyzed the
+code, the compiler can in many cases know in which frame a particular variable
+will be located and access that frame directly, rather than performing the
+<code>lookup-variable-value</code> search.  We will discuss how to implement such
+variable access in <a href="5_002e5_002e6.xhtml#g_t5_002e5_002e6">5.5.6</a>.  Until then, however, we will focus on
+the kind of register and stack optimizations described above.  There are many
+other optimizations that can be performed by a compiler, such as coding
+primitive operations “in line” instead of using a general <code>apply</code>
+mechanism (see <a href="5_002e5_002e5.xhtml#Exercise-5_002e38">Exercise 5.38</a>); but we will not emphasize these here.  Our
+main goal in this section is to illustrate the compilation process in a
+simplified (but still interesting) context.
+</p>
+<table class="menu" style="border-collapse: collapse; border-spacing: 0">
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e5_002e1.xhtml#g_t5_002e5_002e1" accesskey="1">5.5.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Structure of the Compiler
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e5_002e2.xhtml#g_t5_002e5_002e2" accesskey="2">5.5.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Compiling Expressions
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e5_002e3.xhtml#g_t5_002e5_002e3" accesskey="3">5.5.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Compiling Combinations
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e5_002e4.xhtml#g_t5_002e5_002e4" accesskey="4">5.5.4</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Combining Instruction Sequences
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e5_002e5.xhtml#g_t5_002e5_002e5" accesskey="5">5.5.5</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">An Example of Compiled Code
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e5_002e6.xhtml#g_t5_002e5_002e6" accesskey="6">5.5.6</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Lexical Addressing
+</td></tr>
+<tr><td style="text-align: left; vertical-align: top"><a href="5_002e5_002e7.xhtml#g_t5_002e5_002e7" accesskey="7">5.5.7</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Interfacing Compiled Code to the Evaluator
+</td></tr>
+</table>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT318"><p><a class="footnote_backlink" href="#DOCF318"><sup>318</sup></a>
+This is a theoretical statement.  We are not claiming that
+the evaluator’s data paths are a particularly convenient or efficient set of
+data paths for a general-purpose computer.  For example, they are not very good
+for implementing high-performance floating-point calculations or calculations
+that intensively manipulate bit vectors.</p>
+</div>
+<div id="FOOT319"><p><a class="footnote_backlink" href="#DOCF319"><sup>319</sup></a>
+Actually, the machine that runs compiled code can be simpler
+than the interpreter machine, because we won’t use the <code>exp</code> and
+<code>unev</code> registers.  The interpreter used these to hold pieces of
+unevaluated expressions.  With the compiler, however, these expressions get
+built into the compiled code that the register machine will run.  For the same
+reason, we don’t need the machine operations that deal with expression syntax.
+But compiled code will use a few additional machine operations (to represent
+compiled procedure objects) that didn’t appear in the explicit-control
+evaluator machine.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="5_002e5_002e1.xhtml#g_t5_002e5_002e1" accesskey="n" rel="next">5.5.1</a>, Previous: <a href="5_002e4_002e4.xhtml#g_t5_002e4_002e4" accesskey="p" rel="prev">5.4.4</a>, Up: <a href="Chapter-5.xhtml#Chapter-5" accesskey="u" rel="prev">Chapter 5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>

@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Structure and Interpretation of Computer Programs, 2e: 2.1.1</title>
+
+<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 2.1.1" />
+<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 2.1.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="2_002e1.xhtml#g_t2_002e1" rel="prev" title="2.1" />
+<link href="2_002e1_002e2.xhtml#g_t2_002e1_002e2" rel="next" title="2.1.2" />
+<link href="2_002e1.xhtml#g_t2_002e1" rel="prev" title="2.1" />
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/footnotes.js" type="text/javascript"></script>
+<script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+
+<body>
+<section><a id="g_t2_002e1_002e1"></a>
+<nav class="header">
+<p>
+Next: <a href="2_002e1_002e2.xhtml#g_t2_002e1_002e2" accesskey="n" rel="next">2.1.2</a>, Previous: <a href="2_002e1.xhtml#g_t2_002e1" accesskey="p" rel="prev">2.1</a>, Up: <a href="2_002e1.xhtml#g_t2_002e1" accesskey="u" rel="prev">2.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+<hr />
+
+<a id="Example_003a-Arithmetic-Operations-for-Rational-Numbers"></a>
+<h4 class="subsection"><span class="secnum">2.1.1</span><span class="sectitle">Example: Arithmetic Operations for Rational Numbers</span></h4>
+
+<p>Suppose we want to do arithmetic with rational numbers.  We want to be able to
+add, subtract, multiply, and divide them and to test whether two rational
+numbers are equal.
+</p>
+<p>Let us begin by assuming that we already have a way of constructing a rational
+number from a numerator and a denominator.  We also assume that, given a
+rational number, we have a way of extracting (or selecting) its numerator and
+its denominator.  Let us further assume that the constructor and selectors are
+available as procedures:
+</p>
+<ul>
+<li> <code>(make-rat ⟨<var>n</var>⟩ ⟨<var>d</var>⟩)</code> returns the rational number whose numerator 
+is the integer <code>⟨<var>n</var>⟩</code> and whose denominator is the integer 
+<code>⟨<var>d</var>⟩</code>.
+
+</li><li> <code>(numer ⟨<var>x</var>⟩)</code> returns the numerator of the rational number 
+<code>⟨<var>x</var>⟩</code>.
+
+</li><li> <code>(denom ⟨<var>x</var>⟩)</code> returns the denominator of the rational number 
+<code>⟨<var>x</var>⟩</code>.
+
+</li></ul>
+
+<p>We are using here a powerful strategy of synthesis: <a id="index-wishful-thinking"></a>
+<em>wishful thinking</em>.
+We haven’t yet said how a rational number is represented, or how the procedures
+<code>numer</code>, <code>denom</code>, and <code>make-rat</code> should be implemented.  Even
+so, if we did have these three procedures, we could then add, subtract,
+multiply, divide, and test equality by using the following relations:
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <msub>
+              <mi>n</mi>
+              <mn>1</mn>
+            </msub>
+            <msub>
+              <mi>d</mi>
+              <mn>1</mn>
+            </msub>
+          </mfrac>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <msub>
+              <mi>n</mi>
+              <mn>2</mn>
+            </msub>
+            <msub>
+              <mi>d</mi>
+              <mn>2</mn>
+            </msub>
+          </mfrac>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <msub>
+                <mi>n</mi>
+                <mn>1</mn>
+              </msub>
+              <msub>
+                <mi>d</mi>
+                <mn>2</mn>
+              </msub>
+              <mo>+</mo>
+              <msub>
+                <mi>n</mi>
+                <mn>2</mn>
+              </msub>
+              <msub>
+                <mi>d</mi>
+                <mn>1</mn>
+              </msub>
+            </mrow>
+            <mrow>
+              <msub>
+                <mi>d</mi>
+                <mn>1</mn>
+              </msub>
+              <msub>
+                <mi>d</mi>
+                <mn>2</mn>
+              </msub>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <msub>
+              <mi>n</mi>
+              <mn>1</mn>
+            </msub>
+            <msub>
+              <mi>d</mi>
+              <mn>1</mn>
+            </msub>
+          </mfrac>
+        </mrow>
+        <mo>−<!-- − --></mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <msub>
+              <mi>n</mi>
+              <mn>2</mn>
+            </msub>
+            <msub>
+              <mi>d</mi>
+              <mn>2</mn>
+            </msub>
+          </mfrac>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <msub>
+                <mi>n</mi>
+                <mn>1</mn>
+              </msub>
+              <msub>
+                <mi>d</mi>
+                <mn>2</mn>
+              </msub>
+              <mo>−<!-- − --></mo>
+              <msub>
+                <mi>n</mi>
+                <mn>2</mn>
+              </msub>
+              <msub>
+                <mi>d</mi>
+                <mn>1</mn>
+              </msub>
+            </mrow>
+            <mrow>
+              <msub>
+                <mi>d</mi>
+                <mn>1</mn>
+              </msub>
+              <msub>
+                <mi>d</mi>
+                <mn>2</mn>
+              </msub>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <msub>
+              <mi>n</mi>
+              <mn>1</mn>
+            </msub>
+            <msub>
+              <mi>d</mi>
+              <mn>1</mn>
+            </msub>
+          </mfrac>
+        </mrow>
+        <mo>×<!-- × --></mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <msub>
+              <mi>n</mi>
+              <mn>2</mn>
+            </msub>
+            <msub>
+              <mi>d</mi>
+              <mn>2</mn>
+            </msub>
+          </mfrac>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <msub>
+                <mi>n</mi>
+                <mn>1</mn>
+              </msub>
+              <msub>
+                <mi>n</mi>
+                <mn>2</mn>
+              </msub>
+            </mrow>
+            <mrow>
+              <msub>
+                <mi>d</mi>
+                <mn>1</mn>
+              </msub>
+              <msub>
+                <mi>d</mi>
+                <mn>2</mn>
+              </msub>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mfrac>
+          <mrow class="MJX-TeXAtom-ORD">
+            <msub>
+              <mi>n</mi>
+              <mn>1</mn>
+            </msub>
+            <mspace width="thinmathspace"/>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo>/</mo>
+            </mrow>
+            <mspace width="thinmathspace"/>
+            <msub>
+              <mi>d</mi>
+              <mn>1</mn>
+            </msub>
+          </mrow>
+          <mrow class="MJX-TeXAtom-ORD">
+            <msub>
+              <mi>n</mi>
+              <mn>2</mn>
+            </msub>
+            <mspace width="thinmathspace"/>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo>/</mo>
+            </mrow>
+            <mspace width="thinmathspace"/>
+            <msub>
+              <mi>d</mi>
+              <mn>2</mn>
+            </msub>
+          </mrow>
+        </mfrac>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <msub>
+                <mi>n</mi>
+                <mn>1</mn>
+              </msub>
+              <msub>
+                <mi>d</mi>
+                <mn>2</mn>
+              </msub>
+            </mrow>
+            <mrow>
+              <msub>
+                <mi>d</mi>
+                <mn>1</mn>
+              </msub>
+              <msub>
+                <mi>n</mi>
+                <mn>2</mn>
+              </msub>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>,</mo>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <msub>
+              <mi>n</mi>
+              <mn>1</mn>
+            </msub>
+            <msub>
+              <mi>d</mi>
+              <mn>1</mn>
+            </msub>
+          </mfrac>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <msub>
+              <mi>n</mi>
+              <mn>2</mn>
+            </msub>
+            <msub>
+              <mi>d</mi>
+              <mn>2</mn>
+            </msub>
+          </mfrac>
+        </mrow>
+        <mspace width="1em"/>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mtext> </mtext>
+          <mi mathvariant="normal">i</mi>
+          <mi mathvariant="normal">f</mi>
+          <mtext> </mtext>
+          <mi mathvariant="normal">a</mi>
+          <mi mathvariant="normal">n</mi>
+          <mi mathvariant="normal">d</mi>
+          <mtext> </mtext>
+          <mi mathvariant="normal">o</mi>
+          <mi mathvariant="normal">n</mi>
+          <mi mathvariant="normal">l</mi>
+          <mi mathvariant="normal">y</mi>
+          <mtext> </mtext>
+          <mi mathvariant="normal">i</mi>
+          <mi mathvariant="normal">f</mi>
+          <mspace width="1em"/>
+        </mrow>
+        <msub>
+          <mi>n</mi>
+          <mn>1</mn>
+        </msub>
+        <msub>
+          <mi>d</mi>
+          <mn>2</mn>
+        </msub>
+        <mo>=</mo>
+        <msub>
+          <mi>n</mi>
+          <mn>2</mn>
+        </msub>
+        <msub>
+          <mi>d</mi>
+          <mn>1</mn>
+        </msub>
+        <mo>.</mo>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+We can express these rules as procedures:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-rat x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-rat </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))</span><span class="pln">
+               </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)))</span><span class="pln">
+            </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sub-rat x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-rat </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))</span><span class="pln">
+               </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)))</span><span class="pln">
+            </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul-rat x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-rat </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">))</span><span class="pln">
+            </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">div-rat x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">make-rat </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))</span><span class="pln">
+            </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">))))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">equal-rat? x y</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))</span><span class="pln">
+     </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">))))</span></pre></div>
+
+<p>Now we have the operations on rational numbers defined in terms of the selector
+and constructor procedures <code>numer</code>, <code>denom</code>, and <code>make-rat</code>.
+But we haven’t yet defined these.  What we need is some way to glue together a
+numerator and a denominator to form a rational number.
+</p>
+<a id="Pairs"></a>
+<h5 class="subsubheading">Pairs</h5>
+
+<p>To enable us to implement the concrete level of our data abstraction, our
+language provides a compound structure called a <a id="index-pair"></a>
+<em>pair</em>, which can be
+constructed with the primitive procedure <code>cons</code>.  This procedure takes two
+arguments and returns a compound data object that contains the two arguments as
+parts.  Given a pair, we can extract the parts using the primitive procedures
+<code>car</code> and <code>cdr</code>.<a class="footnote_link" id="DOCF68" href="#FOOT68"><sup>68</sup></a> Thus, we can use <code>cons</code>, <code>car</code>, and
+<code>cdr</code> as follows:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">1</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">2</span></i>
+</pre></div>
+
+<p>Notice that a pair is a data object that can be given a name and manipulated,
+just like a primitive data object.  Moreover, <code>cons</code> can be used to form
+pairs whose elements are pairs, and so on:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> y </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> z </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">1</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">3</span></i>
+</pre></div>
+
+<p>In <a href="2_002e2.xhtml#g_t2_002e2">2.2</a> we will see how this ability to combine pairs means that
+pairs can be used as general-purpose building blocks to create all sorts of
+complex data structures.  The single compound-data primitive <a id="index-pair-1"></a>
+<em>pair</em>,
+implemented by the procedures <code>cons</code>, <code>car</code>, and <code>cdr</code>, is the
+only glue we need.  Data objects constructed from pairs are called
+<a id="index-list_002dstructured"></a>
+<em>list-structured</em> data.
+</p>
+<a id="Representing-rational-numbers"></a>
+<h5 class="subsubheading">Representing rational numbers</h5>
+
+<p>Pairs offer a natural way to complete the rational-number system.  Simply
+represent a rational number as a pair of two integers: a numerator and a
+denominator.  Then <code>make-rat</code>, <code>numer</code>, and <code>denom</code> are readily
+implemented as follows:<a class="footnote_link" id="DOCF69" href="#FOOT69"><sup>69</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-rat n d</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> n d</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">))</span></pre></div>
+
+<p>Also, in order to display the results of our computations, we can print
+rational numbers by printing the numerator, a slash, and the
+denominator:<a class="footnote_link" id="DOCF70" href="#FOOT70"><sup>70</sup></a>
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">print-rat x</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">display </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">display </span><span class="str">"/"</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">display </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)))</span></pre></div>
+
+<p>Now we can try our rational-number procedures:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> one-half </span><span class="opn">(</span><span class="pln">make-rat </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">print-rat one-half</span><span class="clo">)</span><span class="pln">
+</span><i><span class="lit">1/2</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> one-third </span><span class="opn">(</span><span class="pln">make-rat </span><span class="lit">1</span><span class="pln"> </span><span class="lit">3</span><span class="clo">))</span><span class="pln">
+</span><span class="opn">(</span><span class="pln">print-rat
+ </span><span class="opn">(</span><span class="pln">add-rat one-half one-third</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">5/6</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">print-rat
+ </span><span class="opn">(</span><span class="pln">mul-rat one-half one-third</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">1/6</span></i><span class="pln">
+
+</span><span class="opn">(</span><span class="pln">print-rat
+ </span><span class="opn">(</span><span class="pln">add-rat one-third one-third</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">6/9</span></i>
+</pre></div>
+
+<p>As the final example shows, our rational-number implementation does not reduce
+rational numbers to lowest terms.  We can remedy this by changing
+<code>make-rat</code>. If we have a <code>gcd</code> procedure like the one in 
+<a href="1_002e2_002e5.xhtml#g_t1_002e2_002e5">1.2.5</a> that produces the greatest common divisor of two integers, we can
+use <code>gcd</code> to reduce the numerator and the denominator to lowest terms
+before constructing the pair:
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-rat n d</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">g </span><span class="opn">(</span><span class="pln">gcd n d</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> n g</span><span class="clo">)</span><span class="pln"> 
+          </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> d g</span><span class="clo">))))</span></pre></div>
+
+<p>Now we have
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">print-rat 
+ </span><span class="opn">(</span><span class="pln">add-rat one-third one-third</span><span class="clo">))</span><span class="pln">
+</span><i><span class="lit">2/3</span></i>
+</pre></div>
+
+<p>as desired.  This modification was accomplished by changing the constructor
+<code>make-rat</code> without changing any of the procedures (such as <code>add-rat</code>
+and <code>mul-rat</code>) that implement the actual operations.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-2_002e1"></a>Exercise 2.1:</strong> Define a better version of
+<code>make-rat</code> that handles both positive and negative arguments.
+<code>Make-rat</code> should normalize the sign so that if the rational number is
+positive, both the numerator and denominator are positive, and if the rational
+number is negative, only the numerator is negative.
+</p></blockquote>
+
+<div class="footnote">
+<hr />
+
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<div id="FOOT68"><p><a class="footnote_backlink" href="#DOCF68"><sup>68</sup></a>
+The name <code>cons</code> stands for
+“construct.”  The names <code>car</code> and <code>cdr</code> derive from the original
+implementation of Lisp on the IBM 704.  That machine had an addressing scheme
+that allowed one to reference the “address” and “decrement” parts of a
+memory location.  <code>Car</code> stands for “Contents of Address part of
+Register” and <code>cdr</code> (pronounced “could-er”) stands for “Contents of
+Decrement part of Register.”</p>
+</div>
+<div id="FOOT69"><p><a class="footnote_backlink" href="#DOCF69"><sup>69</sup></a>
+Another way to define the selectors and
+constructor is
+</p>
+<div class="lisp">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> make-rat </span><span class="kwd">cons</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> numer </span><span class="kwd">car</span><span class="clo">)</span><span class="pln">
+</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> denom </span><span class="kwd">cdr</span><span class="clo">)</span></pre></div>
+
+<p>The first definition associates the name <code>make-rat</code> with the value of the
+expression <code>cons</code>, which is the primitive procedure that constructs pairs.
+Thus <code>make-rat</code> and <code>cons</code> are names for the same primitive
+constructor.
+</p>
+<p>Defining selectors and constructors in this way is efficient: Instead of
+<code>make-rat</code> <em>calling</em> <code>cons</code>, <code>make-rat</code> <em>is</em>
+<code>cons</code>, so there is only one procedure called, not two, when
+<code>make-rat</code> is called.  On the other hand, doing this defeats debugging
+aids that trace procedure calls or put breakpoints on procedure calls: You may
+want to watch <code>make-rat</code> being called, but you certainly don’t want to
+watch every call to <code>cons</code>.
+</p>
+<p>We have chosen not to use this style of definition in this book.</p>
+</div>
+<div id="FOOT70"><p><a class="footnote_backlink" href="#DOCF70"><sup>70</sup></a>
+<code>Display</code> is the Scheme primitive for printing data.
+The Scheme primitive <code>newline</code> starts a new line for printing.  Neither of
+these procedures returns a useful value, so in the uses of <code>print-rat</code>
+below, we show only what <code>print-rat</code> prints, not what the interpreter
+prints as the value returned by <code>print-rat</code>.</p>
+</div>
+</div>
+<hr />
+<nav class="header">
+<p>
+Next: <a href="2_002e1_002e2.xhtml#g_t2_002e1_002e2" accesskey="n" rel="next">2.1.2</a>, Previous: <a href="2_002e1.xhtml#g_t2_002e1" accesskey="p" rel="prev">2.1</a>, Up: <a href="2_002e1.xhtml#g_t2_002e1" accesskey="u" rel="prev">2.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+</nav>
+
+
+</section>
+</body>
+</html>
