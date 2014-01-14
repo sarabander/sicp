@@ -132,7 +132,7 @@ span.chapnum {
   font-size: 6em;
   -moz-font-feature-settings: "onum";
   -ms-font-feature-settings: "onum";
-  -webkit-font-feature-settings: "onum";
+  -webkit-font-feature-settings: "onum" 1;
   -o-font-feature-settings: "onum";
   font-feature-settings: "onum";
   color: #c8c8c8;
@@ -305,7 +305,7 @@ h2 ~ p:first-of-type:first-line, abbr {
   letter-spacing: 0.04em;
   -moz-font-feature-settings: "onum", "smcp";
   -ms-font-feature-settings: "onum", "smcp";
-  -webkit-font-feature-settings: "onum", "smcp";
+  -webkit-font-feature-settings: "onum" 1, "smcp" 1;
   -o-font-feature-settings: "onum", "smcp";
   font-feature-settings: "onum", "smcp";
 }
@@ -421,7 +421,7 @@ math *[mathvariant="monospace"] {
 a#References ~ p {
   -moz-font-feature-settings: "onum", "ss06";
   -ms-font-feature-settings: "onum", "ss06";
-  -webkit-font-feature-settings: "onum", "ss06";
+  -webkit-font-feature-settings: "onum" 1, "ss06" 1;
   -o-font-feature-settings: "onum", "ss06";
   font-feature-settings: "onum", "ss06";
 }
