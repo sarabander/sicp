@@ -8,9 +8,8 @@ $(document).ready(function () {
   var Footnotes = {
     footnotetimeout: false,
     setup: function () {
-      var body = $("body");
+      var body = $("section");
       var footnotelinks = $("a.footnote_link");
-      body.attr('tabindex', '0');
       footnotelinks.attr('tabindex', '0');
       // Don't follow footnote link on click:
       footnotelinks.click(function () { return false; });
@@ -25,7 +24,7 @@ $(document).ready(function () {
       // ...and click outside of popup will make it disappear:
       footnotelinks.bind('blur', Footnotes.footnoteout);
     },
-    bodyclick: function () { void(0); },
+    bodyclick: function () { return; },
     footnoteclick: function () {
       clearTimeout(Footnotes.footnotetimeout);
       $(popup).stop();
