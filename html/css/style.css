@@ -43,6 +43,7 @@ html {
     margin-left:  1em;
     margin-right: 1em;
   }
+  ul.no-bullet {padding-left: 1em}
 }
 
 @media (max-width: 480px) {
@@ -68,6 +69,7 @@ html {
     margin-left:  0.5em;
     margin-right: 0.5em;
   }
+  ul.no-bullet {padding-left: 0.6em}
 }
 
 body {
