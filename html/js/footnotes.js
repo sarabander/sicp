@@ -8,7 +8,7 @@ $(document).ready(function () {
   var Footnotes = {
     footnotetimeout: false,
     setup: function () {
-      var body = $("body");
+      var body = $("section");
       var footnotelinks = $("a.footnote_link");
       footnotelinks.attr('tabindex', '0'); 
       // Don't follow footnote link on click:
