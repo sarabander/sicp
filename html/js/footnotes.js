@@ -8,9 +8,10 @@ $(document).ready(function () {
   var Footnotes = {
     footnotetimeout: false,
     setup: function () {
-      var body = $("section");
+      var body = $("body");
       var footnotelinks = $("a.footnote_link");
-      footnotelinks.attr('tabindex', '0'); 
+      body.attr('tabindex', '0');
+      footnotelinks.attr('tabindex', '0');
       // Don't follow footnote link on click:
       footnotelinks.click(function () { return false; });
 
