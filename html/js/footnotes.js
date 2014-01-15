@@ -10,6 +10,7 @@ $(document).ready(function () {
     setup: function () {
       var body = $("section");
       var footnotelinks = $("a.footnote_link");
+      body.attr('onclick', '');
       footnotelinks.attr('tabindex', '0');
       // Don't follow footnote link on click:
       footnotelinks.click(function () { return false; });
