@@ -41,7 +41,7 @@ exercises.texi figures.texi: ex-fig-ref.pl
 
 $(NEXUS): $(SRC) $(CONV) $(MATH) $(PRETTY) exercises.texi figures.texi
 	@echo -n "Converting Texinfo file to HTML..."; \
-	./texi2any --no-warn --html --iftex $(SRC)
+	./texi2any --no-warn --html --split=section --no-headers --iftex $(SRC)
 	@# Remove temporary files.
 	@grep -lZ 'This file redirects' $(HTML) | xargs -0 rm -f --
 	@echo "done."

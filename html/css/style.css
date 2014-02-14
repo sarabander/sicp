@@ -79,8 +79,7 @@ body {
 }
 
 section {
-  margin-left: auto;
-  margin-right: auto;
+  margin: 1em auto;
   width: 67ex;
   max-width: 88%;
 }
@@ -211,13 +210,14 @@ a[href]:-webkit-any-link > sup {
 nav.header p {
   font-family: "Linux Biolinum O", sans-serif; 
   font-size: 0.9rem;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
+  padding: 0.5em;
+  margin: 0;
+  background-color: #f0f0f0;
 }
 
 nav.header a[href] {
-  margin: -0.6ex;
-  padding: 0.6ex;
+  margin: -1.5ex;
+  padding: 1.5ex;
 }
 
 span.roman {

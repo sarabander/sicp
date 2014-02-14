@@ -8,7 +8,7 @@
     <dc:identifier id="bookid">urn:uuid:a412368e-e0ac-42ce-8c01-0f0da52f5731</dc:identifier>
     <dc:language>en-US</dc:language>
     <meta name="cover" content="cover-image"/>
-    <meta property="dcterms:modified">2014-01-29T17:19:56Z</meta>
+    <meta property="dcterms:modified">2014-02-14T23:46:24Z</meta>
   </metadata>
   <manifest>
     <item id="css-style" href="html/css/style.css" media-type="text/css"/>
@@ -27,134 +27,134 @@
     <item id="xPreface-1e" href="html/Preface-1e.xhtml" media-type="application/xhtml+xml"/>
     <item id="xAcknowledgments" href="html/Acknowledgments.xhtml" media-type="application/xhtml+xml"/>
     <item id="xChapter-1" href="html/Chapter-1.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e1" href="html/1_002e1.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e1_002e1" href="html/1_002e1_002e1.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e1_002e2" href="html/1_002e1_002e2.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e1_002e3" href="html/1_002e1_002e3.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x1_002e1_002e4" href="html/1_002e1_002e4.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e1_002e5" href="html/1_002e1_002e5.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e1_002e6" href="html/1_002e1_002e6.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e1_002e7" href="html/1_002e1_002e7.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e1_002e8" href="html/1_002e1_002e8.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x1_002e2" href="html/1_002e2.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e2_002e1" href="html/1_002e2_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x1_002e2_002e2" href="html/1_002e2_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x1_002e2_002e3" href="html/1_002e2_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e2_002e4" href="html/1_002e2_002e4.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e2_002e5" href="html/1_002e2_002e5.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e2_002e6" href="html/1_002e2_002e6.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e3" href="html/1_002e3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e3_002e1" href="html/1_002e3_002e1.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e3_002e2" href="html/1_002e3_002e2.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e3_002e3" href="html/1_002e3_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x1_002e3_002e4" href="html/1_002e3_002e4.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x1_002e1" href="html/1_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e1" href="html/1_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e1" href="html/1_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e1" href="html/1_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e1" href="html/1_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e1" href="html/1_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e1" href="html/1_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e1" href="html/1_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e1" href="html/1_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e2" href="html/1_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e2" href="html/1_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e2" href="html/1_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e2" href="html/1_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e2" href="html/1_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e2" href="html/1_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e2" href="html/1_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x1_002e3" href="html/1_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x1_002e3" href="html/1_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x1_002e3" href="html/1_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x1_002e3" href="html/1_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x1_002e3" href="html/1_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
     <item id="xChapter-2" href="html/Chapter-2.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x2_002e1" href="html/2_002e1.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x2_002e1_002e1" href="html/2_002e1_002e1.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x2_002e1_002e2" href="html/2_002e1_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e1_002e3" href="html/2_002e1_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x2_002e1_002e4" href="html/2_002e1_002e4.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x2_002e2" href="html/2_002e2.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e2_002e1" href="html/2_002e2_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e2_002e2" href="html/2_002e2_002e2.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e2_002e3" href="html/2_002e2_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e2_002e4" href="html/2_002e2_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e3" href="html/2_002e3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x2_002e3_002e1" href="html/2_002e3_002e1.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x2_002e3_002e2" href="html/2_002e3_002e2.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x2_002e3_002e3" href="html/2_002e3_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e3_002e4" href="html/2_002e3_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e4" href="html/2_002e4.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e4_002e1" href="html/2_002e4_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e4_002e2" href="html/2_002e4_002e2.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e4_002e3" href="html/2_002e4_002e3.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e5" href="html/2_002e5.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e5_002e1" href="html/2_002e5_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e5_002e2" href="html/2_002e5_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x2_002e5_002e3" href="html/2_002e5_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x2_002e1" href="html/2_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e1" href="html/2_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e1" href="html/2_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e1" href="html/2_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e1" href="html/2_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e2" href="html/2_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e2" href="html/2_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e2" href="html/2_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e2" href="html/2_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e2" href="html/2_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e3" href="html/2_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e3" href="html/2_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e3" href="html/2_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e3" href="html/2_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e3" href="html/2_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e4" href="html/2_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e4" href="html/2_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e4" href="html/2_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e4" href="html/2_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e5" href="html/2_002e5.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e5" href="html/2_002e5.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e5" href="html/2_002e5.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x2_002e5" href="html/2_002e5.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
     <item id="xChapter-3" href="html/Chapter-3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x3_002e1" href="html/3_002e1.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x3_002e1_002e1" href="html/3_002e1_002e1.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x3_002e1_002e2" href="html/3_002e1_002e2.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x3_002e1_002e3" href="html/3_002e1_002e3.xhtml" media-type="application/xhtml+xml"/>
+    <item id="x3_002e1" href="html/3_002e1.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x3_002e1" href="html/3_002e1.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x3_002e1" href="html/3_002e1.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x3_002e1" href="html/3_002e1.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
     <item id="x3_002e2" href="html/3_002e2.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e2_002e1" href="html/3_002e2_002e1.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e2_002e2" href="html/3_002e2_002e2.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e2_002e3" href="html/3_002e2_002e3.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e2_002e4" href="html/3_002e2_002e4.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e3" href="html/3_002e3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x3_002e3_002e1" href="html/3_002e3_002e1.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e3_002e2" href="html/3_002e3_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e3_002e3" href="html/3_002e3_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e3_002e4" href="html/3_002e3_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e3_002e5" href="html/3_002e3_002e5.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e4" href="html/3_002e4.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x3_002e4_002e1" href="html/3_002e4_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e4_002e2" href="html/3_002e4_002e2.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x3_002e5" href="html/3_002e5.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x3_002e5_002e1" href="html/3_002e5_002e1.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x3_002e5_002e2" href="html/3_002e5_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e5_002e3" href="html/3_002e5_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e5_002e4" href="html/3_002e5_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x3_002e5_002e5" href="html/3_002e5_002e5.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e2" href="html/3_002e2.xhtml" properties="svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e2" href="html/3_002e2.xhtml" properties="svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e2" href="html/3_002e2.xhtml" properties="svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e2" href="html/3_002e2.xhtml" properties="svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e3" href="html/3_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e3" href="html/3_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e3" href="html/3_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e3" href="html/3_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e3" href="html/3_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e3" href="html/3_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e4" href="html/3_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e4" href="html/3_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e4" href="html/3_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e5" href="html/3_002e5.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e5" href="html/3_002e5.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e5" href="html/3_002e5.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e5" href="html/3_002e5.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e5" href="html/3_002e5.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x3_002e5" href="html/3_002e5.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
     <item id="xChapter-4" href="html/Chapter-4.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e1" href="html/4_002e1.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x4_002e1_002e1" href="html/4_002e1_002e1.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e1_002e2" href="html/4_002e1_002e2.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e1_002e3" href="html/4_002e1_002e3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e1_002e4" href="html/4_002e1_002e4.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e1_002e5" href="html/4_002e1_002e5.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x4_002e1_002e6" href="html/4_002e1_002e6.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e1_002e7" href="html/4_002e1_002e7.xhtml" media-type="application/xhtml+xml"/>
+    <item id="x4_002e1" href="html/4_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e1" href="html/4_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e1" href="html/4_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e1" href="html/4_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e1" href="html/4_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e1" href="html/4_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e1" href="html/4_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e1" href="html/4_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
     <item id="x4_002e2" href="html/4_002e2.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e2_002e1" href="html/4_002e2_002e1.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e2_002e2" href="html/4_002e2_002e2.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e2_002e3" href="html/4_002e2_002e3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e3" href="html/4_002e3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e3_002e1" href="html/4_002e3_002e1.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e3_002e2" href="html/4_002e3_002e2.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e3_002e3" href="html/4_002e3_002e3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4_002e1" href="html/4_002e4_002e1.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4_002e2" href="html/4_002e4_002e2.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4_002e3" href="html/4_002e4_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4_002e4" href="html/4_002e4_002e4.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4_002e4_002e1" href="html/4_002e4_002e4_002e1.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4_002e4_002e2" href="html/4_002e4_002e4_002e2.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4_002e4_002e3" href="html/4_002e4_002e4_002e3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4_002e4_002e4" href="html/4_002e4_002e4_002e4.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4_002e4_002e5" href="html/4_002e4_002e4_002e5.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4_002e4_002e6" href="html/4_002e4_002e4_002e6.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4_002e4_002e7" href="html/4_002e4_002e4_002e7.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x4_002e4_002e4_002e8" href="html/4_002e4_002e4_002e8.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x4_002e2" href="html/4_002e2.xhtml" media-type="application/xhtml+xml"/>
+    <item id="x4_002e2" href="html/4_002e2.xhtml" media-type="application/xhtml+xml"/>
+    <item id="x4_002e2" href="html/4_002e2.xhtml" media-type="application/xhtml+xml"/>
+    <item id="x4_002e3" href="html/4_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x4_002e3" href="html/4_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x4_002e3" href="html/4_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x4_002e3" href="html/4_002e3.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x4_002e4" href="html/4_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
     <item id="xChapter-5" href="html/Chapter-5.xhtml" media-type="application/xhtml+xml"/>
     <item id="x5_002e1" href="html/5_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x5_002e1_002e1" href="html/5_002e1_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x5_002e1_002e2" href="html/5_002e1_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x5_002e1_002e3" href="html/5_002e1_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x5_002e1_002e4" href="html/5_002e1_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x5_002e1_002e5" href="html/5_002e1_002e5.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e2" href="html/5_002e2.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e2_002e1" href="html/5_002e2_002e1.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e2_002e2" href="html/5_002e2_002e2.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e2_002e3" href="html/5_002e2_002e3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e2_002e4" href="html/5_002e2_002e4.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e3" href="html/5_002e3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e3_002e1" href="html/5_002e3_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x5_002e3_002e2" href="html/5_002e3_002e2.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
-    <item id="x5_002e4" href="html/5_002e4.xhtml" properties="svg" media-type="application/xhtml+xml"/>
-    <item id="x5_002e4_002e1" href="html/5_002e4_002e1.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e4_002e2" href="html/5_002e4_002e2.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e4_002e3" href="html/5_002e4_002e3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e4_002e4" href="html/5_002e4_002e4.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e5" href="html/5_002e5.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e5_002e1" href="html/5_002e5_002e1.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e5_002e2" href="html/5_002e5_002e2.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e5_002e3" href="html/5_002e5_002e3.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e5_002e4" href="html/5_002e5_002e4.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e5_002e5" href="html/5_002e5_002e5.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e5_002e6" href="html/5_002e5_002e6.xhtml" media-type="application/xhtml+xml"/>
-    <item id="x5_002e5_002e7" href="html/5_002e5_002e7.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e1" href="html/5_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e1" href="html/5_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e1" href="html/5_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e1" href="html/5_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e1" href="html/5_002e1.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e2" href="html/5_002e2.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e2" href="html/5_002e2.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e2" href="html/5_002e2.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e2" href="html/5_002e2.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e2" href="html/5_002e2.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e3" href="html/5_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e3" href="html/5_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e3" href="html/5_002e3.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e4" href="html/5_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e4" href="html/5_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e4" href="html/5_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e4" href="html/5_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e4" href="html/5_002e4.xhtml" properties="mathml svg" media-type="application/xhtml+xml"/>
+    <item id="x5_002e5" href="html/5_002e5.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e5" href="html/5_002e5.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e5" href="html/5_002e5.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e5" href="html/5_002e5.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e5" href="html/5_002e5.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e5" href="html/5_002e5.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e5" href="html/5_002e5.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
+    <item id="x5_002e5" href="html/5_002e5.xhtml" properties="mathml" media-type="application/xhtml+xml"/>
     <item id="xReferences" href="html/References.xhtml" media-type="application/xhtml+xml"/>
     <item id="xExercises" href="html/Exercises.xhtml" media-type="application/xhtml+xml"/>
     <item id="xFigures" href="html/Figures.xhtml" media-type="application/xhtml+xml"/>
@@ -283,133 +283,133 @@
     <itemref idref="xAcknowledgments"/>
     <itemref idref="xChapter-1"/>
     <itemref idref="x1_002e1"/>
-    <itemref idref="x1_002e1_002e1"/>
-    <itemref idref="x1_002e1_002e2"/>
-    <itemref idref="x1_002e1_002e3"/>
-    <itemref idref="x1_002e1_002e4"/>
-    <itemref idref="x1_002e1_002e5"/>
-    <itemref idref="x1_002e1_002e6"/>
-    <itemref idref="x1_002e1_002e7"/>
-    <itemref idref="x1_002e1_002e8"/>
+    <itemref idref="x1_002e1"/>
+    <itemref idref="x1_002e1"/>
+    <itemref idref="x1_002e1"/>
+    <itemref idref="x1_002e1"/>
+    <itemref idref="x1_002e1"/>
+    <itemref idref="x1_002e1"/>
+    <itemref idref="x1_002e1"/>
+    <itemref idref="x1_002e1"/>
     <itemref idref="x1_002e2"/>
-    <itemref idref="x1_002e2_002e1"/>
-    <itemref idref="x1_002e2_002e2"/>
-    <itemref idref="x1_002e2_002e3"/>
-    <itemref idref="x1_002e2_002e4"/>
-    <itemref idref="x1_002e2_002e5"/>
-    <itemref idref="x1_002e2_002e6"/>
+    <itemref idref="x1_002e2"/>
+    <itemref idref="x1_002e2"/>
+    <itemref idref="x1_002e2"/>
+    <itemref idref="x1_002e2"/>
+    <itemref idref="x1_002e2"/>
+    <itemref idref="x1_002e2"/>
     <itemref idref="x1_002e3"/>
-    <itemref idref="x1_002e3_002e1"/>
-    <itemref idref="x1_002e3_002e2"/>
-    <itemref idref="x1_002e3_002e3"/>
-    <itemref idref="x1_002e3_002e4"/>
+    <itemref idref="x1_002e3"/>
+    <itemref idref="x1_002e3"/>
+    <itemref idref="x1_002e3"/>
+    <itemref idref="x1_002e3"/>
     <itemref idref="xChapter-2"/>
     <itemref idref="x2_002e1"/>
-    <itemref idref="x2_002e1_002e1"/>
-    <itemref idref="x2_002e1_002e2"/>
-    <itemref idref="x2_002e1_002e3"/>
-    <itemref idref="x2_002e1_002e4"/>
+    <itemref idref="x2_002e1"/>
+    <itemref idref="x2_002e1"/>
+    <itemref idref="x2_002e1"/>
+    <itemref idref="x2_002e1"/>
     <itemref idref="x2_002e2"/>
-    <itemref idref="x2_002e2_002e1"/>
-    <itemref idref="x2_002e2_002e2"/>
-    <itemref idref="x2_002e2_002e3"/>
-    <itemref idref="x2_002e2_002e4"/>
+    <itemref idref="x2_002e2"/>
+    <itemref idref="x2_002e2"/>
+    <itemref idref="x2_002e2"/>
+    <itemref idref="x2_002e2"/>
     <itemref idref="x2_002e3"/>
-    <itemref idref="x2_002e3_002e1"/>
-    <itemref idref="x2_002e3_002e2"/>
-    <itemref idref="x2_002e3_002e3"/>
-    <itemref idref="x2_002e3_002e4"/>
+    <itemref idref="x2_002e3"/>
+    <itemref idref="x2_002e3"/>
+    <itemref idref="x2_002e3"/>
+    <itemref idref="x2_002e3"/>
     <itemref idref="x2_002e4"/>
-    <itemref idref="x2_002e4_002e1"/>
-    <itemref idref="x2_002e4_002e2"/>
-    <itemref idref="x2_002e4_002e3"/>
+    <itemref idref="x2_002e4"/>
+    <itemref idref="x2_002e4"/>
+    <itemref idref="x2_002e4"/>
     <itemref idref="x2_002e5"/>
-    <itemref idref="x2_002e5_002e1"/>
-    <itemref idref="x2_002e5_002e2"/>
-    <itemref idref="x2_002e5_002e3"/>
+    <itemref idref="x2_002e5"/>
+    <itemref idref="x2_002e5"/>
+    <itemref idref="x2_002e5"/>
     <itemref idref="xChapter-3"/>
     <itemref idref="x3_002e1"/>
-    <itemref idref="x3_002e1_002e1"/>
-    <itemref idref="x3_002e1_002e2"/>
-    <itemref idref="x3_002e1_002e3"/>
+    <itemref idref="x3_002e1"/>
+    <itemref idref="x3_002e1"/>
+    <itemref idref="x3_002e1"/>
     <itemref idref="x3_002e2"/>
-    <itemref idref="x3_002e2_002e1"/>
-    <itemref idref="x3_002e2_002e2"/>
-    <itemref idref="x3_002e2_002e3"/>
-    <itemref idref="x3_002e2_002e4"/>
+    <itemref idref="x3_002e2"/>
+    <itemref idref="x3_002e2"/>
+    <itemref idref="x3_002e2"/>
+    <itemref idref="x3_002e2"/>
     <itemref idref="x3_002e3"/>
-    <itemref idref="x3_002e3_002e1"/>
-    <itemref idref="x3_002e3_002e2"/>
-    <itemref idref="x3_002e3_002e3"/>
-    <itemref idref="x3_002e3_002e4"/>
-    <itemref idref="x3_002e3_002e5"/>
+    <itemref idref="x3_002e3"/>
+    <itemref idref="x3_002e3"/>
+    <itemref idref="x3_002e3"/>
+    <itemref idref="x3_002e3"/>
+    <itemref idref="x3_002e3"/>
     <itemref idref="x3_002e4"/>
-    <itemref idref="x3_002e4_002e1"/>
-    <itemref idref="x3_002e4_002e2"/>
+    <itemref idref="x3_002e4"/>
+    <itemref idref="x3_002e4"/>
     <itemref idref="x3_002e5"/>
-    <itemref idref="x3_002e5_002e1"/>
-    <itemref idref="x3_002e5_002e2"/>
-    <itemref idref="x3_002e5_002e3"/>
-    <itemref idref="x3_002e5_002e4"/>
-    <itemref idref="x3_002e5_002e5"/>
+    <itemref idref="x3_002e5"/>
+    <itemref idref="x3_002e5"/>
+    <itemref idref="x3_002e5"/>
+    <itemref idref="x3_002e5"/>
+    <itemref idref="x3_002e5"/>
     <itemref idref="xChapter-4"/>
     <itemref idref="x4_002e1"/>
-    <itemref idref="x4_002e1_002e1"/>
-    <itemref idref="x4_002e1_002e2"/>
-    <itemref idref="x4_002e1_002e3"/>
-    <itemref idref="x4_002e1_002e4"/>
-    <itemref idref="x4_002e1_002e5"/>
-    <itemref idref="x4_002e1_002e6"/>
-    <itemref idref="x4_002e1_002e7"/>
+    <itemref idref="x4_002e1"/>
+    <itemref idref="x4_002e1"/>
+    <itemref idref="x4_002e1"/>
+    <itemref idref="x4_002e1"/>
+    <itemref idref="x4_002e1"/>
+    <itemref idref="x4_002e1"/>
+    <itemref idref="x4_002e1"/>
     <itemref idref="x4_002e2"/>
-    <itemref idref="x4_002e2_002e1"/>
-    <itemref idref="x4_002e2_002e2"/>
-    <itemref idref="x4_002e2_002e3"/>
+    <itemref idref="x4_002e2"/>
+    <itemref idref="x4_002e2"/>
+    <itemref idref="x4_002e2"/>
     <itemref idref="x4_002e3"/>
-    <itemref idref="x4_002e3_002e1"/>
-    <itemref idref="x4_002e3_002e2"/>
-    <itemref idref="x4_002e3_002e3"/>
+    <itemref idref="x4_002e3"/>
+    <itemref idref="x4_002e3"/>
+    <itemref idref="x4_002e3"/>
     <itemref idref="x4_002e4"/>
-    <itemref idref="x4_002e4_002e1"/>
-    <itemref idref="x4_002e4_002e2"/>
-    <itemref idref="x4_002e4_002e3"/>
-    <itemref idref="x4_002e4_002e4"/>
-    <itemref idref="x4_002e4_002e4_002e1"/>
-    <itemref idref="x4_002e4_002e4_002e2"/>
-    <itemref idref="x4_002e4_002e4_002e3"/>
-    <itemref idref="x4_002e4_002e4_002e4"/>
-    <itemref idref="x4_002e4_002e4_002e5"/>
-    <itemref idref="x4_002e4_002e4_002e6"/>
-    <itemref idref="x4_002e4_002e4_002e7"/>
-    <itemref idref="x4_002e4_002e4_002e8"/>
+    <itemref idref="x4_002e4"/>
+    <itemref idref="x4_002e4"/>
+    <itemref idref="x4_002e4"/>
+    <itemref idref="x4_002e4"/>
+    <itemref idref="x4_002e4"/>
+    <itemref idref="x4_002e4"/>
+    <itemref idref="x4_002e4"/>
+    <itemref idref="x4_002e4"/>
+    <itemref idref="x4_002e4"/>
+    <itemref idref="x4_002e4"/>
+    <itemref idref="x4_002e4"/>
+    <itemref idref="x4_002e4"/>
     <itemref idref="xChapter-5"/>
     <itemref idref="x5_002e1"/>
-    <itemref idref="x5_002e1_002e1"/>
-    <itemref idref="x5_002e1_002e2"/>
-    <itemref idref="x5_002e1_002e3"/>
-    <itemref idref="x5_002e1_002e4"/>
-    <itemref idref="x5_002e1_002e5"/>
+    <itemref idref="x5_002e1"/>
+    <itemref idref="x5_002e1"/>
+    <itemref idref="x5_002e1"/>
+    <itemref idref="x5_002e1"/>
+    <itemref idref="x5_002e1"/>
     <itemref idref="x5_002e2"/>
-    <itemref idref="x5_002e2_002e1"/>
-    <itemref idref="x5_002e2_002e2"/>
-    <itemref idref="x5_002e2_002e3"/>
-    <itemref idref="x5_002e2_002e4"/>
+    <itemref idref="x5_002e2"/>
+    <itemref idref="x5_002e2"/>
+    <itemref idref="x5_002e2"/>
+    <itemref idref="x5_002e2"/>
     <itemref idref="x5_002e3"/>
-    <itemref idref="x5_002e3_002e1"/>
-    <itemref idref="x5_002e3_002e2"/>
+    <itemref idref="x5_002e3"/>
+    <itemref idref="x5_002e3"/>
     <itemref idref="x5_002e4"/>
-    <itemref idref="x5_002e4_002e1"/>
-    <itemref idref="x5_002e4_002e2"/>
-    <itemref idref="x5_002e4_002e3"/>
-    <itemref idref="x5_002e4_002e4"/>
+    <itemref idref="x5_002e4"/>
+    <itemref idref="x5_002e4"/>
+    <itemref idref="x5_002e4"/>
+    <itemref idref="x5_002e4"/>
     <itemref idref="x5_002e5"/>
-    <itemref idref="x5_002e5_002e1"/>
-    <itemref idref="x5_002e5_002e2"/>
-    <itemref idref="x5_002e5_002e3"/>
-    <itemref idref="x5_002e5_002e4"/>
-    <itemref idref="x5_002e5_002e5"/>
-    <itemref idref="x5_002e5_002e6"/>
-    <itemref idref="x5_002e5_002e7"/>
+    <itemref idref="x5_002e5"/>
+    <itemref idref="x5_002e5"/>
+    <itemref idref="x5_002e5"/>
+    <itemref idref="x5_002e5"/>
+    <itemref idref="x5_002e5"/>
+    <itemref idref="x5_002e5"/>
+    <itemref idref="x5_002e5"/>
     <itemref idref="xReferences"/>
     <itemref idref="xExercises"/>
     <itemref idref="xFigures"/>

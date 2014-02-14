@@ -15,7 +15,7 @@
 <link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
 <link href="index.xhtml#Top" rel="prev" title="Top" />
 <link href="4_002e1.xhtml#g_t4_002e1" rel="next" title="4.1" />
-<link href="3_002e5_002e5.xhtml#g_t3_002e5_002e5" rel="prev" title="3.5.5" />
+<link href="3_002e5.xhtml#g_t3_002e5_002e5" rel="prev" title="3.5.5" />
 
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 <link href="css/prettify.css" rel="stylesheet" type="text/css" />
@@ -29,10 +29,8 @@
 <section><a id="Chapter-4"></a>
 <nav class="header">
 <p>
-Next: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="n" rel="next">4.1</a>, Previous: <a href="3_002e5_002e5.xhtml#g_t3_002e5_002e5" accesskey="p" rel="prev">3.5.5</a>, Up: <a href="index.xhtml#Top" accesskey="u" rel="prev">Top</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+Next: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="n" rel="next">4.1</a>, Prev: <a href="3_002e5.xhtml#g_t3_002e5_002e5" accesskey="p" rel="prev">3.5.5</a>, Up: <a href="index.xhtml#Top" accesskey="u" rel="prev">Top</a></p>
 </nav>
-<hr />
-
 <a id="Metalinguistic-Abstraction"></a>
 <h2 class="chapter"><span class="chapnum">4</span> Metalinguistic Abstraction</h2>
 
@@ -105,13 +103,13 @@ We come to see ourselves as designers of languages, rather than only users of
 languages designed by others.
 </p>
 <p>In fact, we can regard almost any program as the evaluator for some language.
-For instance, the polynomial manipulation system of <a href="2_002e5_002e3.xhtml#g_t2_002e5_002e3">2.5.3</a>
+For instance, the polynomial manipulation system of <a href="2_002e5.xhtml#g_t2_002e5_002e3">2.5.3</a>
 embodies the rules of polynomial arithmetic and implements them in terms of
 operations on list-structured data.  If we augment this system with procedures
 to read and print polynomial expressions, we have the core of a special-purpose
 language for dealing with problems in symbolic mathematics.  The digital-logic
-simulator of <a href="3_002e3_002e4.xhtml#g_t3_002e3_002e4">3.3.4</a> and the constraint propagator of 
-<a href="3_002e3_002e5.xhtml#g_t3_002e3_002e5">3.3.5</a> are legitimate languages in their own right, each with its own
+simulator of <a href="3_002e3.xhtml#g_t3_002e3_002e4">3.3.4</a> and the constraint propagator of 
+<a href="3_002e3.xhtml#g_t3_002e3_002e5">3.3.5</a> are legitimate languages in their own right, each with its own
 primitives, means of combination, and means of abstraction.  Seen from this
 perspective, the technology for coping with large-scale computer systems merges
 with the technology for building new computer languages, and computer science
@@ -168,20 +166,8 @@ drastically different from Lisp, or indeed from any conventional language, we
 will see that the logic-programming evaluator shares the essential structure of
 the Lisp evaluator.
 </p>
-<table class="menu" style="border-collapse: collapse; border-spacing: 0">
-<tr><td style="text-align: left; vertical-align: top"><a href="4_002e1.xhtml#g_t4_002e1" accesskey="1">4.1</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">The Metacircular Evaluator
-</td></tr>
-<tr><td style="text-align: left; vertical-align: top"><a href="4_002e2.xhtml#g_t4_002e2" accesskey="2">4.2</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Variations on a Scheme – Lazy Evaluation
-</td></tr>
-<tr><td style="text-align: left; vertical-align: top"><a href="4_002e3.xhtml#g_t4_002e3" accesskey="3">4.3</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Variations on a Scheme – Nondeterministic Computing
-</td></tr>
-<tr><td style="text-align: left; vertical-align: top"><a href="4_002e4.xhtml#g_t4_002e4" accesskey="4">4.4</a>:</td><td>  </td><td style="text-align: left; vertical-align: top">Logic Programming
-</td></tr>
-</table>
 
 <div class="footnote">
-<hr />
-
 <h4 class="footnotes-heading">Footnotes</h4>
 
 <div id="FOOT205"><p><a class="footnote_backlink" href="#DOCF205"><sup>205</sup></a>
@@ -206,7 +192,7 @@ systems are constructed from electrical networks.  Here, however, the concerns
 are with the large-scale organization of electrical devices to solve a given
 application problem; the physical feasibility of the parts is assumed.  This
 layered collection of languages is another example of the stratified design
-technique illustrated by the picture language of <a href="2_002e2_002e4.xhtml#g_t2_002e2_002e4">2.2.4</a>.</p>
+technique illustrated by the picture language of <a href="2_002e2.xhtml#g_t2_002e2_002e4">2.2.4</a>.</p>
 </div>
 <div id="FOOT206"><p><a class="footnote_backlink" href="#DOCF206"><sup>206</sup></a>
 The most important features that our evaluator leaves
@@ -216,10 +202,9 @@ gives an exposition of programming languages that proceeds via a sequence of
 evaluators written in Scheme.</p>
 </div>
 </div>
-<hr />
 <nav class="header">
 <p>
-Next: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="n" rel="next">4.1</a>, Previous: <a href="3_002e5_002e5.xhtml#g_t3_002e5_002e5" accesskey="p" rel="prev">3.5.5</a>, Up: <a href="index.xhtml#Top" accesskey="u" rel="prev">Top</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>][<a href="Term-Index.xhtml#Term-Index" title="Index" accesskey="i" rel="index">Index</a>]</p>
+Next: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="n" rel="next">4.1</a>, Prev: <a href="3_002e5.xhtml#g_t3_002e5_002e5" accesskey="p" rel="prev">3.5.5</a>, Up: <a href="index.xhtml#Top" accesskey="u" rel="prev">Top</a></p>
 </nav>
 
 

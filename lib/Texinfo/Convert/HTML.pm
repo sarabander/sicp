@@ -766,7 +766,7 @@ sub _translate_names($)
      #'NodeNext',    $self->gdt('Next node'),
      'NodeNext',    $self->gdt('Next'),
      #'NodePrev',    $self->gdt('Previous node'),
-     'NodePrev',    $self->gdt('Previous'),
+     'NodePrev',    $self->gdt('Prev'),
      'NodeForward', $self->gdt('Forward node'),
      'NodeBack',    $self->gdt('Back node'),
      'Forward',     ' &gt; ',
@@ -943,7 +943,7 @@ my %defaults = (
   'SUBDIR'               => undef,
   'USE_NODES'            => 1,
   'INLINE_CONTENTS'      => 1,
-  'SPLIT'                => 'node',
+  'SPLIT'                => 'section',
 # if set style is added in attribute.
   'INLINE_CSS_STYLE'     => 0,
 # if set, no css is used.
@@ -978,8 +978,7 @@ my %defaults = (
   'WORDS_IN_PAGE'        => 100,        # (A.R)
   'SECTION_BUTTONS'      => [[ 'NodeNext', \&_default_node_direction ],
                              [ 'NodePrev', \&_default_node_direction ],
-                             [ 'NodeUp', \&_default_node_direction ], ' ',
-                             'Contents', 'Index'],
+                             [ 'NodeUp', \&_default_node_direction ]],
   'LINKS_BUTTONS'        => ['Top', 'Index', 'Contents', 'About', 
                               'NodeUp', 'NextFile', 'PrevFile'],
 #  'TOP_BUTTONS'          => ['Back', 'Forward', ' ',
@@ -1018,7 +1017,7 @@ my %defaults = (
 <script class="prettifier" src="js/highlight/lang-lisp.js" type="text/javascript"></script>',
   'AFTER_BODY_OPEN'      => '<section>',
   'PRE_BODY_CLOSE'       => '</section>',         # --> (A.R)
-  'DEFAULT_RULE'         => '<hr/>',              # (A.R)
+  'DEFAULT_RULE'         => '',              # (A.R)
   'BIG_RULE'             => '<hr/>',              # (A.R)
   'MENU_SYMBOL'          => '&#8226;',            # bull    (A.R)
   'MENU_ENTRY_COLON'     => ':',
