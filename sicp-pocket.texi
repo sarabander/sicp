@@ -1080,7 +1080,7 @@ Above and beyond these considerations, programming in Lisp is great fun.
 * 1.3::              Formulating Abstractions with Higher-Order Procedures
 @end menu
 
-@node	1.1, 1.1.1, Chapter 1, Chapter 1
+@node	1.1, 1.2, Chapter 1, Chapter 1
 @section The Elements of Programming
 
 A powerful programming language is more than just a means for instructing a
@@ -2360,7 +2360,7 @@ Newton's method in general as an abstraction of these square-root and cube-root
 procedures.)
 @end quotation
 
-@node	1.1.8, 1.2, 1.1.7, 1.1
+@node	1.1.8, 1.2, Chapter 1, 1.1
 @subsection Procedures as Black-Box Abstractions
 
 @code{Sqrt} is our first example of a process defined by a set of mutually
@@ -2603,7 +2603,7 @@ Algol 60. It appears in most advanced programming languages and is an
 important tool for helping to organize the construction of large
 programs.
 
-@node	1.2, 1.2.1, 1.1.8, Chapter 1
+@node	1.2, 1.3, 1.1, Chapter 1
 @section Procedures and the Processes They Generate
 
 We have now considered the elements of programming: We have used primitive
@@ -3806,7 +3806,7 @@ indicate the @code{remainder} operations that are actually performed.  How many
 evaluation of @code{(gcd 206 40)}?  In the applicative-order evaluation?
 @end quotation
 
-@node	1.2.6, 1.3, 1.2.5, 1.2
+@node	1.2.6, 1.3, 1.1, 1.2
 @subsection Example: Testing for Primality
 
 This section describes two methods for checking the primality of an integer
@@ -4166,7 +4166,7 @@ and non-primes.  Hint: One convenient way to make @code{expmod} signal is to
 have it return 0.
 @end quotation
 
-@node	1.3, 1.3.1, 1.2.6, Chapter 1
+@node	1.3, Chapter 2, 1.2, Chapter 1
 @section Formulating Abstractions with Higher-Order Procedures
 
 We have seen that procedures are, in effect, abstractions that describe
@@ -5286,7 +5286,7 @@ computes an approximation to the tangent function based on Lambert's formula.
 @code{k} specifies the number of terms to compute, as in @ref{Exercise 1.37}.
 @end quotation
 
-@node	1.3.4, Chapter 2, 1.3.3, 1.3
+@node	1.3.4, Chapter 2, 1.2, 1.3
 @subsection Procedures as Returned Values
 
 The above examples demonstrate how the ability to pass procedures as arguments
@@ -5698,7 +5698,7 @@ Rewrite the @code{sqrt} procedure of @ref{1.1.7} and the
 @code{iterative-improve}.
 @end quotation
 
-@node    Chapter 2, 2.1, 1.3.4, Top
+@node    Chapter 2, 2.1, 1.3, Top
 @chapter Building Abstractions with Data
 
 @quotation
@@ -5879,7 +5879,7 @@ numbers, and even other polynomials.
 * 2.5::              Systems with Generic Operations
 @end menu
 
-@node	2.1, 2.1.1, Chapter 2, Chapter 2
+@node	2.1, 2.2, Chapter 2, Chapter 2
 @section Introduction to Data Abstraction
 
 In @ref{1.1.8}, we noted that a procedure used as an element in
@@ -6494,7 +6494,7 @@ a direct definition of the addition procedure @code{+} (not in terms of
 repeated application of @code{add-1}).
 @end quotation
 
-@node	2.1.4, 2.2, 2.1.3, 2.1
+@node	2.1.4, 2.2, Chapter 2, 2.1
 @subsection Extended Exercise: Interval Arithmetic
 
 Alyssa P. Hacker is designing a system to help people solve engineering
@@ -6755,7 +6755,7 @@ task impossible?  (Warning: This problem is very difficult.)
 @end quotation
 
 
-@node	2.2, 2.2.1, 2.1.4, Chapter 2
+@node	2.2, 2.3, 2.1, Chapter 2
 @section Hierarchical Data and the Closure Property
 
 As we have seen, pairs provide a primitive ``glue'' that we can use to
@@ -8738,7 +8738,7 @@ it will take Louis's program to solve the eight-queens puzzle, assuming that
 the program in @ref{Exercise 2.42} solves the puzzle in time @math{T}.
 @end quotation
 
-@node	2.2.4, 2.3, 2.2.3, 2.2
+@node	2.2.4, 2.3, 2.1, 2.2
 @subsection Example: A Picture Language
 
 This section presents a simple language for drawing pictures that illustrates
@@ -9583,7 +9583,7 @@ the big Mr. Rogers look outward from each corner of the square.)
 @end enumerate
 @end quotation
 
-@node	2.3, 2.3.1, 2.2.4, Chapter 2
+@node	2.3, 2.4, 2.2, Chapter 2
 @section Symbolic Data
 
 All the compound data objects we have used so far were constructed ultimately
@@ -10745,7 +10745,7 @@ procedure for the case where the set of records is structured as a binary tree,
 ordered by the numerical values of the keys.
 @end quotation
 
-@node	2.3.4, 2.4, 2.3.3, 2.3
+@node	2.3.4, 2.4, 2.2, 2.3
 @subsection Example: Huffman Encoding Trees
 
 This section provides practice in the use of list structure and data
@@ -11209,7 +11209,7 @@ steps needed to encode the most frequent and least frequent symbols in the
 alphabet.
 @end quotation
 
-@node	2.4, 2.4.1, 2.3.4, Chapter 2
+@node	2.4, 2.5, 2.3, Chapter 2
 @section Multiple Representations for Abstract Data
 
 We have introduced data abstraction, a methodology for structuring systems in
@@ -11818,7 +11818,7 @@ higher-level procedures.  This discipline of stripping off and attaching tags
 as data objects are passed from level to level can be an important
 organizational strategy, as we shall see in @ref{2.5}.
 
-@node	2.4.3, 2.5, 2.4.2, 2.4
+@node	2.4.3, 2.5, 2.3, 2.4
 @subsection Data-Directed Programming and Additivity
 
 The general strategy of checking the type of a datum and calling an appropriate
@@ -12285,7 +12285,7 @@ often be added?  Which would be most appropriate for a system in which new
 operations must often be added?
 @end quotation
 
-@node	2.5, 2.5.1, 2.4.3, Chapter 2
+@node	2.5, Chapter 3, 2.4, Chapter 2
 @section Systems with Generic Operations
 
 In the previous section, we saw how to design systems in which data objects can
@@ -13077,7 +13077,7 @@ accommodate this.  You will have to define operations such as @code{sine} and
 @code{cosine} that are generic over ordinary numbers and rational numbers.
 @end quotation
 
-@node	2.5.3, Chapter 3, 2.5.2, 2.5
+@node	2.5.3, Chapter 3, 2.4, 2.5
 @subsection Example: Symbolic Algebra
 
 The manipulation of symbolic algebraic expressions is a complex process that
@@ -13946,7 +13946,7 @@ algorithm, as is the fast test for primality that we discussed in @ref{Chapter
 compute polynomial @abbr{GCD}s.}
 
 
-@node    Chapter 3, 3.1, 2.5.3, Top
+@node    Chapter 3, 3.1, 2.5, Top
 @chapter Modularity, Objects, and State
 
 @quotation
@@ -14014,7 +14014,7 @@ this using a technique known as @newterm{delayed evaluation}.
 * 3.5::              Streams
 @end menu
 
-@node	3.1, 3.1.1, Chapter 3, Chapter 3
+@node	3.1, 3.2, Chapter 3, Chapter 3
 @section Assignment and Local State
 
 We ordinarily view the world as populated by independent objects, each of which
@@ -14623,7 +14623,7 @@ repeatable sequences.  These are very handy to have when testing and debugging
 programs that use random numbers.
 @end quotation
 
-@node	3.1.3, 3.2, 3.1.2, 3.1
+@node	3.1.3, 3.2, Chapter 3, 3.1
 @subsection The Costs of Introducing Assignment
 
 As we have seen, the @code{set!} operation enables us to model objects that
@@ -15000,7 +15000,7 @@ the arguments to @code{+} are evaluated from left to right but will return 1 if
 the arguments are evaluated from right to left.
 @end quotation
 
-@node	3.2, 3.2.1, 3.1.3, Chapter 3
+@node	3.2, 3.3, 3.1, Chapter 3
 @section The Environment Model of Evaluation
 
 When we introduced compound procedures in @ref{Chapter 1}, we used the
@@ -15802,7 +15802,7 @@ Show that the two versions of @code{make-withdraw} create objects with the same
 behavior.  How do the environment structures differ for the two versions?
 @end quotation
 
-@node	3.2.4, 3.3, 3.2.3, 3.2
+@node	3.2.4, 3.3, 3.1, 3.2
 @subsection Internal Definitions
 
 Section @ref{1.1.8} introduced the idea that procedures can have internal
@@ -15973,7 +15973,7 @@ How are the local states for the two accounts kept distinct?  Which parts of
 the environment structure are shared between @code{acc} and @code{acc2}?
 @end quotation
 
-@node	3.3, 3.3.1, 3.2.4, Chapter 3
+@node	3.3, 3.4, 3.2, Chapter 3
 @section Modeling with Mutable Data
 
 @ref{Chapter 2} dealt with compound data as a means for constructing computational
@@ -18092,7 +18092,7 @@ front (last in, first out).
 @end quotation
 
 
-@node	3.3.5, 3.4, 3.3.4, 3.3
+@node	3.3.5, 3.4, 3.2, 3.3
 @subsection Propagation of Constraints
 
 Computer programs are traditionally organized as one-directional computations,
@@ -18765,7 +18765,7 @@ expression-oriented style in terms of the imperative implementation, it is very
 difficult to do the converse.}
 @end quotation
 
-@node	3.4, 3.4.1, 3.3.5, Chapter 3
+@node	3.4, 3.5, 3.3, Chapter 3
 @section Concurrency: Time Is of the Essence
 
 We've seen the power of computational objects with local state as tools for
@@ -19095,7 +19095,7 @@ to explain how these values can occur.
 @end enumerate
 @end quotation
 
-@node	3.4.2, 3.5, 3.4.1, 3.4
+@node	3.4.2, 3.5, 3.3, 3.4
 @subsection Mechanisms for Controlling Concurrency
 
 We've seen that the difficulty in dealing with concurrent processes is rooted
@@ -19829,7 +19829,7 @@ synchronize events) is a fundamental constant relating time and space.  The
 complexities we encounter in dealing with time and state in our computational
 models may in fact mirror a fundamental complexity of the physical universe.
 
-@node 3.5, 3.5.1, 3.4.2, Chapter 3
+@node 3.5, Chapter 4, 3.4, Chapter 3
 @section Streams
 
 We've gained a good understanding of assignment as a tool in modeling, as well
@@ -22205,7 +22205,7 @@ that use assignment, mutate data, or perform input or output.  Even the single
 mutability and delayed evaluation do not mix well in programming languages, and
 devising ways to deal with both of these at once is an active area of research.
 
-@node	3.5.5, Chapter 4, 3.5.4, 3.5
+@node 3.5.5, Chapter 4, 3.4, 3.5
 @subsection Modularity of Functional Programs and Modularity of Objects
 
 As we saw in @ref{3.1.2}, one of the major benefits of introducing
@@ -22483,7 +22483,7 @@ and confusions.  Unifying the object view with the functional view may have
 little to do with programming, but rather with fundamental epistemological
 issues.}
 
-@node    Chapter 4, 4.1, 3.5.5, Top
+@node    Chapter 4, 4.1, 3.5, Top
 @chapter Metalinguistic Abstraction
 
 @quotation
@@ -22644,7 +22644,7 @@ the Lisp evaluator.
 * 4.4::              Logic Programming
 @end menu
 
-@node	4.1, 4.1.1, Chapter 4, Chapter 4
+@node	4.1, 4.2, Chapter 4, Chapter 4
 @section The Metacircular Evaluator
 
 Our evaluator for Lisp will be implemented as a Lisp program.  It may seem
@@ -24551,7 +24551,7 @@ Fill in the missing expressions to complete an alternative definition of
 @end enumerate
 @end quotation
 
-@node	4.1.7, 4.2, 4.1.6, 4.1
+@node	4.1.7, 4.2, Chapter 4, 4.1
 @subsection Separating Syntactic Analysis from Execution
 
 The evaluator implemented above is simple, but it is very inefficient, because
@@ -24840,7 +24840,7 @@ the version in this section.  Use your results to estimate the fraction of time
 that is spent in analysis versus execution for various procedures.
 @end quotation
 
-@node	4.2, 4.2.1, 4.1.7, Chapter 4
+@node	4.2, 4.3, 4.1, Chapter 4
 @section Variations on a Scheme --- Lazy Evaluation
 
 Now that we have an evaluator expressed as a Lisp program, we can experiment
@@ -25441,7 +25441,7 @@ to force or delay arguments accordingly, and you must arrange for forcing to
 memoize or not, as appropriate.
 @end quotation
 
-@node	4.2.3, 4.3, 4.2.2, 4.2
+@node	4.2.3, 4.3, 4.1, 4.2
 @subsection Streams as Lazy Lists
 
 In @ref{3.5.1}, we showed how to implement streams as delayed lists.
@@ -25588,7 +25588,7 @@ the representation of lazy pairs so that the evaluator can identify them in
 order to print them.
 @end quotation
 
-@node	4.3, 4.3.1, 4.2.3, Chapter 4
+@node	4.3, 4.4, 4.2, Chapter 4
 @section Variations on a Scheme --- Nondeterministic Computing
 
 In this section, we extend the Scheme evaluator to support a programming
@@ -26436,7 +26436,7 @@ In fact, the grammar is highly recursive in many places, and Alyssa's technique
 for a way to deal with this.}
 @end quotation
 
-@node	4.3.3, 4.4, 4.3.2, 4.3
+@node	4.3.3, 4.4, 4.2, 4.3
 @subsection Implementing the @code{Amb} Evaluator
 
 The evaluation of an ordinary Scheme expression may return a value, may never
@@ -27088,7 +27088,7 @@ expressions.  Complete the following definition of @code{analyze-require}.
 @end lisp
 @end quotation
 
-@node	4.4, 4.4.1, 4.3.3, Chapter 4
+@node	4.4, Chapter 5, 4.3, Chapter 4
 @section Logic Programming
 
 In @ref{Chapter 1} we stressed that computer science deals with imperative (how
@@ -30002,7 +30002,7 @@ using
          (symbol->string (cadr variable))))))
 @end lisp
 
-@node 4.4.4.8, Chapter 5, 4.4.4.7, 4.4.4
+@node 4.4.4.8, Chapter 5, 4.3, 4.4.4
 @subsubsection Frames and Bindings
 
 Frames are represented as lists of bindings, which are variable-value pairs:
@@ -30250,7 +30250,7 @@ I supposed that @math{P} were true, then I would be able to deduce @math{A} and
 answer is probably worth a Ph.D.)
 @end quotation
 
-@node    Chapter 5, 5.1, 4.4.4.8, Top
+@node    Chapter 5, 5.1, 4.4, Top
 @chapter Computing with Register Machines
 
 @quotation
@@ -30327,7 +30327,7 @@ directly with the registers and operations of the evaluator register machine.
 * 5.5::              Compilation
 @end menu
 
-@node	5.1, 5.1.1, Chapter 5, Chapter 5
+@node	5.1, 5.2, Chapter 5, Chapter 5
 @section Designing Register Machines
 
 To design a register machine, we must design its @newterm{data paths}
@@ -31479,7 +31479,7 @@ Fibonacci machine's controller sequence has an extra @code{save} and an extra
 instructions?
 @end quotation
 
-@node	5.1.5, 5.2, 5.1.4, 5.1
+@node	5.1.5, 5.2, Chapter 5, 5.1
 @subsection Instruction Summary
 
 A controller instruction in our register-machine language has one of the
@@ -31531,7 +31531,7 @@ For example,@*
 @code{(const (a b c))} is the list @code{(a b c)},@*
 and @code{(const ())} is the empty list.
 
-@node	5.2, 5.2.1, 5.1.5, Chapter 5
+@node	5.2, 5.3, 5.1, Chapter 5
 @section A Register-Machine Simulator
 
 In order to gain a good understanding of the design of register machines, we
@@ -32580,7 +32580,7 @@ allocate them one at a time when they are first seen during assembly of the
 instructions.
 @end quotation
 
-@node	5.2.4, 5.3, 5.2.3, 5.2
+@node	5.2.4, 5.3, 5.1, 5.2
 @subsection Monitoring Machine Performance
 
 Simulation is useful not only for verifying the correctness of a proposed
@@ -32755,7 +32755,7 @@ or to remove all breakpoints by means of
 @end lisp
 @end quotation
 
-@node	5.3, 5.3.1, 5.2.4, Chapter 5
+@node	5.3, 5.4, 5.2, Chapter 5
 @section Storage Allocation and Garbage Collection
 
 In section @ref{5.4}, we will show how to implement a Scheme evaluator as a
@@ -33148,7 +33148,7 @@ Design a register machine to implement each of these procedures.  Assume that
 the list-structure memory operations are available as primitive operations.
 @end quotation
 
-@node	5.3.2, 5.4, 5.3.1, 5.3
+@node	5.3.2, 5.4, 5.2, 5.3
 @subsection Maintaining the Illusion of Infinite Memory
 
 The representation method outlined in @ref{5.3.1} solves the problem of
@@ -33513,7 +33513,7 @@ gc-flip
   (assign new-cars (reg temp))
 @end lisp
 
-@node	5.4, 5.4.1, 5.3.2, Chapter 5
+@node	5.4, 5.5, 5.3, Chapter 5
 @section The Explicit-Control Evaluator
 
 In @ref{5.1} we saw how to transform simple Scheme programs into
@@ -34248,7 +34248,7 @@ the actions of the clause.
 uses normal-order evaluation, based on the lazy evaluator of @ref{4.2}.
 @end quotation
 
-@node	5.4.4, 5.5, 5.4.3, 5.4
+@node	5.4.4, 5.5, 5.3, 5.4
 @subsection Running the Evaluator
 
 With the implementation of the explicit-control evaluator we come to the end of
@@ -34610,7 +34610,7 @@ work.  This is a major project.
 @end enumerate
 @end quotation
 
-@node	5.5, 5.5.1, 5.4.4, Chapter 5
+@node	5.5, References, 5.4, Chapter 5
 @section Compilation
 
 The explicit-control evaluator of @ref{5.4} is a register machine whose
@@ -36932,7 +36932,7 @@ procedures.  (The code will work correctly as long as the program does not
 @code{define} or @code{set!} these names.)
 @end quotation
 
-@node	5.5.7, References, 5.5.6, 5.5
+@node	5.5.7, References, 5.4, 5.5
 @subsection Interfacing Compiled Code to the Evaluator
 
 We have not yet explained how to load compiled code into the evaluator machine
@@ -37329,7 +37329,7 @@ into sequences of C instructions.  Compile the metacircular evaluator of
 @ref{4.1} to produce a Scheme interpreter written in C.
 @end quotation
 
-@node    References, Exercises, 5.5.7, Top
+@node    References, Exercises, 5.5, Top
 @unnumbered References
 
 @anchor{Abelson et al. 1992}

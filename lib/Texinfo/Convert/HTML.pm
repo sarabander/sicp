@@ -978,7 +978,8 @@ my %defaults = (
   'WORDS_IN_PAGE'        => 100,        # (A.R)
   'SECTION_BUTTONS'      => [[ 'NodeNext', \&_default_node_direction ],
                              [ 'NodePrev', \&_default_node_direction ],
-                             [ 'NodeUp', \&_default_node_direction ]],
+                             [ 'NodeUp', \&_default_node_direction ], ' ',
+                             'Contents'],
   'LINKS_BUTTONS'        => ['Top', 'Index', 'Contents', 'About', 
                               'NodeUp', 'NextFile', 'PrevFile'],
 #  'TOP_BUTTONS'          => ['Back', 'Forward', ' ',

@@ -220,6 +220,10 @@ nav.header a[href] {
   padding: 1.5ex;
 }
 
+nav.header:last-of-type {
+  margin-top: 2em;
+}
+
 span.roman {
   font-family: "Linux Libertine O", serif; 
   font-size: 0.96rem;
