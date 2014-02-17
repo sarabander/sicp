@@ -15,13 +15,15 @@ CONV = texi2any lib/Texinfo/Convert/HTML.pm	# Texinfo converter scripts
 MATH = get-math.js put-math.js mathcell.xhtml	# LaTeX -> MathML converter
 HIGHL = $(DIR)js/highlight/
 PRETTY = $(HIGHL)prettify.js $(HIGHL)lang-lisp.js batch-prettify.js
-COVER = index.xhtml $(DIR)fig/coverpage.std.svg $(DIR)fig/bookwheel.jpg
+COVER = index.in.xhtml $(DIR)fig/coverpage.std.svg $(DIR)fig/bookwheel.jpg
 THUMB = $(DIR)fig/cover.png     # thumbnail cover image
 SHELL = /bin/bash
 
 JQ = <script src=\"js/jquery.min.js\" type=\"text/javascript\"></script>
 FT = <script src=\"js/footnotes.js\" type=\"text/javascript\"></script>
 BR = <script src=\"js/browsertest.js\" type=\"text/javascript\"></script>
+
+GITHUB = <a href=\"https://github.com/sarabander/sicp\"><img style=\"position: absolute; top: 0; right: 0; border: 0; width: 149px; height: 149px; z-index: 10; opacity: 0.5;\" src=\"http://aral.github.com/fork-me-on-github-retina-ribbons/right-red\@2x.png\" alt=\"Fork me on GitHub\" /></a>
 
 all: $(GOAL)
 # Add scripts to the unpacked HTML5 version that is to be read in a browser.
@@ -31,7 +33,10 @@ all: $(GOAL)
 	      "s{\s*</head>}{\n\n$(JQ)\n$(FT)\n$(BR)\n</head>}" $$file; \
 	  done; \
 	  rm $(DIR)*.bak; \
-	fi
+	fi; \
+        perl -0p -i.bak -e \
+          "s{<!-- Fork me banner -->}{$(GITHUB)}" index.xhtml; \
+        rm *.bak
 
 html: $(NEXUS)
 
@@ -90,6 +95,7 @@ $(GOAL): $(META) $(THUMB) $(FIG) $(CSS) $(FONT) mimetype META-INF/* LICENSE
 	  rm $(DIR)*.bak; \
 	fi; \
 	zip -0Xq $(GOAL) mimetype; \
+        cp index.in.xhtml index.xhtml; \
 	zip -Xr9Dq $(GOAL) $(META) $(HTML) META-INF/* LICENSE \
 	  index.xhtml $(DIR)css/* $(DIR)fig/* ; \
 	echo "done."
