@@ -116,7 +116,7 @@ a[name="Top"] + nav.header {
   display: none; 
 }
 
-h2 { font-size: 1.57rem; }
+h2 { font-size: 1.57rem; line-height: 110%; }
 
 h3 { font-size: 1.31rem; }
 
@@ -126,22 +126,33 @@ h4 code { font-size: 0.88rem; }
 h5 { font-size: 1rem; }
 h5 code { font-size: 0.82rem; }
 
-span.chapnum {
-  display: block;
-  font-size: 6em;
+.chapnum {
+  display: inline-block;
+  font-size: 6.7em;
   -moz-font-feature-settings: "onum";
   -ms-font-feature-settings: "onum";
   -webkit-font-feature-settings: "onum" 1;
   -o-font-feature-settings: "onum";
   font-feature-settings: "onum";
-  color: #c8c8c8;
-  margin-top: 0.6em; 
-  margin-bottom: 0.6em; 
+  color: #cecece;
+}
+
+.chaptitle {
+  display: inline-block;
+  width: 80%;
+  margin-left: 0.1em;
+}
+
+@media (max-width: 960px) {
+  .chaptitle {
+    width: 67%;
+    margin-left: 0.1em;
+  }
 }
 
 .secnum {
   display: inline-block;
-  color: #808080;
+  color: #909090;
   margin-right: 0.8em;
   vertical-align: top;
 }

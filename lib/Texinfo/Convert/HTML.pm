@@ -1952,14 +1952,16 @@ sub _default_heading_text($$$$$)
   } elsif ($level > $self->get_conf('MAX_HEADER_LEVEL')) {
     $level = $self->get_conf('MAX_HEADER_LEVEL');
   }
-  # Enclose chapter or section number inside span to apply different style                        (A.R) -->
+  #(A.R) -->
+  # Enclose chapter or section number inside span to apply different style
+  my $ltype;
   if ($level == 2) {
-    $text =~ s/^(\d(?:\.\d+)*)/<span class=\"chapnum\">$1<\/span>/;
-    #$text =~ s/^(\d(?:\.\d+)*)/<span style="margin-right: 0.8em; color: brown;">$1<\/span>/;
+    $ltype = "chap";
   } else {
-    $text =~ s/^(\d(?:\.\d+)*)\s+(.+)$/<span class=\"secnum\">$1<\/span><span class=\"sectitle\">$2<\/span>/;
-    #$text =~ s/^(\d(?:\.\d+)*)/<span style="margin-right: 1em; color: gray;">$1<\/span>/;
-  }                                                                                               # --> (A.R)
+    $ltype = "sec";
+  }
+  $text =~ s/^(\d(?:\.\d+)*)\s+(.+)$/<span class=\"${ltype}num\">$1<\/span><span class=\"${ltype}title\">$2<\/span>/;
+  # --> (A.R)
   my $result = $self->_attribute_class("h$level", $class) ."$align>$text</h$level>";
   # titlefont appears inline in text, so no end of line is
   # added. The end of line should be added by the user if needed.
