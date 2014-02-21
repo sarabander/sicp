@@ -77,7 +77,7 @@ def make_toc
     ul.name = 'ol'      # make unordered list tags to ordered
   end
   toc.css("a").each do |a|
-    a['href'] = DIR + a['href'].split('#')[0]  # prepend subdirectory
+    a['href'] = DIR + a['href']  # prepend subdirectory
   end
   return toc
 end
@@ -160,7 +160,7 @@ end
 
 # Main program
 @toc = make_toc()
-@links = @toc.css("a").map { |a| a['href'] }
+@links = @toc.css("a").map { |a| a['href'].split('#')[0] } .uniq
 
 write_nav(@toc)
 write_opf(@links)
