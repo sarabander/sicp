@@ -3280,7 +3280,6 @@ computes @math{f} by means of an iterative process.
 is called @newterm{Pascal's triangle}.
 
 @example
-
          1
        1   1
      1   2   1
