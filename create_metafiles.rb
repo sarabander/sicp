@@ -57,6 +57,10 @@ OPF_T = <<EOF
     <item id="cover-jpg" href="#{DIR}fig/bookwheel.jpg" media-type="image/jpeg"/>
     <item id="toc" properties="nav" href="toc.xhtml" media-type="application/xhtml+xml"/>
     <item id="nexus" href="#{DIR}index.xhtml" properties="svg" media-type="application/xhtml+xml"/>
+    <item id="font-license" href="#{DIR}css/fonts/LICENCE.txt" media-type="text/plain"/>
+    <item id="ofl-1_1" href="#{DIR}css/fonts/OFL-1.1.txt" media-type="text/plain"/>
+    <item id="gpl" href="#{DIR}css/fonts/GPL.txt" media-type="text/plain"/>
+    <item id="license" href="LICENSE" media-type="text/plain"/>
   </manifest>
   <spine>
     <itemref idref="cover" linear="no"/>

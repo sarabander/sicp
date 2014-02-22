@@ -8,7 +8,7 @@
     <dc:identifier id="bookid">urn:uuid:a412368e-e0ac-42ce-8c01-0f0da52f5731</dc:identifier>
     <dc:language>en-US</dc:language>
     <meta name="cover" content="cover-image"/>
-    <meta property="dcterms:modified">2014-02-22T15:43:43Z</meta>
+    <meta property="dcterms:modified">2014-02-23T01:22:07Z</meta>
   </metadata>
   <manifest>
     <item id="css-style" href="html/css/style.css" media-type="text/css"/>
@@ -20,6 +20,10 @@
     <item id="cover-jpg" href="html/fig/bookwheel.jpg" media-type="image/jpeg"/>
     <item id="toc" properties="nav" href="toc.xhtml" media-type="application/xhtml+xml"/>
     <item id="nexus" href="html/index.xhtml" properties="svg" media-type="application/xhtml+xml"/>
+    <item id="font-license" href="html/css/fonts/LICENCE.txt" media-type="text/plain"/>
+    <item id="ofl-1_1" href="html/css/fonts/OFL-1.1.txt" media-type="text/plain"/>
+    <item id="gpl" href="html/css/fonts/GPL.txt" media-type="text/plain"/>
+    <item id="license" href="LICENSE" media-type="text/plain"/>
     <item id="xUTF" href="html/UTF.xhtml" media-type="application/xhtml+xml"/>
     <item id="xDedication" href="html/Dedication.xhtml" media-type="application/xhtml+xml"/>
     <item id="xForeword" href="html/Foreword.xhtml" properties="mathml" media-type="application/xhtml+xml"/>

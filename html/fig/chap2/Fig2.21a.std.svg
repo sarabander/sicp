@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <?xml-stylesheet href="../../css/fonts/fonts.css" type="text/css"?>
-<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 753 389" id="svg2" style="display:inline" inkscape:version="0.48.3.1 r9886" width="100%" height="100%" sodipodi:docname="Fig2.21a.std.svg">
-  <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1920" inkscape:window-height="1004" id="namedview37" showgrid="false" inkscape:zoom="1.2958929" inkscape:cx="409.10248" inkscape:cy="175.87027" inkscape:window-x="0" inkscape:window-y="24" inkscape:window-maximized="1" inkscape:current-layer="svg2">
-    <inkscape:grid type="xygrid" id="grid3021"/>
-  </sodipodi:namedview>
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 753 389" id="svg2" style="display:inline" width="100%" height="100%">
+  
   <defs id="defs4"/>
   <metadata id="metadata_2.21">
   <!--
@@ -49,12 +47,12 @@
   -->
 </metadata>
   <rect style="fill:#e8e8e8;fill-opacity:1;stroke:#383838;stroke-width:1.01467276;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" id="rect3796" y="49" x="45" ry="6.7644849" rx="6.7644849" height="54.555573" width="659.99939"/>
-  <path inkscape:connector-curvature="0" style="fill:none;stroke:#383838;stroke-width:1.01467276;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3799" d="m 44.710624,76.595704 -41.171213,0" sodipodi:nodetypes="cc"/>
-  <path inkscape:connector-curvature="0" style="fill:none;stroke:#383838;stroke-width:1.01467276;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3819" d="m 3.539411,229.32274 209.999679,0 m 324.54496,0 209.99969,0" sodipodi:nodetypes="cccc"/>
-  <path inkscape:connector-curvature="0" style="fill:none;stroke:#383838;stroke-width:1.01467276;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3819-0" d="m 3.539411,334.32258 744.544329,0" sodipodi:nodetypes="cc"/>
-  <path inkscape:connector-curvature="0" style="fill:none;stroke:#383838;stroke-width:1.01467276;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3839" d="m 375.81157,277.04994 0,57.27264" sodipodi:nodetypes="cc"/>
+  <path style="fill:none;stroke:#383838;stroke-width:1.01467276;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3799" d="m 44.710624,76.595704 -41.171213,0"/>
+  <path style="fill:none;stroke:#383838;stroke-width:1.01467276;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3819" d="m 3.539411,229.32274 209.999679,0 m 324.54496,0 209.99969,0"/>
+  <path style="fill:none;stroke:#383838;stroke-width:1.01467276;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3819-0" d="m 3.539411,334.32258 744.544329,0"/>
+  <path style="fill:none;stroke:#383838;stroke-width:1.01467276;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3839" d="m 375.81157,277.04994 0,57.27264"/>
   <rect style="fill:#e8e8e8;fill-opacity:1;stroke:#383838;stroke-width:1.01467276;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" id="rect3796-9" y="181.59555" x="213.53909" ry="6.7644849" rx="6.7644849" height="95.454399" width="324.54495"/>
-  <path inkscape:connector-curvature="0" style="fill:none;stroke:#383838;stroke-width:1.01467276;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline" id="path3799-2" d="m 748.08374,76.595704 -42.98728,0" sodipodi:nodetypes="cc"/>
+  <path style="fill:none;stroke:#383838;stroke-width:1.01467276;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline" id="path3799-2" d="m 748.08374,76.595704 -42.98728,0"/>
   <g transform="translate(-51.702179,-53.444216)" id="layer3" style="display:inline">
     <text x="427.51376" y="137.13083" id="text3000" xml:space="preserve" style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#383838;fill-opacity:1;stroke:none;font-family:Inconsolata LGC;-inkscape-font-specification:Sans"><tspan x="427.51376" y="137.13083" id="tspan3002">add-complex  sub-complex  mul-complex  div-complex</tspan></text>
     <text x="427.51376" y="72.767281" id="text3004" xml:space="preserve" style="font-size:24.81814384px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#383838;fill-opacity:1;stroke:none;font-family:Linux Biolinum O;-inkscape-font-specification:Linux Biolinum O"><tspan x="427.51376" y="72.767281" id="tspan3006">Programs that use complex numbers</tspan></text>
