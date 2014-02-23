@@ -7,8 +7,8 @@
 @settitle            Structure and Interpretation of Computer Programs, 2e
 @comment             Unofficial Texinfo Format
 @comment
-@set utfversion      2.andresraba6.1
-@set utfversiondate  February 15, 2014
+@set utfversion      2.andresraba6.2
+@set utfversiondate  February 23, 2014
 @comment
 @comment             This file is licensed under a Creative Commons 
 @comment             Attribution-ShareAlike 3.0 Unported License 
@@ -79,7 +79,10 @@
 @comment   with MathML and MathJax.
 @comment
 @comment * Version 2.andresraba6.1 (February 15, 2014) by Andres Raba.
-@comment   Sections are not split to separate subsection files.
+@comment   Raised the splitting threshold from subsection to section.
+@comment
+@comment * Version 2.andresraba6.2 (February 23, 2014) by Andres Raba.
+@comment   Fixed the SVG files to pass epubcheck validation.
 
 
 @documentencoding UTF-8
