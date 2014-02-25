@@ -58,12 +58,12 @@ $(document).ready(function () {
 
       // Popup opens below the link unless there is 
       // not enough room below and enough above.
-      var top = position.top + 20;
-      if ((top + div.height() + 30 >
+      var top = position.top + 5;
+      if ((top + div.height() + 25 >
             $(window).height() + $(window).scrollTop())
           &&
-          (top - div.height() - 42 > $(window).scrollTop())) {
-        top = position.top - div.height() - 20;
+          (top - div.height() - 15 > $(window).scrollTop())) {
+        top = position.top - div.height() - 35;
       }
       div.css({ left: left,
                 top: top });
