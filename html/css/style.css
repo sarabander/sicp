@@ -25,7 +25,7 @@ html {
   font-family: "Linux Libertine O", serif;
   font-size: 170%;
   color: #383838;
-  line-height: 140%;
+  line-height: 130%;
   /* 'liga' turns on ligatures, 'ss06' picks alternate ampersand */
   -moz-font-feature-settings: "liga" 1, "ss06";
   -ms-font-feature-settings: "liga" 1, "ss06";
@@ -37,8 +37,8 @@ html {
 @media (min-width: 481px) and (max-width: 960px) {
   html {
     font-size: 140%; 
-    line-height: 136%;
   }
+
   blockquote {
     margin-left:  1em;
     margin-right: 1em;
@@ -49,8 +49,8 @@ html {
 @media (max-width: 480px) {
   html {
     font-size: 120%; 
-    line-height: 133%;
   }
+
   /* Allow hyphenation on narrow screens */
   p {
     -ms-hyphens: auto;
@@ -86,7 +86,7 @@ section {
 
 h1, h2, h3, h4, h5 {
   font-family: "Linux Biolinum O", sans-serif; 
-  margin-top: 2em;
+  margin-top: 1.6em;
   margin-bottom: 1.0rem;
   line-height: 125%;
 }
@@ -96,6 +96,14 @@ h1, h2.chapter {
   margin-bottom: 2em;
 }
 
+h2.unnumbered {
+  margin-top: 2.5em;
+}
+
+h3.section {
+  margin-top: 2em;
+}
+  
 strong {
   font-family: "Linux Biolinum O", sans-serif; 
 }
@@ -178,14 +186,14 @@ pre, code, tt, samp {
 
 pre, pre code, pre var {
   font-size: 0.77rem;
-  line-height: 160%;
+  line-height: 150%;
 }
 
-.lisp .MathJax { 
+.lisp .MathJax {
   color: #606060; 
 }
 
-.roman .MathJax { 
+.roman .MathJax {
   color: #a07040; 
 }
 
@@ -336,7 +344,7 @@ h2 ~ p:first-of-type:first-letter {
   font-family: "Linux Libertine O", serif; 
   text-transform: uppercase;
   font-weight: bold;
-  font-size: 3.3em;
+  font-size: 3.0em;
   color: #c0c0c0;
 }
 
@@ -440,3 +448,18 @@ a#References ~ p {
   -o-font-feature-settings: "onum", "ss06";
   font-feature-settings: "onum", "ss06";
 }
+
+@media (max-width: 960px) {
+  html {
+    line-height: 126%;
+  }
+
+  pre, pre code, pre var {
+    line-height: 140%;
+  }
+
+  h2 ~ p:first-of-type:first-letter {
+    font-size: 2.9em;
+  }
+}
+
