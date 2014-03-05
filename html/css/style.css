@@ -143,18 +143,21 @@ h5 code { font-size: 0.82rem; }
   -o-font-feature-settings: "onum";
   font-feature-settings: "onum";
   color: #cecece;
+  height: 1ex;
+  margin-top: 0.3ex;
+  margin-bottom: 0.5ex;
 }
 
 .chaptitle {
   display: inline-block;
-  width: 80%;
-  margin-left: 0.1em;
+  width: 78%;
+  margin-left: 1ex;
 }
 
 @media (max-width: 960px) {
   .chaptitle {
-    width: 67%;
-    margin-left: 0.1em;
+    width: 64%;
+    margin-left: 0.5em;
   }
 }
 
