@@ -8,7 +8,7 @@
     <dc:identifier id="bookid">urn:uuid:a412368e-e0ac-42ce-8c01-0f0da52f5731</dc:identifier>
     <dc:language>en-US</dc:language>
     <meta name="cover" content="cover-image"/>
-    <meta property="dcterms:modified">2014-05-18T16:55:43Z</meta>
+    <meta property="dcterms:modified">2014-06-09T16:40:02Z</meta>
   </metadata>
   <manifest>
     <item id="css-style" href="html/css/style.css" media-type="text/css"/>
