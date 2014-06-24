@@ -31,6 +31,7 @@ Acknowledgements
 * Gavrie Philipson
 * Li Xuanji
 * J. E. Johnson
+* Matt Iversen
 
 License
 -------
