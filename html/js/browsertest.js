@@ -18,7 +18,7 @@
       "//]]>";
 
     script2 = document.createElement("script");
-    script2.src  = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script2.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     script2.type = "text/javascript";
 
     head.appendChild(script1);
