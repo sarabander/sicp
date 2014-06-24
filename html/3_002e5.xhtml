@@ -4054,9 +4054,10 @@ performed on consecutive pairs in the <code>random-numbers</code> stream:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> cesaro-stream
-  </span><span class="opn">(</span><span class="pln">map-successive-pairs </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">r1 r2</span><span class="clo">)</span><span class="pln"> 
-                          </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">gcd r1 r2</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
-                        random-numbers</span><span class="clo">))</span><span class="pln">
+  </span><span class="opn">(</span><span class="pln">map-successive-pairs
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">r1 r2</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pln">gcd r1 r2</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="clo">))</span><span class="pln">
+   random-numbers</span><span class="clo">))</span><span class="pln">
+
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">map-successive-pairs f s</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">cons-stream
    </span><span class="opn">(</span><span class="pln">f </span><span class="opn">(</span><span class="pln">stream-car s</span><span class="clo">)</span><span class="pln"> 
@@ -4091,8 +4092,9 @@ into the <code>pi</code> stream:
       </span><span class="opn">(</span><span class="pln">next passed </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> failed </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
 
 </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> pi
-  </span><span class="opn">(</span><span class="pln">stream-map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> p</span><span class="clo">)))</span><span class="pln">
-              </span><span class="opn">(</span><span class="pln">monte-carlo cesaro-stream </span><span class="lit">0</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)))</span></pre></div>
+  </span><span class="opn">(</span><span class="pln">stream-map
+   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> p</span><span class="clo">)))</span><span class="pln">
+   </span><span class="opn">(</span><span class="pln">monte-carlo cesaro-stream </span><span class="lit">0</span><span class="pln"> </span><span class="lit">0</span><span class="clo">)))</span></pre></div>
 
 <p>There is considerable modularity in this approach, because we still can
 formulate a general <code>monte-carlo</code> procedure that can deal with arbitrary

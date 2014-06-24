@@ -7,8 +7,8 @@
 @settitle            Structure and Interpretation of Computer Programs, 2e
 @comment             Unofficial Texinfo Format
 @comment
-@set utfversion      2.andresraba6.3
-@set utfversiondate  June 9, 2014
+@set utfversion      2.andresraba6.4
+@set utfversiondate  June 24, 2014
 @comment
 @comment             This file is licensed under a Creative Commons 
 @comment             Attribution-ShareAlike 3.0 Unported License 
@@ -87,6 +87,11 @@
 @comment * Version 2.andresraba6.3 (June 9, 2014) by Andres Raba.
 @comment   Improved the pretty-printing of some Scheme code.
 @comment   Decreased the default font size of epub from 170% to 100%.
+@comment
+@comment * Version 2.andresraba6.4 (June 24, 2014) by Andres Raba.
+@comment   Switched on hyphenation for all viewports, made text column
+@comment   wider, re-arranged some Scheme code, changed Mathjax
+@comment   protocol from http to https.
 
 
 @documentencoding UTF-8
@@ -22257,9 +22262,10 @@ performed on consecutive pairs in the @code{random-numbers} stream:
 
 @lisp
 (define cesaro-stream
-  (map-successive-pairs (lambda (r1 r2) 
-                          (= (gcd r1 r2) 1))
-                        random-numbers))
+  (map-successive-pairs
+   (lambda (r1 r2) (= (gcd r1 r2) 1))
+   random-numbers))
+
 (define (map-successive-pairs f s)
   (cons-stream
    (f (stream-car s) 
@@ -22292,8 +22298,9 @@ into the @code{pi} stream:
       (next passed (+ failed 1))))
 
 (define pi
-  (stream-map (lambda (p) (sqrt (/ 6 p)))
-              (monte-carlo cesaro-stream 0 0)))
+  (stream-map
+   (lambda (p) (sqrt (/ 6 p)))
+   (monte-carlo cesaro-stream 0 0)))
 @end lisp
 
 @noindent
@@ -24439,14 +24446,17 @@ the same meaning, as
 
 @lisp
 (define (f x)
-  (letrec ((even? (lambda (n)
-                    (if (= n 0)
-                        true
-                        (odd? (- n 1)))))
-           (odd? (lambda (n)
-                   (if (= n 0)
-                       false
-                       (even? (- n 1))))))
+  (letrec
+      ((even?
+        (lambda (n)
+          (if (= n 0)
+              true
+              (odd? (- n 1)))))
+       (odd?
+        (lambda (n)
+          (if (= n 0)
+              false
+              (even? (- n 1))))))
     ⟨@var{rest of body of @code{f}}⟩))
 @end lisp
 
@@ -24466,11 +24476,12 @@ bindings, such as the mutual recursion of @code{even?} and @code{odd?} in the
 example above, or the evaluation of 10 factorial with
 
 @lisp
-(letrec ((fact
-          (lambda (n)
-            (if (= n 1)
-                1
-                (* n (fact (- n 1)))))))
+(letrec
+    ((fact
+      (lambda (n)
+        (if (= n 1)
+            1
+            (* n (fact (- n 1)))))))
   (fact 10))
 @end lisp
 
@@ -25248,9 +25259,10 @@ was evaluated) after storing its value.}
 
 (define (force-it obj)
   (cond ((thunk? obj)
-         (let ((result (actual-value 
-                        (thunk-exp obj)
-                        (thunk-env obj))))
+         (let ((result
+                (actual-value 
+                 (thunk-exp obj)
+                 (thunk-env obj))))
            (set-car! obj 'evaluated-thunk)
            ;; @r{replace @code{exp} with its value:}
            (set-car! (cdr obj) result) 
@@ -25515,8 +25527,9 @@ examples:
         ((null? list2) list1)
         (else (cons (+ (car list1) 
                        (car list2))
-                    (add-lists (cdr list1) 
-                               (cdr list2))))))
+                    (add-lists
+                     (cdr list1) 
+                     (cdr list2))))))
 
 (define ones (cons 1 ones))
 
@@ -25906,13 +25919,10 @@ triples of integers @math{{(i, j, k)}} between the given bounds such that
 @math{{i \le j}} and @math{{i^2 + j^2 = k^2}}, as follows:
 
 @lisp
-(define (a-pythagorean-triple-between 
-         low 
-         high)
+(define (a-pythagorean-triple-between low high)
   (let ((i (an-integer-between low high)))
     (let ((j (an-integer-between i high)))
-      (let ((k (an-integer-between j 
-                                   high)))
+      (let ((k (an-integer-between j high)))
         (require (= (+ (* i i) (* j j)) 
                     (* k k)))
         (list i j k)))))
@@ -25937,14 +25947,10 @@ one in @ref{Exercise 4.35}.  Is he correct?  (Hint: Consider the number of
 possibilities that must be explored.)
 
 @lisp
-(define (a-pythagorean-triple-between 
-         low 
-         high)
-  (let ((i (an-integer-between low
-                               high))
+(define (a-pythagorean-triple-between low high)
+  (let ((i (an-integer-between low high))
         (hsq (* high high)))
-    (let ((j (an-integer-between i
-                                 high)))
+    (let ((j (an-integer-between i high)))
       (let ((ksq (+ (* i i) (* j j))))
         (require (>= hsq ksq))
         (let ((k (sqrt ksq)))
@@ -26781,9 +26787,10 @@ the assignment before actually calling @code{fail2}.
                       (lookup-variable-value 
                        var 
                        env)))
-                 (set-variable-value! var 
-                                      val 
-                                      env)
+                 (set-variable-value!
+                  var 
+                  val 
+                  env)
                  (succeed 
                   'ok
                   (lambda ()    @r{; *2*}
@@ -26888,8 +26895,8 @@ are no more alternatives to try, the entire @code{amb} expression fails.
 
 @lisp
 (define (analyze-amb exp)
-  (let ((cprocs (map analyze 
-                     (amb-choices exp))))
+  (let ((cprocs
+         (map analyze (amb-choices exp))))
     (lambda (env succeed fail)
       (define (try-next choices)
         (if (null? choices)
@@ -27909,8 +27916,7 @@ plus all meetings of that person's division.  Fill in the body of Alyssa's
 rule.
 
 @lisp
-(rule (meeting-time ?person
-                    ?day-and-time)
+(rule (meeting-time ?person ?day-and-time)
       ⟨@var{rule-body}⟩)
 @end lisp
 
@@ -28598,14 +28604,16 @@ that the input is not a query but rather an assertion or rule to be added to
 the data base.  For instance,
 
 @lisp
-(assert! (job (Bitdiddle Ben)
-              (computer wizard)))
+(assert!
+ (job (Bitdiddle Ben)
+      (computer wizard)))
 
-(assert! (rule (wheel ?person)
-               (and (supervisor 
-                     ?middle-manager ?person)
-                    (supervisor
-                     ?x ?middle-manager))))
+(assert!
+ (rule (wheel ?person)
+       (and (supervisor 
+             ?middle-manager ?person)
+            (supervisor
+             ?x ?middle-manager))))
 @end lisp
 
 @node	4.4.3, 4.4.4, 4.4.2, 4.4
@@ -29180,11 +29188,12 @@ of the input stream.  An error results if there are unbound pattern variables.
    (lambda (frame)
      (if (execute
           (instantiate
-           call frame (lambda (v f)
-                        (error 
-                         "Unknown pat var: 
-                          LISP-VALUE" 
-                         v))))
+           call
+           frame
+           (lambda (v f)
+             (error 
+              "Unknown pat var: LISP-VALUE" 
+              v))))
          (singleton-stream frame)
          the-empty-stream))
    frame-stream))
@@ -29603,13 +29612,14 @@ substitute for the values of variables whenever necessary.
     (cond ((var? e)
            (if (equal? var e)
                true
-               (let ((b (binding-in-frame 
-                         e 
-                         frame)))
-                 (if b
-                     (tree-walk 
-                      (binding-value b))
-                     false))))
+               (let
+                 ((b (binding-in-frame 
+                      e 
+                      frame)))
+                  (if b
+                      (tree-walk 
+                       (binding-value b))
+                      false))))
           ((pair? e)
            (or (tree-walk (car e))
                (tree-walk (cdr e))))

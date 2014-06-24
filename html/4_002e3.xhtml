@@ -319,13 +319,10 @@ triples of integers <math xmlns="http://www.w3.org/1998/Math/MathML">
 </math>, as follows:
 </p>
 <div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a-pythagorean-triple-between 
-         low 
-         high</span><span class="clo">)</span><span class="pln">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a-pythagorean-triple-between low high</span><span class="clo">)</span><span class="pln">
   </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">i </span><span class="opn">(</span><span class="pln">an-integer-between low high</span><span class="clo">)))</span><span class="pln">
     </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">j </span><span class="opn">(</span><span class="pln">an-integer-between i high</span><span class="clo">)))</span><span class="pln">
-      </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">k </span><span class="opn">(</span><span class="pln">an-integer-between j 
-                                   high</span><span class="clo">)))</span><span class="pln">
+      </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">k </span><span class="opn">(</span><span class="pln">an-integer-between j high</span><span class="clo">)))</span><span class="pln">
         </span><span class="opn">(</span><span class="pln">require </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> i i</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> j j</span><span class="clo">))</span><span class="pln"> 
                     </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> k k</span><span class="clo">)))</span><span class="pln">
         </span><span class="opn">(</span><span class="pln">list i j k</span><span class="clo">)))))</span></pre></div>
@@ -349,14 +346,10 @@ one in <a href="#Exercise-4_002e35">Exercise 4.35</a>.  Is he correct?  (Hint: C
 possibilities that must be explored.)
 </p>
 <div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a-pythagorean-triple-between 
-         low 
-         high</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">i </span><span class="opn">(</span><span class="pln">an-integer-between low
-                               high</span><span class="clo">))</span><span class="pln">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">a-pythagorean-triple-between low high</span><span class="clo">)</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">i </span><span class="opn">(</span><span class="pln">an-integer-between low high</span><span class="clo">))</span><span class="pln">
         </span><span class="opn">(</span><span class="pln">hsq </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> high high</span><span class="clo">)))</span><span class="pln">
-    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">j </span><span class="opn">(</span><span class="pln">an-integer-between i
-                                 high</span><span class="clo">)))</span><span class="pln">
+    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">j </span><span class="opn">(</span><span class="pln">an-integer-between i high</span><span class="clo">)))</span><span class="pln">
       </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">ksq </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> i i</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> j j</span><span class="clo">))))</span><span class="pln">
         </span><span class="opn">(</span><span class="pln">require </span><span class="opn">(</span><span class="pun">&gt;=</span><span class="pln"> hsq ksq</span><span class="clo">))</span><span class="pln">
         </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">k </span><span class="opn">(</span><span class="pln">sqrt ksq</span><span class="clo">)))</span><span class="pln">
@@ -1095,9 +1088,10 @@ the assignment before actually calling <code>fail2</code>.
                       </span><span class="opn">(</span><span class="pln">lookup-variable-value 
                        var 
                        env</span><span class="clo">)))</span><span class="pln">
-                 </span><span class="opn">(</span><span class="pln">set-variable-value! var 
-                                      val 
-                                      env</span><span class="clo">)</span><span class="pln">
+                 </span><span class="opn">(</span><span class="pln">set-variable-value!
+                  var 
+                  val 
+                  env</span><span class="clo">)</span><span class="pln">
                  </span><span class="opn">(</span><span class="pln">succeed 
                   </span><span class="lit">'ok</span><span class="pln">
                   </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="clo">)</span><span class="pln">    </span><span class="roman"><span class="com">; *2*</span></span><span class="pln">
@@ -1198,8 +1192,8 @@ are no more alternatives to try, the entire <code>amb</code> expression fails.
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">analyze-amb exp</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">cprocs </span><span class="opn">(</span><span class="pln">map analyze 
-                     </span><span class="opn">(</span><span class="pln">amb-choices exp</span><span class="clo">))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">cprocs
+         </span><span class="opn">(</span><span class="pln">map analyze </span><span class="opn">(</span><span class="pln">amb-choices exp</span><span class="clo">))))</span><span class="pln">
     </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">env succeed fail</span><span class="clo">)</span><span class="pln">
       </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">try-next choices</span><span class="clo">)</span><span class="pln">
         </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? choices</span><span class="clo">)</span><span class="pln">

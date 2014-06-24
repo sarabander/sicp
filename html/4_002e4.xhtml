@@ -775,8 +775,7 @@ plus all meetings of that person’s division.  Fill in the body of Alyssa’s
 rule.
 
 <div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">meeting-time </span><span class="pun">?</span><span class="pln">person
-                    </span><span class="pun">?</span><span class="pln">day-and-time</span><span class="clo">)</span><span class="pln">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">meeting-time </span><span class="pun">?</span><span class="pln">person </span><span class="pun">?</span><span class="pln">day-and-time</span><span class="clo">)</span><span class="pln">
       ⟨</span><var><span class="pln">rule-body</span></var><span class="pln">⟩</span><span class="clo">)</span></pre></div>
 
 </li><li> Alyssa arrives at work on Wednesday morning and wonders what meetings she has
@@ -1354,14 +1353,16 @@ that the input is not a query but rather an assertion or rule to be added to
 the data base.  For instance,
 </p>
 <div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">assert! </span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">)</span><span class="pln">
-              </span><span class="opn">(</span><span class="pln">computer wizard</span><span class="clo">)))</span><span class="pln">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">assert!
+ </span><span class="opn">(</span><span class="pln">job </span><span class="opn">(</span><span class="pln">Bitdiddle Ben</span><span class="clo">)</span><span class="pln">
+      </span><span class="opn">(</span><span class="pln">computer wizard</span><span class="clo">)))</span><span class="pln">
 
-</span><span class="opn">(</span><span class="pln">assert! </span><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">wheel </span><span class="pun">?</span><span class="pln">person</span><span class="clo">)</span><span class="pln">
-               </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor 
-                     </span><span class="pun">?</span><span class="pln">middle-manager </span><span class="pun">?</span><span class="pln">person</span><span class="clo">)</span><span class="pln">
-                    </span><span class="opn">(</span><span class="pln">supervisor
-                     </span><span class="pun">?</span><span class="pln">x </span><span class="pun">?</span><span class="pln">middle-manager</span><span class="clo">))))</span></pre></div>
+</span><span class="opn">(</span><span class="pln">assert!
+ </span><span class="opn">(</span><span class="pln">rule </span><span class="opn">(</span><span class="pln">wheel </span><span class="pun">?</span><span class="pln">person</span><span class="clo">)</span><span class="pln">
+       </span><span class="opn">(</span><span class="kwd">and</span><span class="pln"> </span><span class="opn">(</span><span class="pln">supervisor 
+             </span><span class="pun">?</span><span class="pln">middle-manager </span><span class="pun">?</span><span class="pln">person</span><span class="clo">)</span><span class="pln">
+            </span><span class="opn">(</span><span class="pln">supervisor
+             </span><span class="pun">?</span><span class="pln">x </span><span class="pun">?</span><span class="pln">middle-manager</span><span class="clo">))))</span></pre></div>
 
 <a id="g_t4_002e4_002e3"></a>
 <a id="Is-Logic-Programming-Mathematical-Logic_003f"></a>
@@ -1870,11 +1871,12 @@ of the input stream.  An error results if there are unbound pattern variables.
    </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">frame</span><span class="clo">)</span><span class="pln">
      </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">execute
           </span><span class="opn">(</span><span class="pln">instantiate
-           call frame </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">v f</span><span class="clo">)</span><span class="pln">
-                        </span><span class="opn">(</span><span class="err">error</span><span class="pln"> 
-                         </span><span class="str">"Unknown pat var: 
-                          LISP-VALUE"</span><span class="pln"> 
-                         v</span><span class="clo">))))</span><span class="pln">
+           call
+           frame
+           </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">v f</span><span class="clo">)</span><span class="pln">
+             </span><span class="opn">(</span><span class="err">error</span><span class="pln"> 
+              </span><span class="str">"Unknown pat var: LISP-VALUE"</span><span class="pln"> 
+              v</span><span class="clo">))))</span><span class="pln">
          </span><span class="opn">(</span><span class="pln">singleton-stream frame</span><span class="clo">)</span><span class="pln">
          the-empty-stream</span><span class="clo">))</span><span class="pln">
    frame-stream</span><span class="clo">))</span><span class="pln">
@@ -2204,13 +2206,14 @@ substitute for the values of variables whenever necessary.
     </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">var? e</span><span class="clo">)</span><span class="pln">
            </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">equal</span><span class="pun">?</span><span class="pln"> var e</span><span class="clo">)</span><span class="pln">
                true
-               </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">b </span><span class="opn">(</span><span class="pln">binding-in-frame 
-                         e 
-                         frame</span><span class="clo">)))</span><span class="pln">
-                 </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> b
-                     </span><span class="opn">(</span><span class="pln">tree-walk 
-                      </span><span class="opn">(</span><span class="pln">binding-value b</span><span class="clo">))</span><span class="pln">
-                     false</span><span class="clo">))))</span><span class="pln">
+               </span><span class="opn">(</span><span class="kwd">let</span><span class="pln">
+                 </span><span class="opn">((</span><span class="pln">b </span><span class="opn">(</span><span class="pln">binding-in-frame 
+                      e 
+                      frame</span><span class="clo">)))</span><span class="pln">
+                  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> b
+                      </span><span class="opn">(</span><span class="pln">tree-walk 
+                       </span><span class="opn">(</span><span class="pln">binding-value b</span><span class="clo">))</span><span class="pln">
+                      false</span><span class="clo">))))</span><span class="pln">
           </span><span class="opn">((</span><span class="pln">pair? e</span><span class="clo">)</span><span class="pln">
            </span><span class="opn">(</span><span class="kwd">or</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tree-walk </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> e</span><span class="clo">))</span><span class="pln">
                </span><span class="opn">(</span><span class="pln">tree-walk </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> e</span><span class="clo">))))</span><span class="pln">

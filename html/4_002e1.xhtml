@@ -1440,14 +1440,17 @@ the same meaning, as
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f x</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">letrec</span><span class="pln"> </span><span class="opn">((</span><span class="pln">even? </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">n</span><span class="clo">)</span><span class="pln">
-                    </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
-                        true
-                        </span><span class="opn">(</span><span class="pln">odd? </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)))))</span><span class="pln">
-           </span><span class="opn">(</span><span class="pln">odd? </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">n</span><span class="clo">)</span><span class="pln">
-                   </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
-                       false
-                       </span><span class="opn">(</span><span class="pln">even? </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))))))</span><span class="pln">
+  </span><span class="opn">(</span><span class="kwd">letrec</span><span class="pln">
+      </span><span class="opn">((</span><span class="pln">even?
+        </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">n</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+              true
+              </span><span class="opn">(</span><span class="pln">odd? </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)))))</span><span class="pln">
+       </span><span class="opn">(</span><span class="pln">odd?
+        </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">n</span><span class="clo">)</span><span class="pln">
+          </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
+              false
+              </span><span class="opn">(</span><span class="pln">even? </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))))))</span><span class="pln">
     ⟨</span><var><span class="pln">rest of body of </span><code><span class="pln">f</span></code></var><span class="pln">⟩</span><span class="clo">))</span></pre></div>
 
 <p><code>Letrec</code> expressions, which have the form
@@ -1488,11 +1491,12 @@ bindings, such as the mutual recursion of <code>even?</code> and <code>odd?</cod
 example above, or the evaluation of 10 factorial with
 </p>
 <div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">letrec</span><span class="pln"> </span><span class="opn">((</span><span class="pln">fact
-          </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">n</span><span class="clo">)</span><span class="pln">
-            </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
-                </span><span class="lit">1</span><span class="pln">
-                </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> n </span><span class="opn">(</span><span class="pln">fact </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)))))))</span><span class="pln">
+<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">letrec</span><span class="pln">
+    </span><span class="opn">((</span><span class="pln">fact
+      </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">n</span><span class="clo">)</span><span class="pln">
+        </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
+            </span><span class="lit">1</span><span class="pln">
+            </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> n </span><span class="opn">(</span><span class="pln">fact </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)))))))</span><span class="pln">
   </span><span class="opn">(</span><span class="pln">fact </span><span class="lit">10</span><span class="clo">))</span></pre></div>
 
 <ol>
