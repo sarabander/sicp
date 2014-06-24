@@ -50,21 +50,6 @@ html {
   html {
     font-size: 120%; 
   }
-
-  /* Allow hyphenation on narrow screens */
-  p {
-    -ms-hyphens: auto;
-    -webkit-hyphens: auto;
-    -moz-hyphens: auto;
-    hyphens: auto;
-  }
-  /* But not in navigation bar */
-  nav p {
-    -ms-hyphens: none;
-    -webkit-hyphens: none;
-    -moz-hyphens: none;
-    hyphens: none;
-  }
   blockquote {
     margin-left:  0.5em;
     margin-right: 0.5em;
@@ -80,7 +65,7 @@ body {
 
 section {
   margin: 1em auto;
-  width: 67ex;
+  width: 76ex;
   max-width: 88%;
 }
 
@@ -203,6 +188,21 @@ pre, pre code, pre var {
 p, table.menu, div.lisp {
   margin-top: 1em;
   margin-bottom: 1em;
+}
+
+/* Allow hyphenation */
+p {
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+}
+/* But not in navigation bar and in References */
+nav p, a#References ~ p {
+  -ms-hyphens: none;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  hyphens: none;
 }
 
 a#UTF ~ p > i:last-child {
