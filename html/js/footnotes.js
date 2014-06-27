@@ -18,14 +18,23 @@ $(document).ready(function () {
       body.unbind('click', Footnotes.bodyclick);
       footnotelinks.unbind('click', Footnotes.footnoteclick);
       footnotelinks.unbind('blur', Footnotes.footnoteout);
+      $(document).unbind('keydown', Footnotes.keydown);
 
       body.bind('click', Footnotes.bodyclick);
       // Bind new behaviour where click will pop up the footnote:
       footnotelinks.bind('click', Footnotes.footnoteclick);
       // ...and click outside of popup will make it disappear:
       footnotelinks.bind('blur', Footnotes.footnoteout);
+      // ...escape key should also do the job:
+      $(document).bind('keydown', Footnotes.keydown);
     },
     bodyclick: function () { return; },
+    keydown: function (event) {
+      // Capture escape key.
+      if (event.which == 27) {
+        Footnotes.footnoteout();
+      }
+    },
     footnoteclick: function () {
       clearTimeout(Footnotes.footnotetimeout);
       $(popup).stop();
