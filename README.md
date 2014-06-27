@@ -32,6 +32,7 @@ Acknowledgements
 * Li Xuanji
 * J. E. Johnson
 * Matt Iversen
+* Eugene Sharygin
 
 License
 -------
