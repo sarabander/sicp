@@ -20856,8 +20856,8 @@ sin x = x - ----- + ------------- - ...
 \]
 @end tex
 @noindent
-represented as infinite streams.  We will represent the series @math{a_0 +
-a_1 x + a_2 x^2 + a_3 x^3 + \dots} as the stream whose
+represented as infinite streams.  We will represent the series @math{{a_0 +
+a_1 x} + {a_2 x^2} + {a_3 x^3 + \dots}} as the stream whose
 elements are the coefficients @math{a_0}, @math{a_1}, @math{a_2}, @math{a_3}, @dots{}.
 
 @enumerate a
