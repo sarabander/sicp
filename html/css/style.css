@@ -466,3 +466,21 @@ a#References ~ p {
   }
 }
 
+.jump {
+  font-family: "STIXGeneral";
+  font-size: 2rem;
+  font-weight: bold;
+  position: fixed;
+  right: 0;
+  padding: 1ex 0ex;
+  text-align: center;
+}
+
+.jump a[href] {
+  color: rgba(230, 230, 230, .5);
+  margin: -2ex;
+  padding: 2ex;
+}
+
+.top { top: 0; }
+.bottom { bottom: 0; }
