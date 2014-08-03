@@ -468,11 +468,11 @@ a#References ~ p {
 
 .jump {
   font-family: "STIXGeneral";
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: bold;
   position: fixed;
   right: 0;
-  padding: 1ex 0ex;
+  padding: 0.1ex;
   text-align: center;
 }
 
