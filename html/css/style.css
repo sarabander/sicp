@@ -473,6 +473,7 @@ a#References ~ p {
   position: fixed;
   right: 0;
   text-align: center;
+  padding: 0.7ex 0.0ex;
 }
 
 .jump a[href] {
@@ -483,10 +484,8 @@ a#References ~ p {
 
 .top { 
   top: 0; 
-  padding: 0.7ex 0.0ex;
 }
 
 .bottom { 
   bottom: 0; 
-  padding: 0.3ex 0.0ex;
 }
