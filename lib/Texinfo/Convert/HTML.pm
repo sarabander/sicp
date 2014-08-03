@@ -1016,8 +1016,8 @@ my %defaults = (
 
 <script class="prettifier" src="js/highlight/prettify.js" type="text/javascript"></script>
 <script class="prettifier" src="js/highlight/lang-lisp.js" type="text/javascript"></script>',
-  'AFTER_BODY_OPEN'      => '<section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">&#x2227;</a></span><a id="pagetop"></a>',
-  'PRE_BODY_CLOSE'       => '</section><span class="bottom jump" title="Jump to bottom"><a href="#pagebottom" accesskey="b">&#x2228;</a></span><a id="pagebottom"></a>',         # --> (A.R)
+  'AFTER_BODY_OPEN'      => '<section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">&#8673;</a></span><a id="pagetop"></a>',
+  'PRE_BODY_CLOSE'       => '</section><span class="bottom jump" title="Jump to bottom"><a href="#pagebottom" accesskey="b">&#8675;</a></span><a id="pagebottom"></a>',         # --> (A.R)
   'DEFAULT_RULE'         => '',              # (A.R)
   'BIG_RULE'             => '<hr/>',              # (A.R)
   'MENU_SYMBOL'          => '&#8226;',            # bull    (A.R)

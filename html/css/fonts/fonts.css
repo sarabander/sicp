@@ -157,3 +157,13 @@
   font-style: normal;
 }
 
+/* A few arrows for navigation */
+
+@font-face {
+  font-family: 'DejaVu-Arrows';
+  src:url('dejasans-b-arrows.woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+

@@ -8,7 +8,7 @@
     <dc:identifier id="bookid">urn:uuid:a412368e-e0ac-42ce-8c01-0f0da52f5731</dc:identifier>
     <dc:language>en-US</dc:language>
     <meta name="cover" content="cover-image"/>
-    <meta property="dcterms:modified">2014-08-03T00:39:58Z</meta>
+    <meta property="dcterms:modified">2014-08-03T18:09:27Z</meta>
   </metadata>
   <manifest>
     <item id="css-style" href="html/css/style.css" media-type="text/css"/>
@@ -153,6 +153,7 @@
     <item id="xsa" href="html/fig/icons/sa.std.svg" media-type="image/svg+xml"/>
     <item id="xwhite_chess_queen" href="html/fig/icons/white_chess_queen.svg" media-type="image/svg+xml"/>
     <item id="xdejamono-r-subset" href="html/css/fonts/dejamono-r-subset.woff" media-type="application/font-woff"/>
+    <item id="xdejasans-b-arrows" href="html/css/fonts/dejasans-b-arrows.woff" media-type="application/font-woff"/>
     <item id="xincons-rb-subset" href="html/css/fonts/incons-rb-subset.woff" media-type="application/font-woff"/>
     <item id="xincons-ri-subset" href="html/css/fonts/incons-ri-subset.woff" media-type="application/font-woff"/>
     <item id="xincons-r-subset" href="html/css/fonts/incons-r-subset.woff" media-type="application/font-woff"/>

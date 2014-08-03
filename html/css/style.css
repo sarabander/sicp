@@ -467,20 +467,26 @@ a#References ~ p {
 }
 
 .jump {
-  font-family: "STIXGeneral";
-  font-size: 1.8rem;
+  font-family: "DejaVu-Arrows";
+  font-size: 2rem;
   font-weight: bold;
   position: fixed;
   right: 0;
-  padding: 0.1ex;
   text-align: center;
 }
 
 .jump a[href] {
   color: rgba(230, 230, 230, .5);
-  margin: -2ex;
-  padding: 2ex;
+  margin: -1.5ex;
+  padding: 1.5ex;
 }
 
-.top { top: 0; }
-.bottom { bottom: 0; }
+.top { 
+  top: 0; 
+  padding: 0.7ex 0.0ex;
+}
+
+.bottom { 
+  bottom: 0; 
+  padding: 0.3ex 0.0ex;
+}
