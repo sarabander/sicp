@@ -191,7 +191,7 @@ p, table.menu, div.lisp {
 }
 
 /* Allow hyphenation */
-p {
+p, ol, ul {
   -ms-hyphens: auto;
   -webkit-hyphens: auto;
   -moz-hyphens: auto;
