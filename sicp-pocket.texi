@@ -37689,21 +37689,20 @@ McAllester, David Allen.  1980.  An outlook on truth maintenance.  Memo 551,
 
 @anchor{McCarthy 1960}
 McCarthy, John.  1960.  Recursive functions of symbolic expressions and their
-computation by machine.  @cite{Communications of the @abbr{ACM}}
-3(4): 184-195.
-@url{http://innovation.it.uts.edu.au/projectjmc/articles/recursive.html, –›}
+computation by machine.  @cite{Communications of the @abbr{ACM}} 3(4): 184-195.
+@url{http://www-formal.stanford.edu/jmc/recursive.pdf, –›}
 
 @anchor{McCarthy 1963}
 McCarthy, John.  1963.  A basis for a mathematical theory of computation.  In
 @cite{Computer Programming and Formal Systems}, edited by P. Braffort and
 D. Hirschberg.  North-Holland.
-@url{http://innovation.it.uts.edu.au/projectjmc/articles/basis.html, –›}
+@url{http://www-formal.stanford.edu/jmc/basis.html, –›}
 
 @anchor{McCarthy 1978}
 McCarthy, John.  1978.  The history of Lisp.  In @cite{Proceedings of the
 @abbr{ACM} @abbr{SIGPLAN} Conference on the History of Programming
 Languages}.
-@url{http://innovation.it.uts.edu.au/projectjmc/articles/lisp.html, –›}
+@url{http://www-formal.stanford.edu/jmc/history/lisp/lisp.html, –›}
 
 @anchor{McCarthy et al. 1965}
 McCarthy, John, P. W. Abrahams, D. J. Edwards, T. P. Hart, and M. I.  Levin.
@@ -37772,7 +37771,7 @@ lambda: The ultimate software tool.  In @cite{Conference Record of the 1982
 
 Rees, Jonathan, and William Clinger (eds). 1991.  The revised⁴ report on the
 algorithmic language Scheme.  @cite{Lisp Pointers}, 4(3).
-@url{http://people.csail.mit.edu/jaffer/r4rs_toc.html, –›}
+@url{http://people.csail.mit.edu/jaffer/r4rs.pdf, –›}
 
 @anchor{Rivest et al. (1977)}
 Rivest, Ronald, Adi Shamir, and Leonard Adleman.  1977.  A method for obtaining
