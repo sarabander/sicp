@@ -37400,6 +37400,7 @@ Algebraic and Numeric Problems}. New York: American Elsevier.
 @anchor{Chaitin 1975}
 Chaitin, Gregory J.  1975.  Randomness and mathematical proof.
 @cite{Scientific American} 232(5): 47-52.
+@url{https://www.cs.auckland.ac.nz/~chaitin/sciamer.html, –›}
 
 @anchor{Church (1941)}
 Church, Alonzo.  1941.  @cite{The Calculi of Lambda-Con@-ver@-sion}.  Princeton,
@@ -37425,6 +37426,7 @@ Programming Languages}, pp. 155-162.
 Colmerauer A., H. Kanoui, R. Pasero, and P. Roussel.  1973.  Un syst@`eme de
 communication homme-machine en fran@,{c}ais.  Technical report, Groupe
 Intelligence Artificielle, Universit@'e d'Aix Marseille, Luminy.
+@url{http://alain.colmerauer.free.fr/alcol/ArchivesPublications/HommeMachineFr/HoMa.pdf, –›}
 
 @anchor{Cormen et al. 1990}
 Cormen, Thomas, Charles Leiserson, and Ronald Rivest.  1990. @cite{Introduction
@@ -37466,10 +37468,12 @@ Doyle, Jon. 1979. A truth maintenance system. @cite{Artificial Intelligence}
 Feigenbaum, Edward, and Howard Shrobe. 1993. The Japanese National Fifth
 Generation Project: Introduction, survey, and evaluation.  In @cite{Future
 Generation Computer Systems}, vol. 9, pp. 105-117.
+@url{https://saltworks.stanford.edu/assets/kv359wz9060.pdf, –›}
 
 @anchor{Feeley (1986)}
 Feeley, Marc.  1986.  Deux approches @`a l'implantation du language
 Scheme.  Masters thesis, Universit@'e de Montr@'eal.
+@url{http://www.iro.umontreal.ca/~feeley/papers/FeeleyMSc.pdf, –›}
 
 @anchor{Feeley and Lapalme 1987}
 Feeley, Marc and Guy Lapalme.  1987.  Using closures for code generation.
@@ -37483,10 +37487,12 @@ Applications}, volume 1. New York: John Wiley & Sons.
 Fenichel, R., and J. Yochelson.  1969.  A Lisp garbage collector for virtual
 memory computer systems.  @cite{Communications of the @abbr{ACM}}
 12(11): 611-612.
+@url{https://www.cs.purdue.edu/homes/hosking/690M/p611-fenichel.pdf, –›}
 
 @anchor{Floyd (1967)}
 Floyd, Robert. 1967. Nondeterministic algorithms. @cite{@abbr{JACM}},
 14(4): 636-644.
+@url{http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.332.36, –›}
 
 @anchor{Forbus and deKleer 1993}
 Forbus, Kenneth D., and Johan deKleer.  1993. @cite{Building Problem
@@ -37510,6 +37516,7 @@ Gabriel, Richard P. 1988.  The Why of @emph{Y}.  @cite{Lisp Pointers}
 
 Goldberg, Adele, and David Robson.  1983.  @cite{Smalltalk-80: The Language and
 Its Implementation}. Reading, @abbr{MA}: Addison-Wesley.
+@url{http://stephane.ducasse.free.fr/FreeBooks/BlueBook/Bluebook.pdf, –›}
 
 @anchor{Gordon et al. 1979}
 Gordon, Michael, Robin Milner, and Christopher Wadsworth.  1979.
@@ -37530,6 +37537,7 @@ Intelligence}, pp. 219-240.
 Green, Cordell, and Bertram Raphael.  1968.  The use of theorem-proving
 techniques in question-answering systems.  In @cite{Proceedings of the
 @abbr{ACM} National Conference}, pp. 169-181.
+@url{http://www.kestrel.edu/home/people/green/publications/green-raphael.pdf, –›}
 
 @anchor{Griss 1981}
 Griss, Martin L.  1981.  Portable Standard Lisp, a brief overview.  Utah
@@ -37548,6 +37556,7 @@ Cliffs, N.J.: Prentice-Hall.
 Hanson, Christopher P.  1990.  Efficient stack allocation for tail-recursive
 languages.  In @cite{Proceedings of @abbr{ACM} Conference on Lisp and
 Functional Programming}, pp. 106-118.
+@url{https://groups.csail.mit.edu/mac/ftpdir/users/cph/links.ps.gz, –›}
 
 @anchor{Hanson 1991}
 Hanson, Christopher P.  1991.  A syntactic closures macro facility.  @cite{Lisp
@@ -37561,6 +37570,7 @@ Mathematical Society} @abbr{XIX}(2).
 @anchor{Hardy and Wright 1960}
 Hardy, Godfrey H., and E. M. Wright.  1960.  @cite{An Introduction to the
 Theory of Numbers}.  4th edition.  New York: Oxford University Press.
+@url{https://archive.org/details/AnIntroductionToTheTheoryOfNumbers-4thEd-G.h.HardyE.m.Wright, –›}
 
 @anchor{Havender (1968)}
 Havender, J. 1968. Avoiding deadlocks in multi-tasking systems. @cite{IBM
@@ -37650,6 +37660,7 @@ Intelligence, University of Edinburgh.
 
 Kowalski, Robert.  1979.  @cite{Logic for Problem Solving}. New York:
 North-Holland.
+@url{http://www.doc.ic.ac.uk/%7Erak/papers/LogicForProblemSolving.pdf, –›}
 
 @anchor{Lamport (1978)}
 Lamport, Leslie. 1978.  Time, clocks, and the ordering of events in a
@@ -37853,6 +37864,7 @@ com@-mu@-ni@-cation system.  Technical report 296, @abbr{MIT} Lincoln Laboratory
 @anchor{Teitelman 1974}
 Teitelman, Warren.  1974.  Interlisp reference manual.  Technical report, Xerox
 Palo Alto Research Center.
+@url{http://www.softwarepreservation.org/projects/LISP/interlisp/Interlisp-Oct_1974.pdf/view, –›}
 
 @anchor{Thatcher et al. 1978}
 Thatcher, James W., Eric G. Wagner, and Jesse B. Wright. 1978.  Data type
