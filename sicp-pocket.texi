@@ -6371,7 +6371,7 @@ if @code{x} is @code{(make-rat n d)}, then
 @end ifinfo
 @tex
 \[ % :31:
-  {{\tt (numer\kern1ex x)} \over {\tt (denom\kern1ex x)}} = {{{\tt n} \over {\tt d}}.}   \]
+  {\text{(numer x)} \over \text{(denom x)}} = {{\text{n} \over \text{d}}.}   \]
 @end tex
 In fact, this is the only condition @code{make-rat}, @code{numer}, and
 @code{denom} must fulfill in order to form a suitable basis for a
@@ -8391,14 +8391,13 @@ any book on matrix algebra) are the following:
 \[ % :38:
   
 \eqalign{ 
-	{\tt (dot-product\kern1ex v\kern1ex w)} 		&\; {\rm returns\;the\;sum\;} 
-		\Sigma_i v_i w_i; \cr
-	{\tt (matrix-*-vector\kern1ex m\kern1ex v)} 	&\; {\rm returns\;the\;vector\;} {\bf t}, \cr
-		&\; {\rm where\;} t_i = \Sigma_j m_{ij} v_j; \cr
-	{\tt (matrix-*-matrix\kern1ex m\kern1ex n)} 	&\; {\rm returns\;the\;matrix\;} {\bf p}, \cr
-		&\; {\rm where\;} p_{ij} = \Sigma_k m_{ik} n_{kj}; \cr
-	{\tt (transpose\kern1ex m)} 			&\; {\rm returns\;the\;matrix\;} {\bf n}, \cr 
-		&\; {\rm where\;} n_{ij} = m_{ji}. \cr
+	\text{(dot-product v w)} 	& \text{returns the sum}\;\Sigma_i v_i w_i; \cr
+	\text{(matrix-*-vector m v)} 	& \text{returns the vector}\;{\bf t}, \cr
+		& \text{where}\; t_i = \Sigma_j m_{ij} v_j; \cr
+	\text{(matrix-*-matrix m n)} 	& \text{returns the matrix}\;{\bf p}, \cr
+		& \text{where}\; p_{ij} = \Sigma_k m_{ik} n_{kj}; \cr
+	\text{(transpose m)} 		& \text{returns the matrix}\;{\bf n}, \cr
+		& \text{where}\; n_{ij} = m_{ji}. \cr
 }  \]
 @end tex
 We can define the dot product as@footnote{This definition uses the extended
@@ -34968,35 +34967,35 @@ use @math{{⟨\kern0.1em reg_1⟩}} and @math{{⟨\kern0.1em reg_2⟩}}:
 \[ % :83:
 
 \begin{array}{l|l|l|l}
-⟨\kern0.1em{seq_1}⟩ 		            & 
-{\tt (save }                                & 
-{\tt (save }                   	            & 
-{\tt (save } \kern1ex ⟨\kern0.1em{reg_2}⟩{\tt)}    \\
+⟨\kern0.1em{seq_1}⟩                     &
+\text{(save}                            &
+\text{(save}                            &
+\text{(save} \kern1ex ⟨\kern0.1em{reg_2}⟩\text{)}    \\
 
-⟨\kern0.1em{seq_2}⟩  		            & 
-\kern1ex ⟨\kern0.1em{reg_1}⟩{\tt)}                 & 
-\kern1ex ⟨\kern0.1em{reg_2}⟩{\tt)}                 & 
-{\tt (save } \kern1ex ⟨\kern0.1em{reg_1}⟩{\tt)}    \\
+⟨\kern0.1em{seq_2}⟩  		        &
+\kern1ex ⟨\kern0.1em{reg_1}⟩\text{)}    &
+\kern1ex ⟨\kern0.1em{reg_2}⟩\text{)}    &
+\text{(save} \kern1ex ⟨\kern0.1em{reg_1}⟩\text{)}    \\
 
-                                            & 
-⟨\kern0.1em{seq_1}⟩                       & 
-⟨\kern0.1em{seq_1}⟩                       & 
-⟨\kern0.1em{seq_1}⟩                       \\
+                                        &
+⟨\kern0.1em{seq_1}⟩                     &
+⟨\kern0.1em{seq_1}⟩                     &
+⟨\kern0.1em{seq_1}⟩                                  \\
 
-                                            &
-{\tt (restore }                             &
-{\tt (restore }                             & 
-{\tt (restore } \kern1ex ⟨\kern0.1em{reg_1}⟩{\tt)} \\
+                                        &
+\text{(restore}                         &
+\text{(restore}                         &
+\text{(restore} \kern1ex ⟨\kern0.1em{reg_1}⟩\text{)} \\
 
-                         	            &
-\kern1ex ⟨\kern0.1em{reg_1}⟩{\tt)}                 &
-\kern1ex ⟨\kern0.1em{reg_2}⟩{\tt)}                 &
-{\tt (restore } \kern1ex ⟨\kern0.1em{reg_2}⟩{\tt)} \\
+                                        &
+\kern1ex ⟨\kern0.1em{reg_1}⟩\text{)}    &
+\kern1ex ⟨\kern0.1em{reg_2}⟩\text{)}    &
+\text{(restore} \kern1ex ⟨\kern0.1em{reg_2}⟩\text{)} \\
 
-                                            & 
-⟨\kern0.1em{seq_2}⟩                       &
-⟨\kern0.1em{seq_2}⟩                       &
-⟨\kern0.1em{seq_2}⟩ 
+                                        &
+⟨\kern0.1em{seq_2}⟩                     &
+⟨\kern0.1em{seq_2}⟩                     &
+⟨\kern0.1em{seq_2}⟩
 \end{array}
 \]
 @end tex

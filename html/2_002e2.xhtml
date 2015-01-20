@@ -1546,328 +1546,154 @@ this representation, we can use sequence operations to concisely express the
 basic matrix and vector operations.  These operations (which are described in
 any book on matrix algebra) are the following:
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-  <mtable columnalign="right left" rowspacing=".5em" columnspacing="thickmathspace">
-    <mtr>
-      <mtd>
+<mtable columnalign="right left" rowspacing=".5em" columnspacing="thickmathspace">
+  <mtr>
+    <mtd>
+      <mtext>(dot-product v w)</mtext>
+    </mtd>
+    <mtd>
+      <mtext>returns the sum</mtext>
+      <mspace width="thickmathspace"/>
+      <msub>
+        <mi mathvariant="normal">Σ<!-- Σ --></mi>
+        <mi>i</mi>
+      </msub>
+      <msub>
+        <mi>v</mi>
+        <mi>i</mi>
+      </msub>
+      <msub>
+        <mi>w</mi>
+        <mi>i</mi>
+      </msub>
+      <mo>;</mo>
+    </mtd>
+  </mtr>
+  <mtr>
+    <mtd>
+      <mtext>(matrix-*-vector m v)</mtext>
+    </mtd>
+    <mtd>
+      <mtext>returns the vector</mtext>
+      <mspace width="thickmathspace"/>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="bold">t</mi>
+      </mrow>
+      <mo>,</mo>
+    </mtd>
+  </mtr>
+  <mtr>
+    <mtd/>
+    <mtd>
+      <mtext>where</mtext>
+      <mspace width="thickmathspace"/>
+      <msub>
+        <mi>t</mi>
+        <mi>i</mi>
+      </msub>
+      <mo>=</mo>
+      <msub>
+        <mi mathvariant="normal">Σ<!-- Σ --></mi>
+        <mi>j</mi>
+      </msub>
+      <msub>
+        <mi>m</mi>
         <mrow class="MJX-TeXAtom-ORD">
-          <mo mathvariant="monospace" stretchy="false">(</mo>
-          <mi mathvariant="monospace">d</mi>
-          <mi mathvariant="monospace">o</mi>
-          <mi mathvariant="monospace">t</mi>
-          <mo mathvariant="monospace">−<!-- − --></mo>
-          <mi mathvariant="monospace">p</mi>
-          <mi mathvariant="monospace">r</mi>
-          <mi mathvariant="monospace">o</mi>
-          <mi mathvariant="monospace">d</mi>
-          <mi mathvariant="monospace">u</mi>
-          <mi mathvariant="monospace">c</mi>
-          <mi mathvariant="monospace">t</mi>
-          <mspace width="1ex"/>
-          <mi mathvariant="monospace">v</mi>
-          <mspace width="1ex"/>
-          <mi mathvariant="monospace">w</mi>
-          <mo mathvariant="monospace" stretchy="false">)</mo>
-        </mrow>
-      </mtd>
-      <mtd>
-        <mspace width="thickmathspace"/>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">e</mi>
-          <mi mathvariant="normal">t</mi>
-          <mi mathvariant="normal">u</mi>
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">n</mi>
-          <mi mathvariant="normal">s</mi>
-          <mspace width="thickmathspace"/>
-          <mi mathvariant="normal">t</mi>
-          <mi mathvariant="normal">h</mi>
-          <mi mathvariant="normal">e</mi>
-          <mspace width="thickmathspace"/>
-          <mi mathvariant="normal">s</mi>
-          <mi mathvariant="normal">u</mi>
-          <mi mathvariant="normal">m</mi>
-          <mspace width="thickmathspace"/>
-        </mrow>
-        <msub>
-          <mi mathvariant="normal">Σ<!-- Σ --></mi>
           <mi>i</mi>
-        </msub>
-        <msub>
-          <mi>v</mi>
-          <mi>i</mi>
-        </msub>
-        <msub>
-          <mi>w</mi>
-          <mi>i</mi>
-        </msub>
-        <mo>;</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mo mathvariant="monospace" stretchy="false">(</mo>
-          <mi mathvariant="monospace">m</mi>
-          <mi mathvariant="monospace">a</mi>
-          <mi mathvariant="monospace">t</mi>
-          <mi mathvariant="monospace">r</mi>
-          <mi mathvariant="monospace">i</mi>
-          <mi mathvariant="monospace">x</mi>
-          <mo mathvariant="monospace">−<!-- − --></mo>
-          <mo mathvariant="monospace">∗<!-- ∗ --></mo>
-          <mo mathvariant="monospace">−<!-- − --></mo>
-          <mi mathvariant="monospace">v</mi>
-          <mi mathvariant="monospace">e</mi>
-          <mi mathvariant="monospace">c</mi>
-          <mi mathvariant="monospace">t</mi>
-          <mi mathvariant="monospace">o</mi>
-          <mi mathvariant="monospace">r</mi>
-          <mspace width="1ex"/>
-          <mi mathvariant="monospace">m</mi>
-          <mspace width="1ex"/>
-          <mi mathvariant="monospace">v</mi>
-          <mo mathvariant="monospace" stretchy="false">)</mo>
-        </mrow>
-      </mtd>
-      <mtd>
-        <mspace width="thickmathspace"/>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">e</mi>
-          <mi mathvariant="normal">t</mi>
-          <mi mathvariant="normal">u</mi>
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">n</mi>
-          <mi mathvariant="normal">s</mi>
-          <mspace width="thickmathspace"/>
-          <mi mathvariant="normal">t</mi>
-          <mi mathvariant="normal">h</mi>
-          <mi mathvariant="normal">e</mi>
-          <mspace width="thickmathspace"/>
-          <mi mathvariant="normal">v</mi>
-          <mi mathvariant="normal">e</mi>
-          <mi mathvariant="normal">c</mi>
-          <mi mathvariant="normal">t</mi>
-          <mi mathvariant="normal">o</mi>
-          <mi mathvariant="normal">r</mi>
-          <mspace width="thickmathspace"/>
-        </mrow>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="bold">t</mi>
-        </mrow>
-        <mo>,</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd/>
-      <mtd>
-        <mspace width="thickmathspace"/>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="normal">w</mi>
-          <mi mathvariant="normal">h</mi>
-          <mi mathvariant="normal">e</mi>
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">e</mi>
-          <mspace width="thickmathspace"/>
-        </mrow>
-        <msub>
-          <mi>t</mi>
-          <mi>i</mi>
-        </msub>
-        <mo>=</mo>
-        <msub>
-          <mi mathvariant="normal">Σ<!-- Σ --></mi>
           <mi>j</mi>
-        </msub>
-        <msub>
-          <mi>m</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mi>j</mi>
-          </mrow>
-        </msub>
-        <msub>
-          <mi>v</mi>
+        </mrow>
+      </msub>
+      <msub>
+        <mi>v</mi>
+        <mi>j</mi>
+      </msub>
+      <mo>;</mo>
+    </mtd>
+  </mtr>
+  <mtr>
+    <mtd>
+      <mtext>(matrix-*-matrix m n)</mtext>
+    </mtd>
+    <mtd>
+      <mtext>returns the matrix</mtext>
+      <mspace width="thickmathspace"/>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="bold">p</mi>
+      </mrow>
+      <mo>,</mo>
+    </mtd>
+  </mtr>
+  <mtr>
+    <mtd/>
+    <mtd>
+      <mtext>where</mtext>
+      <mspace width="thickmathspace"/>
+      <msub>
+        <mi>p</mi>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi>i</mi>
           <mi>j</mi>
-        </msub>
-        <mo>;</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mo mathvariant="monospace" stretchy="false">(</mo>
-          <mi mathvariant="monospace">m</mi>
-          <mi mathvariant="monospace">a</mi>
-          <mi mathvariant="monospace">t</mi>
-          <mi mathvariant="monospace">r</mi>
-          <mi mathvariant="monospace">i</mi>
-          <mi mathvariant="monospace">x</mi>
-          <mo mathvariant="monospace">−<!-- − --></mo>
-          <mo mathvariant="monospace">∗<!-- ∗ --></mo>
-          <mo mathvariant="monospace">−<!-- − --></mo>
-          <mi mathvariant="monospace">m</mi>
-          <mi mathvariant="monospace">a</mi>
-          <mi mathvariant="monospace">t</mi>
-          <mi mathvariant="monospace">r</mi>
-          <mi mathvariant="monospace">i</mi>
-          <mi mathvariant="monospace">x</mi>
-          <mspace width="1ex"/>
-          <mi mathvariant="monospace">m</mi>
-          <mspace width="1ex"/>
-          <mi mathvariant="monospace">n</mi>
-          <mo mathvariant="monospace" stretchy="false">)</mo>
         </mrow>
-      </mtd>
-      <mtd>
-        <mspace width="thickmathspace"/>
+      </msub>
+      <mo>=</mo>
+      <msub>
+        <mi mathvariant="normal">Σ<!-- Σ --></mi>
+        <mi>k</mi>
+      </msub>
+      <msub>
+        <mi>m</mi>
         <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">e</mi>
-          <mi mathvariant="normal">t</mi>
-          <mi mathvariant="normal">u</mi>
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">n</mi>
-          <mi mathvariant="normal">s</mi>
-          <mspace width="thickmathspace"/>
-          <mi mathvariant="normal">t</mi>
-          <mi mathvariant="normal">h</mi>
-          <mi mathvariant="normal">e</mi>
-          <mspace width="thickmathspace"/>
-          <mi mathvariant="normal">m</mi>
-          <mi mathvariant="normal">a</mi>
-          <mi mathvariant="normal">t</mi>
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">i</mi>
-          <mi mathvariant="normal">x</mi>
-          <mspace width="thickmathspace"/>
-        </mrow>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="bold">p</mi>
-        </mrow>
-        <mo>,</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd/>
-      <mtd>
-        <mspace width="thickmathspace"/>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="normal">w</mi>
-          <mi mathvariant="normal">h</mi>
-          <mi mathvariant="normal">e</mi>
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">e</mi>
-          <mspace width="thickmathspace"/>
-        </mrow>
-        <msub>
-          <mi>p</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mi>j</mi>
-          </mrow>
-        </msub>
-        <mo>=</mo>
-        <msub>
-          <mi mathvariant="normal">Σ<!-- Σ --></mi>
+          <mi>i</mi>
           <mi>k</mi>
-        </msub>
-        <msub>
-          <mi>m</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mi>k</mi>
-          </mrow>
-        </msub>
-        <msub>
-          <mi>n</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>k</mi>
-            <mi>j</mi>
-          </mrow>
-        </msub>
-        <mo>;</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mo mathvariant="monospace" stretchy="false">(</mo>
-          <mi mathvariant="monospace">t</mi>
-          <mi mathvariant="monospace">r</mi>
-          <mi mathvariant="monospace">a</mi>
-          <mi mathvariant="monospace">n</mi>
-          <mi mathvariant="monospace">s</mi>
-          <mi mathvariant="monospace">p</mi>
-          <mi mathvariant="monospace">o</mi>
-          <mi mathvariant="monospace">s</mi>
-          <mi mathvariant="monospace">e</mi>
-          <mspace width="1ex"/>
-          <mi mathvariant="monospace">m</mi>
-          <mo mathvariant="monospace" stretchy="false">)</mo>
         </mrow>
-      </mtd>
-      <mtd>
-        <mspace width="thickmathspace"/>
+      </msub>
+      <msub>
+        <mi>n</mi>
         <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">e</mi>
-          <mi mathvariant="normal">t</mi>
-          <mi mathvariant="normal">u</mi>
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">n</mi>
-          <mi mathvariant="normal">s</mi>
-          <mspace width="thickmathspace"/>
-          <mi mathvariant="normal">t</mi>
-          <mi mathvariant="normal">h</mi>
-          <mi mathvariant="normal">e</mi>
-          <mspace width="thickmathspace"/>
-          <mi mathvariant="normal">m</mi>
-          <mi mathvariant="normal">a</mi>
-          <mi mathvariant="normal">t</mi>
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">i</mi>
-          <mi mathvariant="normal">x</mi>
-          <mspace width="thickmathspace"/>
+          <mi>k</mi>
+          <mi>j</mi>
         </mrow>
+      </msub>
+      <mo>;</mo>
+    </mtd>
+  </mtr>
+  <mtr>
+    <mtd>
+      <mtext>(transpose m)</mtext>
+    </mtd>
+    <mtd>
+      <mtext>returns the matrix</mtext>
+      <mspace width="thickmathspace"/>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="bold">n</mi>
+      </mrow>
+      <mo>,</mo>
+    </mtd>
+  </mtr>
+  <mtr>
+    <mtd/>
+    <mtd>
+      <mtext>where</mtext>
+      <mspace width="thickmathspace"/>
+      <msub>
+        <mi>n</mi>
         <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="bold">n</mi>
+          <mi>i</mi>
+          <mi>j</mi>
         </mrow>
-        <mo>,</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd/>
-      <mtd>
-        <mspace width="thickmathspace"/>
+      </msub>
+      <mo>=</mo>
+      <msub>
+        <mi>m</mi>
         <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="normal">w</mi>
-          <mi mathvariant="normal">h</mi>
-          <mi mathvariant="normal">e</mi>
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">e</mi>
-          <mspace width="thickmathspace"/>
+          <mi>j</mi>
+          <mi>i</mi>
         </mrow>
-        <msub>
-          <mi>n</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mi>j</mi>
-          </mrow>
-        </msub>
-        <mo>=</mo>
-        <msub>
-          <mi>m</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>j</mi>
-            <mi>i</mi>
-          </mrow>
-        </msub>
-        <mo>.</mo>
-      </mtd>
-    </mtr>
-  </mtable>
+      </msub>
+      <mo>.</mo>
+    </mtd>
+  </mtr>
+</mtable>
 </math>
 We can define the dot product as<a class="footnote_link" id="DOCF83" href="#FOOT83"><sup>83</sup></a>
 </p>
