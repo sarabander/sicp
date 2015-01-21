@@ -8342,8 +8342,8 @@ of @code{accumulate-n}:
 
 @quotation
 @strong{@anchor{Exercise 2.37}Exercise 2.37:}
-Suppose we represent vectors @w{@b{v} = @math{(v_i)}} as sequences of numbers, and
-matrices @w{@b{m} = @math{(m_{ij})}} as sequences of vectors (the rows of the
+Suppose we represent vectors @b{v} = @math{{(v_i)}} as sequences of numbers, and
+matrices @b{m} = @math{{(m_{ij})}} as sequences of vectors (the rows of the
 matrix).  For example, the matrix
 @ifinfo
 
@@ -19741,14 +19741,14 @@ in terms of atomic @code{test-and-set!} operations.
 
 Now that we have seen how to implement serializers, we can see that account
 exchanging still has a problem, even with the @code{serialized-exchange}
-procedure above.  Imagine that Peter attempts to exchange @math{a}1 with @math{a}2
-while Paul concurrently attempts to exchange @math{a}2 with @math{a}1.  Suppose that
+procedure above.  Imagine that Peter attempts to exchange @math{{a1}} with @math{{a2}}
+while Paul concurrently attempts to exchange @math{{a2}} with @math{{a1}}.  Suppose that
 Peter's process reaches the point where it has entered a serialized procedure
-protecting @math{a}1 and, just after that, Paul's process enters a serialized
-procedure protecting @math{a}2.  Now Peter cannot proceed (to enter a serialized
-procedure protecting @math{a}2) until Paul exits the serialized procedure
-protecting @math{a}2.  Similarly, Paul cannot proceed until Peter exits the
-serialized procedure protecting @math{a}1.  Each process is stalled forever,
+protecting @math{{a1}} and, just after that, Paul's process enters a serialized
+procedure protecting @math{{a2}}.  Now Peter cannot proceed (to enter a serialized
+procedure protecting @math{{a2}}) until Paul exits the serialized procedure
+protecting @math{{a2}}.  Similarly, Paul cannot proceed until Peter exits the
+serialized procedure protecting @math{{a1}}.  Each process is stalled forever,
 waiting for the other.  This situation is called a @newterm{deadlock}.
 Deadlock is always a danger in systems that provide concurrent access to
 multiple shared resources.

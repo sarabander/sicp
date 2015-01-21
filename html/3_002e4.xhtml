@@ -979,31 +979,58 @@ semaphore must wait for release operations.  Give implementations of semaphores
 <p>Now that we have seen how to implement serializers, we can see that account
 exchanging still has a problem, even with the <code>serialized-exchange</code>
 procedure above.  Imagine that Peter attempts to exchange <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>1 with <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>1</mn>
+</mrow>
+</math> with <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>2
+  <mn>2</mn>
+</mrow>
+</math>
 while Paul concurrently attempts to exchange <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>2 with <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>2</mn>
+</mrow>
+</math> with <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>1.  Suppose that
+  <mn>1</mn>
+</mrow>
+</math>.  Suppose that
 Peter’s process reaches the point where it has entered a serialized procedure
 protecting <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>1 and, just after that, Paul’s process enters a serialized
+  <mn>1</mn>
+</mrow>
+</math> and, just after that, Paul’s process enters a serialized
 procedure protecting <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>2.  Now Peter cannot proceed (to enter a serialized
+  <mn>2</mn>
+</mrow>
+</math>.  Now Peter cannot proceed (to enter a serialized
 procedure protecting <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>2) until Paul exits the serialized procedure
+  <mn>2</mn>
+</mrow>
+</math>) until Paul exits the serialized procedure
 protecting <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>2.  Similarly, Paul cannot proceed until Peter exits the
+  <mn>2</mn>
+</mrow>
+</math>.  Similarly, Paul cannot proceed until Peter exits the
 serialized procedure protecting <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>1.  Each process is stalled forever,
+  <mn>1</mn>
+</mrow>
+</math>.  Each process is stalled forever,
 waiting for the other.  This situation is called a <a id="index-deadlock"></a>
 <em>deadlock</em>.
 Deadlock is always a danger in systems that provide concurrent access to
