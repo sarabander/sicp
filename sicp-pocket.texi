@@ -21590,7 +21590,7 @@ S_i = C + >   x_j dt
 @end ifinfo
 @tex
 \[ % :73:
-  S_i \,=\, C + {\sum_{j\kern0.07em = \kern0.03em 1}^i x_j \kern0.1em dt}  \]
+  S_i \,=\, C + {\sum_{j=1}^i x_j \, dt}  \]
 @end tex
 @noindent
 and returns the stream of values @math{{S = (S_i)}}.  The following
