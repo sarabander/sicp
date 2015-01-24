@@ -33,6 +33,7 @@ Acknowledgements
 * J. E. Johnson
 * Matt Iversen
 * Eugene Sharygin
+* Brian Wignall
 
 License
 -------
