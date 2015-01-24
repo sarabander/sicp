@@ -327,13 +327,12 @@ table.menu td {
 
 h2 ~ p:first-of-type:first-line, abbr {
   font-family: "Linux Libertine O", serif; 
-  text-transform: lowercase;
   letter-spacing: 0.04em;
-  -moz-font-feature-settings: "onum", "smcp";
-  -ms-font-feature-settings: "onum", "smcp";
-  -webkit-font-feature-settings: "onum" 1, "smcp" 1;
-  -o-font-feature-settings: "onum", "smcp";
-  font-feature-settings: "onum", "smcp";
+  -moz-font-feature-settings: "onum", "c2sc", "smcp";
+  -ms-font-feature-settings: "onum", "c2sc", "smcp";
+  -webkit-font-feature-settings: "onum", "c2sc", "smcp";
+  -o-font-feature-settings: "onum", "c2sc", "smcp";
+  font-feature-settings: "onum", "c2sc", "smcp";
 }
 
 h2 ~ p:first-of-type:first-letter {
@@ -389,6 +388,11 @@ a.cover object {
 /* Italic correction */
 var {
   padding-right: 0.16ex;
+}
+
+/* MathML fonts */
+mtext {
+  font-family: STIX;
 }
 
 pre math {
