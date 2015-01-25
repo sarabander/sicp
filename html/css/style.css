@@ -197,8 +197,8 @@ p, ol, ul {
   -moz-hyphens: auto;
   hyphens: auto;
 }
-/* But not in navigation bar, references, and imprint */
-nav p, a#References ~ p, h1 ~ p {
+/* But not in navigation bar, imprint, contents, and references */
+nav p, a#References ~ p, h1 ~ p, .shortcontents ul, .contents ul {
   -ms-hyphens: none;
   -webkit-hyphens: none;
   -moz-hyphens: none;
