@@ -480,7 +480,7 @@ a#References ~ p {
 }
 
 .jump a[href] {
-  color: rgba(230, 230, 230, .5);
+  color: rgba(220, 220, 220, .5);
   margin: -1.5ex;
   padding: 1.5ex;
 }
