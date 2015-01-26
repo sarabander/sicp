@@ -695,32 +695,62 @@ follows:<a class="footnote_link" id="DOCF169" href="#FOOT169"><sup>169</sup></a>
 <p>This procedure works well when only a single process is trying to do the
 exchange.  Suppose, however, that Peter and Paul both have access to accounts
 <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>1, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>1</mn>
+</mrow>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>2, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>2</mn>
+</mrow>
+</math>, and <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>3, and that Peter exchanges <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>3</mn>
+</mrow>
+</math>, and that Peter exchanges <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>1 and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>1</mn>
+</mrow>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>2 while
+  <mn>2</mn>
+</mrow>
+</math> while
 Paul concurrently exchanges <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>1 and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>1</mn>
+</mrow>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>3.  Even with account deposits and
+  <mn>3</mn>
+</mrow>
+</math>.  Even with account deposits and
 withdrawals serialized for individual accounts (as in the <code>make-account</code>
 procedure shown above in this section), <code>exchange</code> can still produce
 incorrect results.  For example, Peter might compute the difference in the
 balances for <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>1 and <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mn>1</mn>
+</mrow>
+</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>2, but then Paul might change the balance in
+  <mn>2</mn>
+</mrow>
+</math>, but then Paul might change the balance in
 <math xmlns="http://www.w3.org/1998/Math/MathML">
+<mrow class="MJX-TeXAtom-ORD">
   <mi>a</mi>
-</math>1 before Peter is able to complete the exchange.<a class="footnote_link" id="DOCF170" href="#FOOT170"><sup>170</sup></a>  For correct behavior, we must arrange for the
+  <mn>1</mn>
+</mrow>
+</math> before Peter is able to complete the exchange.<a class="footnote_link" id="DOCF170" href="#FOOT170"><sup>170</sup></a>  For correct behavior, we must arrange for the
 <code>exchange</code> procedure to lock out any other concurrent accesses to the
 accounts during the entire time of the exchange.
 </p>

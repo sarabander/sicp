@@ -18169,14 +18169,14 @@ relationship between Fahrenheit and Celsius temperatures is
 @end tex
 Such a constraint can be thought of as a network consisting of primitive adder,
 multiplier, and constant constraints (@ref{Figure 3.28}).  In the figure, we
-see on the left a multiplier box with three terminals, labeled @math{m}1, @math{m}2,
+see on the left a multiplier box with three terminals, labeled @math{{m1}}, @math{{m2}},
 and @math{p}.  These connect the multiplier to the rest of the network as follows:
-The @math{m}1 terminal is linked to a connector @math{C}, which will hold the Celsius
-temperature.  The @math{m}2 terminal is linked to a connector @math{w}, which is also
+The @math{{m1}} terminal is linked to a connector @math{C}, which will hold the Celsius
+temperature.  The @math{{m2}} terminal is linked to a connector @math{w}, which is also
 linked to a constant box that holds 9.  The @math{p} terminal, which the
-multiplier box constrains to be the product of @math{m}1 and @math{m}2, is linked to
-the @math{p} terminal of another multiplier box, whose @math{m}2 is connected to a
-constant 5 and whose @math{m}1 is connected to one of the terms in a sum.
+multiplier box constrains to be the product of @math{{m1}} and @math{{m2}}, is linked to
+the @math{p} terminal of another multiplier box, whose @math{{m2}} is connected to a
+constant 5 and whose @math{{m1}} is connected to one of the terms in a sum.
 
 @float
 @anchor{Figure 3.28}
@@ -19422,13 +19422,13 @@ bug in our banking system!)}
 @noindent
 This procedure works well when only a single process is trying to do the
 exchange.  Suppose, however, that Peter and Paul both have access to accounts
-@math{a}1, @math{a}2, and @math{a}3, and that Peter exchanges @math{a}1 and @math{a}2 while
-Paul concurrently exchanges @math{a}1 and @math{a}3.  Even with account deposits and
+@math{{a1}}, @math{{a2}}, and @math{{a3}}, and that Peter exchanges @math{{a1}} and @math{{a2}} while
+Paul concurrently exchanges @math{{a1}} and @math{{a3}}.  Even with account deposits and
 withdrawals serialized for individual accounts (as in the @code{make-account}
 procedure shown above in this section), @code{exchange} can still produce
 incorrect results.  For example, Peter might compute the difference in the
-balances for @math{a}1 and @math{a}2, but then Paul might change the balance in
-@math{a}1 before Peter is able to complete the exchange.@footnote{If the account
+balances for @math{{a1}} and @math{{a2}}, but then Paul might change the balance in
+@math{{a1}} before Peter is able to complete the exchange.@footnote{If the account
 balances start out as $10, $20, and $30, then after any number of concurrent
 exchanges, the balances should still be $10, $20, and $30 in some order.
 Serializing the deposits to individual accounts is not sufficient to guarantee
