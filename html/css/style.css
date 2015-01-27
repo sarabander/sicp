@@ -221,8 +221,8 @@ a[href] > sup {
   vertical-align: top; 
   position: relative;
   top: -0.4ex;
-  margin: -1ex;
-  padding: 1ex;
+  margin: -2ex;
+  padding: 2ex;
 }
 
 a[href]:-webkit-any-link > sup {
