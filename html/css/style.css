@@ -23,7 +23,7 @@ ul.no-bullet {list-style: none}
 
 html {
   font-family: "Linux Libertine O", serif;
-  font-size: 170%;
+  font-size: 170%; /* 100% for epub */
   color: #383838;
   line-height: 130%;
   /* 'liga' turns on ligatures, 'ss06' picks alternate ampersand */
@@ -36,7 +36,7 @@ html {
 
 @media (min-width: 481px) and (max-width: 960px) {
   html {
-    font-size: 140%; 
+    font-size: 140%; /* 100% for epub */
   }
 
   blockquote {
@@ -48,7 +48,7 @@ html {
 
 @media (max-width: 480px) {
   html {
-    font-size: 120%; 
+    font-size: 120%; /* 100% for epub */
   }
   blockquote {
     margin-left:  0.5em;
@@ -474,7 +474,8 @@ a#References ~ p {
   font-family: "DejaVu-Arrows";
   font-size: 2rem;
   font-weight: bold;
-  position: fixed;
+  position: fixed; /* comment out when generating epub */
+  /* display: none; */ /* uncomment for epub */
   right: 0;
   text-align: center;
 }
