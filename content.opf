@@ -8,7 +8,7 @@
     <dc:identifier id="bookid">urn:uuid:a412368e-e0ac-42ce-8c01-0f0da52f5731</dc:identifier>
     <dc:language>en-US</dc:language>
     <meta name="cover" content="cover-image"/>
-    <meta property="dcterms:modified">2015-01-24T03:05:19Z</meta>
+    <meta property="dcterms:modified">2015-01-29T17:20:40Z</meta>
   </metadata>
   <manifest>
     <item id="css-style" href="html/css/style.css" media-type="text/css"/>
@@ -150,6 +150,7 @@
     <item id="xblack_chess_queen" href="html/fig/icons/black_chess_queen.svg" media-type="image/svg+xml"/>
     <item id="xby" href="html/fig/icons/by.std.svg" media-type="image/svg+xml"/>
     <item id="xcc" href="html/fig/icons/cc.std.svg" media-type="image/svg+xml"/>
+    <item id="xnc" href="html/fig/icons/nc.std.svg" media-type="image/svg+xml"/>
     <item id="xsa" href="html/fig/icons/sa.std.svg" media-type="image/svg+xml"/>
     <item id="xwhite_chess_queen" href="html/fig/icons/white_chess_queen.svg" media-type="image/svg+xml"/>
     <item id="xdejamono-r-subset" href="html/css/fonts/dejamono-r-subset.woff" media-type="application/font-woff"/>

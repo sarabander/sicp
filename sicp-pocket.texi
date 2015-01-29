@@ -7,16 +7,16 @@
 @settitle            Structure and Interpretation of Computer Programs, 2e
 @comment             Unofficial Texinfo Format
 @comment
-@set utfversion      2.andresraba6.4
-@set utfversiondate  June 24, 2014
+@set utfversion      2.andresraba6.5
+@set utfversiondate  January 29, 2015
 @comment
-@comment             This file is licensed under a Creative Commons 
-@comment             Attribution-ShareAlike 3.0 Unported License 
-@comment             http://creativecommons.org/licenses/by-sa/3.0/
+@comment             This file is licensed under a Creative Commons
+@comment             Attribution-NonCommercial-ShareAlike 3.0 Unported License
+@comment             http://creativecommons.org/licenses/by-nc-sa/3.0/
 @comment             
 @comment             This is a Texinfo file.  To convert it to Info hypertext
 @comment             format, you will need the `makeinfo' program from the GNU
-@comment             Texinfo package.  To produce a PDF, use texi2pdf. 
+@comment             Texinfo package.  To produce a PDF, use texi2pdf.
 @comment             For more information about this file,
 @comment             see the text under `@node UTF' below.
 @comment             
@@ -92,6 +92,11 @@
 @comment   Switched on hyphenation for all viewports, made text column
 @comment   wider, re-arranged some Scheme code, changed Mathjax
 @comment   protocol from http to https.
+@comment
+@comment * Version 2.andresraba6.5 (January 29, 2015) by Andres Raba.
+@comment   Added noncommercial clause to license, fixed broken links,
+@comment   added more fulltext links, replaced monospace with roman in
+@comment   MathML (Android rendering bug), adjusted math typography.
 
 
 @documentencoding UTF-8
