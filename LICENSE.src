@@ -3,8 +3,8 @@
  
  1. sicp-pocket.texi, the HTML files of the book, and illustrations in 
     directory 'html/fig' are licensed under Creative Commons 
-    Attribution-ShareAlike 3.0 Unported License 
-    (http://creativecommons.org/licenses/by-sa/3.0/).
+    Attribution-NonCommercial-ShareAlike 3.0 Unported License 
+    (http://creativecommons.org/licenses/by-nc-sa/3.0/).
  
  2. Javascript libraries have their own individual licenses.
 
