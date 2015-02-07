@@ -121,13 +121,9 @@ h5 code { font-size: 0.82rem; }
 
 .chapnum {
   display: inline-block;
+  font-weight: normal;
   font-size: 6.7em;
-  -moz-font-feature-settings: "onum";
-  -ms-font-feature-settings: "onum";
-  -webkit-font-feature-settings: "onum" 1;
-  -o-font-feature-settings: "onum";
-  font-feature-settings: "onum";
-  color: #cecece;
+  color: #aeaece;
   height: 1ex;
   margin-top: 0.3ex;
   margin-bottom: 0.5ex;
@@ -148,7 +144,7 @@ h5 code { font-size: 0.82rem; }
 
 .secnum {
   display: inline-block;
-  color: #909090;
+  color: #9090c0;
   margin-right: 0.8em;
   vertical-align: top;
 }
@@ -345,9 +341,9 @@ h2 ~ p:first-of-type:first-letter {
   line-height: 0.67em;
   font-family: "Linux Libertine O", serif; 
   text-transform: uppercase;
-  font-weight: bold;
+  font-weight: normal;
   font-size: 3.0em;
-  color: #c0c0c0;
+  color: #9090c0;
 }
 
 h2 + blockquote {
