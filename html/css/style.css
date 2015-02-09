@@ -333,16 +333,16 @@ h2 ~ p:first-of-type:first-line, abbr {
 
 h2 ~ p:first-of-type:first-letter {
   float: left;
-  margin-top: 0.4rem;
+  margin-top: 0.33rem;
   margin-right: 0.04em;
-  margin-bottom: -0.1em;
-  margin-left: -0.2ex;
+  margin-bottom: -0.15em;
+  margin-left: -0.15ex;
   padding-left: 0;
-  line-height: 0.67em;
-  font-family: "Linux Libertine O", serif; 
+  line-height: 0.83em;
+  font-family: "Linux Libertine O", serif;
   text-transform: uppercase;
   font-weight: normal;
-  font-size: 3.0em;
+  font-size: 3rem;
   color: #9090c0;
 }
 
