@@ -34,11 +34,10 @@ html {
   font-feature-settings: "liga", "ss06";
 }
 
-@media (min-width: 481px) and (max-width: 960px) {
+@media (min-width: 481px) and (max-width: 720px) {
   html {
     font-size: 140%; /* 100% for epub */
   }
-
   blockquote {
     margin-left:  1em;
     margin-right: 1em;
