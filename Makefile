@@ -4,17 +4,17 @@
 # Constants
 
 DIR = html/
-SRC = sicp-pocket.texi		# book's Texinfo source
-GOAL = ../sicp.epub		# the end product of compilation
-NEXUS = $(DIR)index.xhtml	# the central file with table of contents
-META = content.opf toc.xhtml 	# epub metafiles generated from NEXUS
-HTML = $(DIR)*.xhtml		# all the HTML files of the book
-FIG = $(DIR)fig/*/*.svg		# SVG diagrams
-CSS = $(DIR)css/*.css		# style files
-FONT = $(DIR)css/fonts/*	# WOFF fonts
-JS = $(DIR)js/*.js		# javascript libraries
-CONV = texi2any lib/Texinfo/Convert/HTML.pm	# Texinfo converter scripts
-MATH = get-math.js put-math.js mathcell.xhtml	# LaTeX -> MathML converter
+SRC = sicp-pocket.texi          # book's Texinfo source
+GOAL = ../sicp.epub             # the end product of compilation
+NEXUS = $(DIR)index.xhtml       # the central file with table of contents
+META = content.opf toc.xhtml    # epub metafiles generated from NEXUS
+HTML = $(DIR)*.xhtml            # all the HTML files of the book
+FIG = $(DIR)fig/*/*.svg         # SVG diagrams
+CSS = $(DIR)css/*.css           # style files
+FONT = $(DIR)css/fonts/*        # WOFF fonts
+JS = $(DIR)js/*.js              # javascript libraries
+CONV = texi2any lib/Texinfo/Convert/HTML.pm     # Texinfo converter scripts
+MATH = get-math.js put-math.js mathcell.xhtml   # LaTeX -> MathML converter
 HIGHL = $(DIR)js/highlight/
 PRETTY = $(HIGHL)prettify.js $(HIGHL)lang-lisp.js batch-prettify.js
 COVER = index.in.xhtml $(DIR)fig/coverpage.std.svg $(DIR)fig/bookwheel.jpg
@@ -38,9 +38,9 @@ all: $(GOAL)
 	  done; \
 	  rm $(DIR)*.bak; \
 	fi; \
-        perl -0p -i.bak -e \
-          "s{<!-- Fork me banner -->}{$(GITHUB)}" index.xhtml; \
-        rm *.bak
+	perl -0p -i.bak -e \
+	  "s{<!-- Fork me banner -->}{$(GITHUB)}" index.xhtml; \
+	rm *.bak
 
 html: $(NEXUS)
 
@@ -99,7 +99,7 @@ $(GOAL): $(META) $(THUMB) $(FIG) $(CSS) $(FONT) mimetype META-INF/* LICENSE
 	  rm $(DIR)*.bak; \
 	fi; \
 	zip -0Xq $(GOAL) mimetype; \
-        cp index.in.xhtml index.xhtml; \
+	cp index.in.xhtml index.xhtml; \
 	zip -Xr9Dq $(GOAL) $(META) $(HTML) META-INF/* LICENSE \
 	  index.xhtml $(DIR)css/* $(DIR)fig/* ; \
 	echo "done."
