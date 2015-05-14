@@ -1,6 +1,8 @@
 # Makefile for compiling sicp.epub from the sources.
 # (c) 2014 Andres Raba, GNU GPL v.3.
 
+# Constants
+
 DIR = html/
 SRC = sicp-pocket.texi		# book's Texinfo source
 GOAL = ../sicp.epub		# the end product of compilation
@@ -24,6 +26,8 @@ FT = <script src=\"js/footnotes.js\" type=\"text/javascript\"></script>
 BR = <script src=\"js/browsertest.js\" type=\"text/javascript\"></script>
 
 GITHUB = <a href=\"https://github.com/sarabander/sicp\"><img style=\"position: absolute; top: 0; right: 0; border: 0; width: 149px; height: 149px; z-index: 10; opacity: 0.5;\" src=\"http://aral.github.com/fork-me-on-github-retina-ribbons/right-red\@2x.png\" alt=\"Fork me on GitHub\" /></a>
+
+# Targets
 
 all: $(GOAL)
 # Add scripts to the unpacked HTML5 version that is to be read in a browser.
