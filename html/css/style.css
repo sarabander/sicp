@@ -34,11 +34,10 @@ html {
   font-feature-settings: "liga", "ss06";
 }
 
-@media (min-width: 481px) and (max-width: 960px) {
+@media (min-width: 481px) and (max-width: 720px) {
   html {
     font-size: 140%; /* 100% for epub */
   }
-
   blockquote {
     margin-left:  1em;
     margin-right: 1em;
@@ -121,13 +120,9 @@ h5 code { font-size: 0.82rem; }
 
 .chapnum {
   display: inline-block;
+  font-weight: normal;
   font-size: 6.7em;
-  -moz-font-feature-settings: "onum";
-  -ms-font-feature-settings: "onum";
-  -webkit-font-feature-settings: "onum" 1;
-  -o-font-feature-settings: "onum";
-  font-feature-settings: "onum";
-  color: #cecece;
+  color: #aeaece;
   height: 1ex;
   margin-top: 0.3ex;
   margin-bottom: 0.5ex;
@@ -148,7 +143,7 @@ h5 code { font-size: 0.82rem; }
 
 .secnum {
   display: inline-block;
-  color: #909090;
+  color: #9090c0;
   margin-right: 0.8em;
   vertical-align: top;
 }
@@ -212,7 +207,7 @@ a#UTF ~ p > i:last-child {
 }
 
 a[href] {
-  color: #902828;
+  color: #804040;
   text-decoration: none;
 }
 
@@ -337,17 +332,17 @@ h2 ~ p:first-of-type:first-line, abbr {
 
 h2 ~ p:first-of-type:first-letter {
   float: left;
-  margin-top: 0.4rem;
+  margin-top: 0.33rem;
   margin-right: 0.04em;
-  margin-bottom: -0.1em;
-  margin-left: -0.2ex;
+  margin-bottom: -0.15em;
+  margin-left: -0.15ex;
   padding-left: 0;
-  line-height: 0.67em;
-  font-family: "Linux Libertine O", serif; 
+  line-height: 0.83em;
+  font-family: "Linux Libertine O", serif;
   text-transform: uppercase;
-  font-weight: bold;
-  font-size: 3.0em;
-  color: #c0c0c0;
+  font-weight: normal;
+  font-size: 3rem;
+  color: #9090c0;
 }
 
 h2 + blockquote {

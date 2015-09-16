@@ -7,12 +7,12 @@
 @settitle            Structure and Interpretation of Computer Programs, 2e
 @comment             Unofficial Texinfo Format
 @comment
-@set utfversion      2.andresraba6.5
-@set utfversiondate  January 29, 2015
+@set utfversion      2.andresraba6.6
+@set utfversiondate  September 16, 2015
 @comment
 @comment             This file is licensed under a Creative Commons
-@comment             Attribution-NonCommercial-ShareAlike 3.0 Unported License
-@comment             http://creativecommons.org/licenses/by-nc-sa/3.0/
+@comment             Attribution-ShareAlike 4.0 International License
+@comment             http://creativecommons.org/licenses/by-sa/4.0/
 @comment             
 @comment             This is a Texinfo file.  To convert it to Info hypertext
 @comment             format, you will need the `makeinfo' program from the GNU
@@ -97,7 +97,10 @@
 @comment   Added noncommercial clause to license, fixed broken links,
 @comment   added more fulltext links, replaced monospace with roman in
 @comment   MathML (Android rendering bug), adjusted math typography.
-
+@comment
+@comment * Version 2.andresraba6.6 (September 16, 2015) by Andres Raba.
+@comment   Fixed broken links. Tinted chapter and section numbers.
+@comment   License updated to CC BY-SA 4.0.
 
 @documentencoding UTF-8
 
@@ -129,12 +132,11 @@
 @noindent
 @image{fig/icons/cc, 6mm,,,.std.svg}
 @image{fig/icons/by, 6mm,,,.std.svg}
-@image{fig/icons/nc, 6mm,,,.std.svg}
 @image{fig/icons/sa, 6mm,,,.std.svg}
 
 @noindent
-This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0
-Unported License (@url{http://creativecommons.org/licenses/by-nc-sa/3.0/, @abbr{CC BY-NC-SA 3.0}}).
+This work is licensed under a Creative Commons Attribution-ShareAlike 4.0
+International License (@url{http://creativecommons.org/licenses/by-sa/4.0/, @abbr{CC BY-SA 4.0}}).
 Based on a work at @url{http://mitpress.mit.edu/sicp/, mitpress.mit.edu}.
 
 @noindent
@@ -37374,7 +37376,7 @@ Systems---Programming Language---Common Lisp}.
 @anchor{Appel 1987}
 Appel, Andrew W.  1987.  Garbage collection can be faster than stack
 allocation.  @cite{Information Processing Letters} 25(4): 275-279.
-@url{http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.39.8219, –›}
+@url{https://www.cs.princeton.edu/~appel/papers/45.ps, –›}
 
 @anchor{Backus 1978}
 Backus, John.  1978.  Can programming be liberated from the von Neumann style?
@@ -37670,7 +37672,7 @@ North-Holland.
 @anchor{Lamport (1978)}
 Lamport, Leslie. 1978.  Time, clocks, and the ordering of events in a
 distributed system.  @cite{Communications of the @abbr{ACM}} 21(7): 558-565.
-@url{http://www.stanford.edu/class/cs240/readings/lamport.pdf, –›}
+@url{http://research.microsoft.com/en-us/um/people/lamport/pubs/time-clocks.pdf, –›}
 
 @anchor{Lampson et al. 1981}
 Lampson, Butler, J. J. Horning, R.  London, J. G. Mitchell, and G. K.  Popek.
@@ -37864,7 +37866,7 @@ reference manual.  Memo 203@abbr{A}, @abbr{MIT} Artificial Intelligence Laborato
 @anchor{Sutherland (1963)}
 Sutherland, Ivan E.  1963.  @abbr{SKETCHPAD}: A man-machine graphical
 com@-mu@-ni@-cation system.  Technical report 296, @abbr{MIT} Lincoln Laboratory.
-@url{http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.10.4290, –›}
+@url{https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-574.pdf, –›}
 
 @anchor{Teitelman 1974}
 Teitelman, Warren.  1974.  Interlisp reference manual.  Technical report, Xerox
@@ -37885,7 +37887,7 @@ in Computer Science, volume 123. New York: Springer-Verlag, pp.  334-348.
 @anchor{Wand 1980}
 Wand, Mitchell.  1980.  Continuation-based program transformation strategies.
 @cite{Journal of the @abbr{ACM}} 27(1): 164-180.
-@url{http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.83.8567, –›}
+@url{http://www.diku.dk/OLD/undervisning/2005e/224/papers/Wand80.pdf, –›}
 
 @anchor{Waters (1979)}
 Waters, Richard C.  1979.  A method for analyzing loop programs.
