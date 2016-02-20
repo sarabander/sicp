@@ -37381,7 +37381,7 @@ allocation.  @cite{Information Processing Letters} 25(4): 275-279.
 @anchor{Backus 1978}
 Backus, John.  1978.  Can programming be liberated from the von Neumann style?
 @cite{Communications of the @abbr{ACM}} 21(8): 613-641.
-@url{http://www.stanford.edu/class/cs242/readings/backus.pdf, –›}
+@url{http://worrydream.com/refs/Backus-CanProgrammingBeLiberated.pdf, –›}
 
 @anchor{Baker (1978)}
 Baker, Henry G., Jr.  1978.  List processing in real time on a serial computer.
@@ -37776,7 +37776,7 @@ Rabin, Michael O. 1980. Probabilistic algorithm for testing primality.
 @anchor{Raymond 1993}
 Raymond, Eric.  1993. @cite{The New Hacker's Dictionary}. 2nd edition.
 Cambridge, @abbr{MA}: @abbr{MIT} Press.
-@url{http://www.outpost9.com/reference/jargon/jargon_toc.html, –›}
+@url{http://www.catb.org/jargon/, –›}
 
 Raynal, Michel. 1986. @cite{Algorithms for Mutual Exclusion}.  Cambridge, @abbr{MA}:
 @abbr{MIT} Press.
