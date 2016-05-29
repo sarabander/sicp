@@ -6,7 +6,7 @@ SICP
 
 This is a new HTML5 and EPUB3 version of "Structure and Interpretation of Computer Programs" by Abelson, Sussman, and Sussman. It comes from the lineage of [Unofficial Texinfo Format](http://www.neilvandyke.org/sicp-texi/) that was converted from the original [HTML version](http://mitpress.mit.edu/sicp/) at The MIT Press.
 
-<b>In EPUB3 format: [sicp.epub](https://www.dropbox.com/s/y9jt5kmabt02yg8/sicp.epub?dl=0)</b>
+<b>In EPUB3 format: [sicp.epub](https://github.com/sarabander/sicp-epub/blob/master/sicp.epub?raw=true)</b>
 
 <b>For online reading: [HTML book](http://sarabander.github.io/sicp/)</b>
 
