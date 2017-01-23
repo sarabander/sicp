@@ -1916,7 +1916,7 @@ Another way to write the absolute-value procedure is
 
 @noindent
 which could be expressed in English as ``If @math{x} is less than zero return 
-@math{{-x}}; otherwise return @math{x}.''  @code{Else} is a special symbol that can be
+@math{{-x}}; otherwise return @math{x}.''  @code{else} is a special symbol that can be
 used in place of the @math{{⟨p⟩}} in the final clause of a @code{cond}.  This
 causes the @code{cond} to return as its value the value of the corresponding
 @math{{⟨e⟩}} whenever all previous clauses have been bypassed.  In fact, any
