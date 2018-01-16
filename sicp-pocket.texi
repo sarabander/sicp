@@ -37407,7 +37407,7 @@ Algebraic and Numeric Problems}. New York: American Elsevier.
 @anchor{Chaitin 1975}
 Chaitin, Gregory J.  1975.  Randomness and mathematical proof.
 @cite{Scientific American} 232(5): 47-52.
-@url{https://www.cs.auckland.ac.nz/~chaitin/sciamer.html, –›}
+@url{http://www.owlnet.rice.edu/~km9/Randomness%20and%20Mathematical.pdf, –›}
 
 @anchor{Church (1941)}
 Church, Alonzo.  1941.  @cite{The Calculi of Lambda-Con@-ver@-sion}.  Princeton,
@@ -37427,7 +37427,7 @@ Functional Programming}, pp. 226-234.
 Clinger, William, and Jonathan Rees.  1991.  Macros that work.  In
 @cite{Proceedings of the 1991 @abbr{ACM} Conference on Principles of
 Programming Languages}, pp. 155-162.
-@url{http://mumble.net/~jar/pubs/macros_that_work.ps, –›}
+@url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.464.1336&rep=rep1&type=pdf, –›}
 
 @anchor{Colmerauer et al. 1973}
 Colmerauer A., H. Kanoui, R. Pasero, and P. Roussel.  1973.  Un syst@`eme de
@@ -37672,7 +37672,7 @@ North-Holland.
 @anchor{Lamport (1978)}
 Lamport, Leslie. 1978.  Time, clocks, and the ordering of events in a
 distributed system.  @cite{Communications of the @abbr{ACM}} 21(7): 558-565.
-@url{http://research.microsoft.com/en-us/um/people/lamport/pubs/time-clocks.pdf, –›}
+@url{https://amturing.acm.org/p558-lamport.pdf, –›}
 
 @anchor{Lampson et al. 1981}
 Lampson, Butler, J. J. Horning, R.  London, J. G. Mitchell, and G. K.  Popek.
@@ -37708,19 +37708,19 @@ McAllester, David Allen.  1980.  An outlook on truth maintenance.  Memo 551,
 @anchor{McCarthy 1960}
 McCarthy, John.  1960.  Recursive functions of symbolic expressions and their
 computation by machine.  @cite{Communications of the @abbr{ACM}} 3(4): 184-195.
-@url{http://www-formal.stanford.edu/jmc/recursive.pdf, –›}
+@url{http://homepages.inf.ed.ac.uk/wadler/papers/papers-we-love/mccarthy-recursive-functions.pdf, –›}
 
 @anchor{McCarthy 1963}
 McCarthy, John.  1963.  A basis for a mathematical theory of computation.  In
 @cite{Computer Programming and Formal Systems}, edited by P. Braffort and
 D. Hirschberg.  North-Holland.
-@url{http://www-formal.stanford.edu/jmc/basis.html, –›}
+@url{https://ropas.snu.ac.kr/~kwang/4190.310/mccarthy63basis.pdf, –›}
 
 @anchor{McCarthy 1978}
 McCarthy, John.  1978.  The history of Lisp.  In @cite{Proceedings of the
 @abbr{ACM} @abbr{SIGPLAN} Conference on the History of Programming
 Languages}.
-@url{http://www-formal.stanford.edu/jmc/history/lisp/lisp.html, –›}
+@url{http://jmc.stanford.edu/articles/lisp.html, –›}
 
 @anchor{McCarthy et al. 1965}
 McCarthy, John, P. W. Abrahams, D. J. Edwards, T. P. Hart, and M. I.  Levin.
