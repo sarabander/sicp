@@ -858,7 +858,7 @@ resulting procedure:
         </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="pln">intersection-set </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> set1</span><span class="clo">)</span><span class="pln"> 
                                 set2</span><span class="clo">))))</span></pre></div>
 
-<p>In designing a representation, one of the issues we should be concerned with is
+<p>In designing a representation, one of the issues we should be concerned with its
 efficiency.  Consider the number of steps required by our set operations.
 Since they all use <code>element-of-set?</code>, the speed of this operation has a
 major impact on the efficiency of the set implementation as a whole.  Now, in
