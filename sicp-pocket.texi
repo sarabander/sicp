@@ -8695,7 +8695,6 @@ produce not only one solution, but all solutions to the puzzle.
 @caption{@strong{Figure 2.8:} A solution to the eight-queens puzzle.}
 @end iftex
 @end float
-@end quotation
 
 We implement this solution as a procedure @code{queens}, which returns a
 sequence of all solutions to the problem of placing @math{n} queens on an
@@ -8735,6 +8734,7 @@ You must also write the procedure @code{safe?}, which determines for a set of
 positions, whether the queen in the @math{k^{\text{th}}} column is safe with respect to the
 others.  (Note that we need only check whether the new queen is safe---the
 other queens are already guaranteed safe with respect to each other.)
+@end quotation
 
 @quotation
 @strong{@anchor{Exercise 2.43}Exercise 2.43:} Louis Reasoner is having a
