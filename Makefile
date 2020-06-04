@@ -87,7 +87,7 @@ $(META): $(NEXUS) create_metafiles.rb
 	./create_metafiles.rb
 
 $(THUMB): $(COVER)
-	@inkscape -b "#fbfbfb" -C -e $(THUMB) -f $(DIR)fig/coverpage.std.svg > /dev/null
+	@inkscape $(DIR)fig/coverpage.std.svg -b "#fbfbfb" -C --export-filename=$(THUMB) > /dev/null
 
 $(GOAL): $(META) $(THUMB) $(FIG) $(CSS) $(FONT) mimetype META-INF/* LICENSE
 	@if [ -f $(GOAL) ]; then rm $(GOAL); fi; \
