@@ -19,7 +19,7 @@ HIGHL = $(DIR)js/highlight/
 PRETTY = $(HIGHL)prettify.js $(HIGHL)lang-lisp.js batch-prettify.js
 COVER = index.in.xhtml $(DIR)fig/coverpage.std.svg $(DIR)fig/bookwheel.jpg
 THUMB = $(DIR)fig/cover.png     # thumbnail cover image
-SHELL = /bin/bash
+SHELL = /usr/bin/env bash
 
 JQ = <script src=\"js/jquery.min.js\" type=\"text/javascript\"></script>
 FT = <script src=\"js/footnotes.js\" type=\"text/javascript\"></script>
