@@ -25,7 +25,7 @@ JQ = <script src=\"js/jquery.min.js\" type=\"text/javascript\"></script>
 FT = <script src=\"js/footnotes.js\" type=\"text/javascript\"></script>
 BR = <script src=\"js/browsertest.js\" type=\"text/javascript\"></script>
 
-GITHUB = <a href=\"https://github.com/sarabander/sicp\"><img style=\"position: absolute; top: 0; right: 0; border: 0; width: 149px; height: 149px; z-index: 10; opacity: 0.5;\" src=\"http://aral.github.com/fork-me-on-github-retina-ribbons/right-red\@2x.png\" alt=\"Fork me on GitHub\" /></a>
+GITHUB = <a class=\"github-fork-ribbon\" href=\"https://github.com/sarabander/sicp\" data-ribbon=\"Fork me on GitHub\" title=\"Fork me on GitHub\">Fork me on GitHub</a>
 
 # Targets
 
